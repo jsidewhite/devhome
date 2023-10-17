@@ -49,7 +49,7 @@
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon VerticalAlignment="Top" Grid.Column="0" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xec7a;" FontSize="35"/>
+                    <FontIcon VerticalAlignment="Top" Grid.Column="0" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xec7a;" FontSize="135"/>
                     <StackPanel Grid.Column="1" Orientation="Vertical">
                         <TextBlock x:Uid="InitializationPage_SetupTitle" FontSize="14" FontWeight="Bold" TextWrapping="Wrap"/>
                         <TextBlock x:Uid="InitializationPage_SetupDescription" FontSize="14" TextWrapping="Wrap" />
@@ -71,10 +71,10 @@
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe713;" FontSize="35"/>
+                    <FontIcon Grid.Column="0" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe713;" FontSize="85"/>
                     <StackPanel Grid.Column="1" Orientation="Vertical">
-                        <TextBlock x:Uid="InitializationPage_SettingsTitle" FontSize="14" FontWeight="Bold" TextWrapping="Wrap"/>
-                        <TextBlock x:Uid="InitializationPage_SettingsDescription" FontSize="14" TextWrapping="Wrap" />
+                        <TextBlock x:Uid="InitializationPage_SettingsTitle" FontSize="44" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock x:Uid="InitializationPage_SettingsDescription" FontSize="44" TextWrapping="Wrap" />
                     </StackPanel>
                 </Grid>
             </Grid>

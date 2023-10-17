@@ -107,6 +107,7 @@ public sealed partial class ShellPage : Page
         {
             foreach (var tool in group.Tools)
             {
+                // jw: bind to NavigationPane.Content here
                 var navigationViewItemString = $@"
                     <NavigationViewItem
                         xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""

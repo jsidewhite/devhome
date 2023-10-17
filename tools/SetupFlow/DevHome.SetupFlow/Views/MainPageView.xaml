@@ -118,7 +118,49 @@
                                 <ImageIcon Source="ms-appx:///DevHome.SetupFlow/Assets/Setup_ConfigurationFile.png" />
                             </ctControls:SettingsCard.HeaderIcon>
                         </ctControls:SettingsCard>
+
+
+
+
+
+
+
+
+
+
+
+                        <Grid Background="Transparent">
+                            <ctControls:SettingsCard x:Uid="ms-resource:///DevHome.SetupFlow/Resources/DeveloperQuietMode"
+                                               AutomationProperties.AutomationId="EndToEndSetupButton"
+                                               IsClickEnabled="True"
+                                               Command="{x:Bind ViewModel.StartSetupCommand}"
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Header}"
+                                               IsEnabled="{x:Bind ViewModel.EnablePackageInstallerItem, Mode=OneWay}"
+                                               ActionIconToolTip="{Binding Header, RelativeSource={RelativeSource Mode=Self}}"
+                                               AutomationProperties.AccessibilityView="Control"
+                                               ActionIcon="{x:Null}" >
+                                <ctControls:SettingsCard.HeaderIcon>
+                                    <ImageIcon
+                                        Opacity="{x:Bind ViewModel.EnablePackageInstallerItem, Mode=OneWay, Converter={StaticResource BoolToOpacityConverter}}"
+                                        Source="ms-appx:///DevHome.SetupFlow/Assets/Setup_AppManagement.png" />
+                                </ctControls:SettingsCard.HeaderIcon>
+                            </ctControls:SettingsCard>
+
+                            <!-- Tooltip visible when the settings card is disabled -->
+                            <ToolTipService.ToolTip>
+                                <ToolTip
+                                    x:Uid="ms-resource:///DevHome.SetupFlow/Resources/MainPage_MainPage_AppInstallerRequiredTooltip"
+                                    IsEnabled="{x:Bind ViewModel.EnablePackageInstallerItem,Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
+                            </ToolTipService.ToolTip>
+                        </Grid>
                     </StackPanel>
+
+                    
+                    
+                    
+                    
+                    
+                    
 
                     <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
                         <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="ms-resource:///DevHome.SetupFlow/Resources/MainPage_QuickConfiguration" />

@@ -462,7 +462,7 @@
     <comment>Text for a clickable learn more button</comment>
   </data>
   <data name="MainPage.Title" xml:space="preserve">
-    <value>Machine configuration</value>
+    <value>Machine configuration2</value>
     <comment>Title for the main page where users can configure their machines</comment>
   </data>
   <data name="MainPage_AppInstallerUpdateInfoBar.Title" xml:space="preserve">
@@ -529,12 +529,19 @@
     <value>End-to-end setup</value>
     <comment>Header for a card than when clicked takes the user to a multi-step flow for setting up their machine</comment>
   </data>
+
+  
+  
+  
+  
+  
+  
   <data name="NoAppsToInstall.Text" xml:space="preserve">
     <value>No apps to install</value>
     <comment>Text shown if no applications were selected to install</comment>
   </data>
   <data name="NavigationPane.Content" xml:space="preserve">
-    <value>Machine configuration</value>
+    <value>Machine configuration2</value>
     <comment>Navigation pane content</comment>
   </data>
   <data name="NoApplicationsAdded.Text" xml:space="preserve">
@@ -1234,5 +1241,17 @@
   <data name="StartingInstallPackageMessage" xml:space="preserve">
     <value>Starting to install package {0}</value>
     <comment>{Locked="{0}"} String letting users know that DevHome has started to install a package. {0} is the package id</comment>
+  </data>
+
+
+
+
+  <data name="DeveloperQuietMode.Description" xml:space="preserve">
+    <value>Defer background processes and maintenance tasks from interrupting your development</value>
+    <comment>Body text description for a card than when clicked takes the user to a multi-step flow for setting up their machine</comment>
+  </data>
+  <data name="DeveloperQuietMode.Header" xml:space="preserve">
+    <value>Developer Quiet Mode</value>
+    <comment>Header for a card than when clicked takes the user to a multi-step flow for setting up their machine</comment>
   </data>
 </root>
