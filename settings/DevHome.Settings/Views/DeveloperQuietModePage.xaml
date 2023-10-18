@@ -24,7 +24,7 @@
         ItemsSource="{x:Bind Breadcrumbs}" />
 
     <ScrollViewer Grid.Row="1" VerticalAlignment="Top">
-      <StackPanel>
+      <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
 
         <TextBlock Margin="{StaticResource MediumBottomMargin}">
           <Run x:Uid="Settings_Feedback2_OpenSource"/>
@@ -98,6 +98,12 @@
                                                ActionIconToolTip="{Binding Header, RelativeSource={RelativeSource Mode=Self}}"
                                                AutomationProperties.AccessibilityView="Control"
                                                ActionIcon="{x:Null}" >
+
+          <ctControls:SettingsCard.HeaderIcon>
+            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9CE;"/>
+          </ctControls:SettingsCard.HeaderIcon>
+          
+          
         </ctControls:SettingsCard>
         
         
