@@ -418,4 +418,27 @@
     <value>There are currently no experimental features</value>
     <comment>Message shown when there are no available experimental features</comment>
   </data>
+
+
+
+  <data name="Settings_ExperimentalFeatures_DeveloperQuietMode_Header" xml:space="preserve">
+    <value>Developer Quiet Mode</value>
+    <comment>The header for the Experimental Features settings card</comment>
+  </data>
+  
+  <data name="Settings_ExperimentalFeatures_DeveloperQuietMode2.Header" xml:space="preserve">
+    <value>Developer Quiet Mode</value>
+    <comment>Header for a card than when clicked takes the user to a multi-step flow for setting up their machine</comment>
+  </data>
+  <data name="Settings_ExperimentalFeatures_DeveloperQuietMode2.Description" xml:space="preserve">
+    <value>Defer background processes and maintenance tasks from interrupting your development</value>
+    <comment>Body text description for a card than when clicked takes the user to a multi-step flow for setting up their machine</comment>
+  </data>
+  
+  
+  <data name="Settings_ExperimentalFeatures_DeveloperQuietModeStartButton.Text" xml:space="preserve">
+    <value>Start session</value>
+    <comment>sdf</comment>
+  </data>
+  
 </root>

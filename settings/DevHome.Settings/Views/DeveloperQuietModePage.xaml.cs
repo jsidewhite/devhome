@@ -32,7 +32,7 @@ public sealed partial class DeveloperQuietModePage : Page
         Breadcrumbs = new ObservableCollection<Breadcrumb>
         {
             new Breadcrumb(stringResource.GetLocalized("Settings_Header"), typeof(SettingsViewModel).FullName!),
-            new Breadcrumb(stringResource.GetLocalized("Settings_DeveloperQuietModePage_Header"), typeof(DeveloperQuietModeViewModel).FullName!),
+            new Breadcrumb(stringResource.GetLocalized("Settings_ExperimentalFeatures_DeveloperQuietMode_Header"), typeof(DeveloperQuietModeViewModel).FullName!),
         };
     }
 
