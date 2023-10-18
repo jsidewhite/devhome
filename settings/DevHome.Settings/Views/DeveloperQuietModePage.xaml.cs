@@ -13,6 +13,21 @@ namespace DevHome.Settings.Views;
 
 public sealed partial class DeveloperQuietModePage : Page
 {
+    private bool _isExtensionEnabled;
+
+    public bool IsExtensionEnabled
+    {
+        get => _isExtensionEnabled;
+
+        set
+        {
+            if (_isExtensionEnabled != value)
+            {
+                _isExtensionEnabled = value;
+            }
+        }
+    }
+
     public DeveloperQuietModeViewModel ViewModel
     {
         get;

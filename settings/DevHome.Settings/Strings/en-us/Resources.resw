@@ -440,5 +440,19 @@
     <value>Start session</value>
     <comment>sdf</comment>
   </data>
+
+  <data name="DQM_ManageExtensionCard.Header" xml:space="preserve">
+    <value>Session duration</value>
+    <comment>Label for the link to that extension's settings</comment>
+  </data>
+
+  <data name="Settings_DeveloperQuietMode_RelatedLinks.Text" xml:space="preserve">
+    <value>Related links</value>
+  </data>
+
+
+  <data name="Settings_DeveloperQuietMode_SessionDurationValue.Text" xml:space="preserve">
+    <value>120 mins</value>
+  </data>
   
 </root>

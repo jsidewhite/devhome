@@ -30,7 +30,6 @@
         </ctControls:SettingsExpander.HeaderIcon>
 
 
-        <StackPanel Orientation="Horizontal">
 
 
           <Button
@@ -55,12 +54,21 @@
                   TextTrimming="CharacterEllipsis"/>
             </Grid>
           </Button>
+
+
           
-        </StackPanel>
         
         
         
         <ctControls:SettingsExpander.Items>
+
+          <ctControls:SettingsCard x:Uid="DQM_ManageExtensionCard"
+                   CornerRadius="0,0,3,3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+              <TextBlock x:Uid="Settings_DeveloperQuietMode_SessionDurationValue" Margin="{StaticResource XSmallTopBottomMargin}" />
+            </StackPanel>
+          </ctControls:SettingsCard>
+          
           <ctControls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
             <StackPanel Orientation="Vertical">
               <TextBlock x:Uid="Settings_DeveloperQuietMode_RelatedLinks" Margin="{StaticResource XSmallTopBottomMargin}" />

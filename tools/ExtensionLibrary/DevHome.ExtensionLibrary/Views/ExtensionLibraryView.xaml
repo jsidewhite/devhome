@@ -65,6 +65,11 @@
                 <ItemsRepeater ItemsSource="{x:Bind ViewModel.InstalledPackagesList, Mode=OneWay}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="viewmodels:InstalledPackageViewModel">
+                            
+                            
+                            
+                            
+                            
                             <ctControls:SettingsExpander Header="{x:Bind Title}"
                                                    Description="{x:Bind GeneratePackageDetails(Version,Publisher , InstalledDate), Mode=OneWay}"
                                                    Margin="{ThemeResource SettingsCardMargin}"
@@ -101,6 +106,10 @@
                                     </DataTemplate>
                                 </ctControls:SettingsExpander.ItemTemplate>
                             </ctControls:SettingsExpander>
+                            
+                            
+                            
+                            
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>
