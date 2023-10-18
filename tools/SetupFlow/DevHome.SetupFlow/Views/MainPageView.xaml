@@ -133,7 +133,7 @@
                             <ctControls:SettingsCard x:Uid="ms-resource:///DevHome.SetupFlow/Resources/DeveloperQuietMode"
                                                AutomationProperties.AutomationId="EndToEndSetupButton"
                                                IsClickEnabled="True"
-                                               Command="{x:Bind ViewModel.StartSetupCommand}"
+                                               Command="{x:Bind ViewModel.StartDevQuietModeCommand}"
                                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Header}"
                                                IsEnabled="{x:Bind ViewModel.EnablePackageInstallerItem, Mode=OneWay}"
                                                ActionIconToolTip="{Binding Header, RelativeSource={RelativeSource Mode=Self}}"

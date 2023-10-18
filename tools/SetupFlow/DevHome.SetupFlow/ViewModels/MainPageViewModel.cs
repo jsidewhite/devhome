@@ -187,6 +187,18 @@ public partial class MainPageViewModel : SetupPageViewModelBase
     }
 
     [RelayCommand]
+    private async Task StartDevQuietModeAsync()
+    {
+        Log.Logger?.ReportInfo(Log.Component.MainPage, "Launching configuration file flow");
+        var configFileSetupFlow = _host.GetService<ConfigurationFileTaskGroup>();
+        if (await configFileSetupFlow.PickConfigurationFileAsync())
+        {
+            Log.Logger?.ReportInfo(Log.Component.MainPage, "Starting flow for Configuration file");
+            StartSetupFlowForTaskGroups(null, "ConfigurationFile", configFileSetupFlow);
+        }
+    }
+
+    [RelayCommand]
     private async Task BannerButtonAsync()
     {
         await Launcher.LaunchUriAsync(new ("https://go.microsoft.com/fwlink/?linkid=2235076"));
