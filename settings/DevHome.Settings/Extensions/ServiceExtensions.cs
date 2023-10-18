@@ -27,6 +27,7 @@ public static class ServiceExtensions
         services.AddTransient<ExtensionSettingsViewModel>();
         services.AddTransient<ExtensionSettingsPage>();
         services.AddSingleton<ExperimentalFeaturesViewModel>();
+        services.AddSingleton<DeveloperQuietModeViewModel>();
 
         return services;
     }

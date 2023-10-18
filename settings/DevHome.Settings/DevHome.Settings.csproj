@@ -19,12 +19,16 @@
   <ItemGroup>
     <None Remove="Views\AboutPage.xaml" />
     <None Remove="Views\AccountsPage.xaml" />
+    <None Remove="Views\DeveloperQuietModePage.xaml" />
     <None Remove="Views\ExperimentalFeaturesPage.xaml" />
     <None Remove="Views\ExtensionSettingsPage.xaml" />
     <None Remove="Views\ExtensionsPage.xaml" />
     <None Remove="Views\FeedbackPage.xaml" />
     <None Remove="Views\LoginUIDialog.xaml" />
     <None Remove="Views\PreferencesPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="views\DeveloperQuietMode23Page.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +74,15 @@
 
   <ItemGroup>
     <Folder Include="TelemetryEvents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Views\DeveloperQuietMode23Page.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <Page Update="Views\DeveloperQuietModePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>

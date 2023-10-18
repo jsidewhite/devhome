@@ -87,7 +87,7 @@ public partial class SettingsViewModel : ObservableObject
                 navigationService.NavigateTo(typeof(FeedbackViewModel).FullName!);
                 return;
             case "ExperimentalFeatures":
-                navigationService.NavigateTo(typeof(ExperimentalFeaturesViewModel).FullName!);
+                navigationService.NavigateTo(typeof(DeveloperQuietModeViewModel).FullName!);
                 return;
             default:
                 return;
