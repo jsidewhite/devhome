@@ -454,5 +454,11 @@
   <data name="Settings_DeveloperQuietMode_SessionDurationValue.Text" xml:space="preserve">
     <value>120 mins</value>
   </data>
+
+
+  <data name="Settings_Feedback2_OpenSource.Text" xml:space="preserve">
+    <value>Developer Quiet Mode sessions defer background activity and maintenance tasks for a period of time, making your PC's resources fully available to you.</value>
+    <comment>Dev Home abides by Microsoft Open Source guidance</comment>
+  </data>
   
 </root>
