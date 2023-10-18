@@ -32,10 +32,6 @@
 
         <StackPanel Orientation="Horizontal">
 
-          <TextBlock
-              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-              IsTextSelectionEnabled="True"
-              Text="Developer Quiet Mode" />
 
           <Button
               x:Name="focusStartButton"
@@ -47,6 +43,10 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition />
               </Grid.ColumnDefinitions>
+              <FontIcon
+                  VerticalAlignment="Center"
+                  FontSize="16"
+                  Glyph="&#xF5B0;"/>
               <TextBlock
                   x:Uid="Settings_ExperimentalFeatures_DeveloperQuietModeStartButton"
                   x:Name="StartButtonText"
