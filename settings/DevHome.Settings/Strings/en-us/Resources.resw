@@ -460,5 +460,27 @@
     <value>Developer Quiet Mode sessions defer background activity and maintenance tasks for a period of time, making your PC's resources fully available to you.</value>
     <comment>Dev Home abides by Microsoft Open Source guidance</comment>
   </data>
+
+  <data name="Settings_DeveloperQuietMode_sdfsdf.Header" xml:space="preserve">
+    <value>More about Developer Quiet Mode</value>
+  </data>
+
+  <data name="Settings_DeveloperQuietMode_sdfsdf.Description" xml:space="preserve">
+    <value></value>
+  </data>
+
+
+  <data name="Settings_Feedback_ReportSecurity.Description" xml:space="preserve">
+    <value>Read our security policy and learn how to report vulnerabilities</value>
+    <comment>Look at the guidance on security</comment>
+  </data>
+  <data name="Settings_Feedback_ReportSecurity.Header" xml:space="preserve">
+    <value>Report a security vulnerability</value>
+    <comment>Tell us about potential security concerns</comment>
+  </data>
+  <data name="Settings_Feedback_ReportSecurity_Button.Text" xml:space="preserve">
+    <value>Learn more</value>
+    <comment>Click on this link if you want to learn more and read the security policy. View is an action.</comment>
+  </data>
   
 </root>

@@ -92,7 +92,7 @@
 
 
 
-        <ctControls:SettingsCard x:Uid="ms-resource:///DevHome.SetupFlow/Resources/MainPage_SetupFlow"
+        <ctControls:SettingsCard x:Uid="ms-resource:///DevHome.Settings/Resources/Settings_DeveloperQuietMode_sdfsdf"
                                                AutomationProperties.AutomationId="EndToEndSetupButton"
                                                IsClickEnabled="True"
                                                ActionIconToolTip="{Binding Header, RelativeSource={RelativeSource Mode=Self}}"
@@ -102,8 +102,25 @@
           <ctControls:SettingsCard.HeaderIcon>
             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9CE;"/>
           </ctControls:SettingsCard.HeaderIcon>
+
           
           
+        </ctControls:SettingsCard>
+
+
+
+
+        <ctControls:SettingsCard x:Uid="Settings_Feedback_ReportSecurity">
+          <ctControls:SettingsCard.HeaderIcon>
+            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
+                  Glyph="&#xf552;"/>
+          </ctControls:SettingsCard.HeaderIcon>
+          <Button MinWidth="150">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock x:Uid="Settings_Feedback_ReportSecurity_Button" />
+              <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A7;" FontSize="12" />
+            </StackPanel>
+          </Button>
         </ctControls:SettingsCard>
         
         
