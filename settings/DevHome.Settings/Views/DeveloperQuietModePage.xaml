@@ -76,7 +76,8 @@
             </StackPanel>
           </ctControls:SettingsCard>
 
-          
+
+                        <!--
           <ctControls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
             <StackPanel Orientation="Vertical">
               <TextBlock x:Uid="Settings_DeveloperQuietMode_RelatedLinks" Margin="{StaticResource XSmallTopBottomMargin}" />
@@ -86,6 +87,8 @@
               <HyperlinkButton x:Uid="SettingsPage_PrivacyPolicyLink" Margin="{StaticResource HyperlinkButtonNegativeMargin}" />
             </StackPanel>
           </ctControls:SettingsCard>
+            -->
+            
         </ctControls:SettingsExpander.Items>
       </ctControls:SettingsExpander>
 

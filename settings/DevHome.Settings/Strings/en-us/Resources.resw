@@ -471,7 +471,7 @@
 
 
   <data name="Settings_Exp_DeveloperQuietMode_LearnMore.Description" xml:space="preserve">
-    <value>Learn more about the experimental nature of Developer Quiet Mode and future improments</value>
+    <value>Learn more about the experimental nature of Developer Quiet Mode and future improvements</value>
     <comment>Look at the guidance on security</comment>
   </data>
   <data name="Settings_Exp_DeveloperQuietMode_LearnMore.Header" xml:space="preserve">
