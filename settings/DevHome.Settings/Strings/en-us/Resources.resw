@@ -470,15 +470,15 @@
   </data>
 
 
-  <data name="Settings_Feedback_ReportSecurity.Description" xml:space="preserve">
-    <value>Read our security policy and learn how to report vulnerabilities</value>
+  <data name="Settings_Exp_DeveloperQuietMode_LearnMore.Description" xml:space="preserve">
+    <value>Learn more about the experimental nature of Developer Quiet Mode and future improments</value>
     <comment>Look at the guidance on security</comment>
   </data>
-  <data name="Settings_Feedback_ReportSecurity.Header" xml:space="preserve">
-    <value>Report a security vulnerability</value>
+  <data name="Settings_Exp_DeveloperQuietMode_LearnMore.Header" xml:space="preserve">
+    <value>More about Developer Quiet Mode</value>
     <comment>Tell us about potential security concerns</comment>
   </data>
-  <data name="Settings_Feedback_ReportSecurity_Button.Text" xml:space="preserve">
+  <data name="Settings_Exp_DeveloperQuietMode_LearnMore_Button.Text" xml:space="preserve">
     <value>Learn more</value>
     <comment>Click on this link if you want to learn more and read the security policy. View is an action.</comment>
   </data>
