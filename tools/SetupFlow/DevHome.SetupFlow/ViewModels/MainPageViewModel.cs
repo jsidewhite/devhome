@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevHome.Common.Extensions;
+using DevHome.Common.Services;
 using DevHome.Common.TelemetryEvents;
 using DevHome.Common.TelemetryEvents.SetupFlow;
 using DevHome.SetupFlow.Common.Helpers;
@@ -15,6 +16,7 @@ using DevHome.SetupFlow.Services;
 using DevHome.SetupFlow.TaskGroups;
 using DevHome.SetupFlow.Utilities;
 using DevHome.Telemetry;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Windows.Storage;
 using Windows.System;
@@ -187,15 +189,17 @@ public partial class MainPageViewModel : SetupPageViewModelBase
     }
 
     [RelayCommand]
-    private async Task StartDevQuietModeAsync()
+    private void StartDevQuietMode(string flowTitle)
     {
-        Log.Logger?.ReportInfo(Log.Component.MainPage, "Launching configuration file flow");
-        var configFileSetupFlow = _host.GetService<ConfigurationFileTaskGroup>();
-        if (await configFileSetupFlow.PickConfigurationFileAsync())
-        {
-            Log.Logger?.ReportInfo(Log.Component.MainPage, "Starting flow for Configuration file");
-            StartSetupFlowForTaskGroups(null, "ConfigurationFile", configFileSetupFlow);
-        }
+        Log.Logger?.ReportInfo(Log.Component.MainPage, "Navigating to Developer Quiet Mode page");
+
+        // MainFrame.Navigate(typeof(NewPage));
+        // MainPageViewModel.Navigate(typeof(DeveloperQuietModeView));
+        // var navigationService = _host.Services.GetService<INavigationService>();
+        var navigationService = _host.GetService<INavigationService>();
+
+        // navigationService.NavigateTo(typeof(DevHome.SetupFlow.ViewModels.SetupFlowViewModel).FullName!);
+        navigationService.NavigateTo(typeof(DevHome.SetupFlow.ViewModels.DeveloperQuietModeViewModel).FullName!);
     }
 
     [RelayCommand]

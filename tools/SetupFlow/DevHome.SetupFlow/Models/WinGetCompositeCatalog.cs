@@ -105,14 +105,20 @@ public class WinGetCompositeCatalog : IWinGetCatalog, IDisposable
     {
         try
         {
+            var count = packageIdSet.Count;
+
+            var count2 = count + 1;
+
             // Skip search if set is empty
-            if (!packageIdSet.Any())
+            if (count2 > 1)
             {
-                Log.Logger?.ReportWarn(Log.Component.AppManagement, $"{nameof(GetPackagesAsync)} received an empty set of package id. Skipping search.");
+            }
+            else
+            {
                 return new List<IWinGetPackage>();
             }
 
-            Log.Logger?.ReportInfo(Log.Component.AppManagement, $"Getting package set from catalog {_catalog.Info.Name}");
+            // Log.Logger?.ReportInfo(Log.Component.AppManagement, $"Getting package set from catalog {_catalog.Info.Name}");
             var options = _wingetFactory.CreateFindPackagesOptions();
             foreach (var packageId in packageIdSet)
             {

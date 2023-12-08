@@ -1,0 +1,124 @@
+<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<pg:ToolPage
+    x:Class="DevHome.DeveloperQuietMode.Views.DeveloperQuietModePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:pg="using:DevHome.Common"
+    xmlns:behaviors="using:DevHome.Common.Behaviors"
+    xmlns:DeveloperQuietModeBehaviors="using:DevHome.DeveloperQuietMode.Behaviors"
+    xmlns:selectors="using:DevHome.DeveloperQuietMode.Selectors"
+    xmlns:views="using:DevHome.DeveloperQuietMode.Views"
+    xmlns:controls="using:DevHome.DeveloperQuietMode.Controls"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
+    mc:Ignorable="d">
+  <Page.Resources>
+    <converters:BoolToVisibilityConverter x:Key="NegatedBoolToVisibilityConverter" TrueValue="Collapsed" FalseValue="Visible" />
+  </Page.Resources>
+
+  <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+
+    <!-- Display view for the current view-model -->
+    <ContentControl
+        Grid.Row="0"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        IsTabStop="False"
+        Content="{x:Bind ViewModel.Orchestrator.CurrentPageViewModel, Mode=OneWay}">
+      <ContentControl.ContentTemplateSelector>
+        <selectors:DeveloperQuietModeViewSelector>
+          <selectors:DeveloperQuietModeViewSelector.MainPageTemplate>
+            <DataTemplate>
+              <views:MainPageView />
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.MainPageTemplate>
+          <selectors:DeveloperQuietModeViewSelector.RepoConfigTemplate>
+            <DataTemplate>
+              <views:RepoConfigView />
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.RepoConfigTemplate>
+          <selectors:DeveloperQuietModeViewSelector.AppManagementTemplate>
+            <DataTemplate>
+              <views:AppManagementView />
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.AppManagementTemplate>
+          <selectors:DeveloperQuietModeViewSelector.ReviewTemplate>
+            <DataTemplate>
+              <views:ReviewView />
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.ReviewTemplate>
+          <selectors:DeveloperQuietModeViewSelector.LoadingTemplate>
+            <DataTemplate>
+              <views:LoadingView />
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.LoadingTemplate>
+          <selectors:DeveloperQuietModeViewSelector.SummaryTemplate>
+            <DataTemplate>
+              <views:SummaryView />
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.SummaryTemplate>
+          <selectors:DeveloperQuietModeViewSelector.ConfigurationFileTemplate>
+            <DataTemplate>
+              <views:ConfigurationFileView/>
+            </DataTemplate>
+          </selectors:DeveloperQuietModeViewSelector.ConfigurationFileTemplate>
+        </selectors:DeveloperQuietModeViewSelector>
+      </ContentControl.ContentTemplateSelector>
+    </ContentControl>
+
+    <controls:DeveloperQuietModeNavigation
+        Grid.Row="1"
+        Visibility="{x:Bind ViewModel.Orchestrator.CurrentPageViewModel.IsNavigationBarVisible, Mode=OneWay}">
+      <i:Interaction.Behaviors>
+        <DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior>
+          <!-- TODO: https://github.com/microsoft/devhome/issues/1494
+                         - DefaultCancelTemplate should not contain multiple elements, instead CancelTemplate should be used to overwrite the default behavior.
+                         - Explore the option to share the style in the setup flow navigation control to eliminate redundancy -->
+          <DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior.DefaultCancelTemplate>
+            <Grid>
+              <HyperlinkButton
+                  AutomationProperties.AutomationControlType="Button"
+                  Command="{x:Bind ViewModel.CancelCommand, Mode=OneWay}"
+                  MinWidth="120" Margin="4,0"
+                  x:Uid="ms-resource:///DevHome.DeveloperQuietMode/Resources/Cancel"
+                  Visibility="{x:Bind ViewModel.Orchestrator.ShouldShowDoneButton, Mode=OneWay, Converter={StaticResource NegatedBoolToVisibilityConverter}}"/>
+              <Button
+                  Command="{x:Bind ViewModel.CancelCommand, Mode=OneWay}"
+                  MinWidth="120" Margin="4,0"
+                  x:Uid="ms-resource:///DevHome.DeveloperQuietMode/Resources/DoneButton"
+                  Visibility="{x:Bind ViewModel.Orchestrator.ShouldShowDoneButton, Mode=OneWay}"/>
+            </Grid>
+          </DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior.DefaultCancelTemplate>
+          <DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior.DefaultPreviousTemplate>
+            <Button
+                Command="{x:Bind ViewModel.Orchestrator.GoToPreviousPageCommand, Mode=OneWay}"
+                MinWidth="120" Margin="4,0"
+                Visibility="{x:Bind ViewModel.Orchestrator.HasPreviousPage, Mode=OneWay}"
+                x:Uid="ms-resource:///DevHome.DeveloperQuietMode/Resources/Previous" />
+          </DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior.DefaultPreviousTemplate>
+          <!-- Workaround to show a tooltip on a disabled button
+                         https://github.com/microsoft/microsoft-ui-xaml/issues/2262-->
+          <DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior.DefaultNextTemplate>
+            <Grid Background="Transparent" ToolTipService.ToolTip="{x:Bind ViewModel.Orchestrator.CurrentPageViewModel.NextPageButtonToolTipText, Mode=OneWay}">
+              <Button
+                  Command="{x:Bind ViewModel.Orchestrator.GoToNextPageCommand, Mode=OneWay}"
+                  Style="{StaticResource AccentButtonStyle}"
+                  MinWidth="120" Margin="4,0"
+                  Content="{x:Bind ViewModel.Orchestrator.CurrentPageViewModel.NextPageButtonText, Mode=OneWay}"
+                  ToolTipService.ToolTip="{x:Bind ViewModel.Orchestrator.CurrentPageViewModel.NextPageButtonToolTipText, Mode=OneWay}" />
+            </Grid>
+          </DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior.DefaultNextTemplate>
+        </DeveloperQuietModeBehaviors:DeveloperQuietModeNavigationBehavior>
+      </i:Interaction.Behaviors>
+    </controls:DeveloperQuietModeNavigation>
+  </Grid>
+</pg:ToolPage>
