@@ -57,6 +57,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\common\DevHome.Common.csproj" />
+        <ProjectReference Include="..\ConsoleApplication1\ConsoleApplication1.vcxproj" />
         <ProjectReference Include="..\CoreWidgetProvider\CoreWidgetProvider.csproj" />
         <ProjectReference Include="..\settings\DevHome.Settings\DevHome.Settings.csproj" />
         <ProjectReference Include="..\tools\Dashboard\DevHome.Dashboard\DevHome.Dashboard.csproj" />
@@ -112,21 +113,20 @@
 
 <!--  THIS ONE WORKS too -->
 <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <Content Include="C:\h\repo\devhome\packages\Microsoft.Internal.Windows.DevHome.Win32.1.0.20240126-x1032\runtimes\native\x64\Microsoft.Internal.Windows.DevHome.Win32.dll">
+    <Content Include="C:\h\repo\devhome\packages\Microsoft.Internal.Windows.DevHome.Win32.1.0.20240125-x1445\runtimes\native\x64\Microsoft.Internal.Windows.DevHome.Win32.dll">
     </Content>
   </ItemGroup>
 
 <!--   -->
 <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <Content Include="C:\h\repo\devhome\x64\Release\ConsoleApplication1.exe">
+    <Content Include="C:\h\repo\devhome\src\bin\x64\Release\net6.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
     </Content>
   </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="C:\h\repo\devhome\x64\Release\ConsoleApplication1.exe">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
+<ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Content Include="C:\h\repo\devhome\packages\Microsoft.Internal.Windows.DevHome.Win32.1.0.20240125-x1445\runtimes\native\x64\Microsoft.Internal.Windows.DevHome.Win32.dll">
+    </Content>
+  </ItemGroup>
 
     <PropertyGroup>
         <DefineConstants Condition="'$(BuildRing)'=='Canary'">$(DefineConstants);CANARY_BUILD</DefineConstants>
@@ -161,9 +161,6 @@
             </AdditionalPackageFile>
             <AdditionalPackageFile Include="$(TargetDir)\Modules\**\*.*">
               <PackagePath>$(ModulePath)Modules</PackagePath>
-            </AdditionalPackageFile>
-            <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
-              <PackagePath>.\</PackagePath>
             </AdditionalPackageFile>
         </ItemGroup>
 

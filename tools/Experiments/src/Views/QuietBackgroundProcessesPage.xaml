@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pg:ToolPage
+    x:Class="DevHome.Experiments.Views.QuietBackgroundProcessesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DevHome.Experiments.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pg="using:DevHome.Common"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+
+    <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="1" VerticalAlignment="Top">
+            <StackPanel Orientation="Vertical">
+
+
+
+                <TextBlock Text="{Binding ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+
+
+                <controls:SettingsExpander Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+
+                    <controls:SettingsExpander.HeaderIcon>
+                        <BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/DevHome.ico" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    
+                    <!--<ToggleSwitch IsOn="{x:Bind IsEnabled,Mode=TwoWay}" Grid.Column="1" />-->
+                    <StackPanel Orientation="Horizontal">
+
+
+                        <TextBlock Text="{x:Bind ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsToggleOn, Mode=TwoWay}"/>
+                        </StackPanel>
+
+
+                    </StackPanel>
+
+                  <controls:SettingsExpander.Items>
+
+                        <controls:SettingsCard Header="Quiet background processes beta feature description" Description="This feature can be activated for 2 hours, additional description text here. Learn more" HorizontalContentAlignment="Left" >
+                            <StackPanel Orientation="Vertical">
+
+
+
+
+
+                                <Button x:Name="analyticSummaryButtosdfsdfn" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Analytic summary" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard ContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">Related links</TextBlock>
+                                <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Provide feedback</HyperlinkButton>
+                                <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Link to docs</HyperlinkButton>
+                            </StackPanel>
+                        </controls:SettingsCard>
+
+
+
+
+                    </controls:SettingsExpander.Items>
+
+                </controls:SettingsExpander>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+</pg:ToolPage>
