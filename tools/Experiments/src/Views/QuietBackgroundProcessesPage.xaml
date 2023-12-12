@@ -19,7 +19,52 @@
             <StackPanel Orientation="Vertical">
                 <controls:SettingsCard Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" Margin="{ThemeResource SettingsCardMargin}">
                     <ToggleSwitch IsOn="{x:Bind IsEnabled,Mode=TwoWay}" Grid.Column="1" />
+
                 </controls:SettingsCard>
+
+                <controls:SettingsExpander Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+
+                    <controls:SettingsExpander.HeaderIcon>
+                        <BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/DevHome.ico" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    
+                    <!--<ToggleSwitch IsOn="{x:Bind IsEnabled,Mode=TwoWay}" Grid.Column="1" />-->
+
+                    <Button x:Name="focusStartButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Start session" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                    </Button>
+
+
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard x:Uid="DQM_ManageExtensionCard" CornerRadius="0,0,3,3">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                <TextBlock Text="Quiet background processes beta feature description" Margin="{StaticResource XSmallTopBottomMargin}" />
+                                <TextBlock Text="This feature can be activated for 3 hours, additional description text here. Learn more" Margin="{StaticResource XSmallTopBottomMargin}" />
+
+
+                                <Button x:Name="analyticSummaryButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Analytic summary" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </Button>
+
+
+                            </StackPanel>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+
+                </controls:SettingsExpander>
             </StackPanel>
         </ScrollViewer>
     </Grid>
