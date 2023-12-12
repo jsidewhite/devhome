@@ -35,11 +35,11 @@
             "experimentId": "ExperimentalFeature_1"
           },
           {
-            "identity": "DevHome.TestExperiment",
+            "identity": "DevHome.QuietBackgroundProcessesTestExperiment",
             "assembly": "DevHome.Experiments",
             "viewFullName": "DevHome.Experiments.Views.QuietBackgroundProcessesPage",
             "viewModelFullName": "DevHome.Experiments.ViewModels.QuietBackgroundProcessesViewModel",
-            "icon": "f0f7",
+            "icon": "f5b0",
             "experimentId": "QuietBackgroundProcessesExperiment"
           }
         ]

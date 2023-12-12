@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel
 {
+    public string Name3 => "sdfsdfdsf34534";
+
     public QuietBackgroundProcessesViewModel()
     {
     }
