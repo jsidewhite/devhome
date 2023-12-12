@@ -7,9 +7,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pg="using:DevHome.Common"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock x:Name="StartButtonText" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="sdfdsf" />
+    <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="1" VerticalAlignment="Top">
+            <StackPanel Orientation="Vertical">
+                <controls:SettingsCard Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" Margin="{ThemeResource SettingsCardMargin}">
+                    <ToggleSwitch IsOn="{x:Bind IsEnabled,Mode=TwoWay}" Grid.Column="1" />
+                </controls:SettingsCard>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
+
 </pg:ToolPage>
