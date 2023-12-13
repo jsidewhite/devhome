@@ -17,13 +17,6 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="1" VerticalAlignment="Top">
             <StackPanel Orientation="Vertical">
-                
-                
-                
-                <controls:SettingsCard Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" Margin="{ThemeResource SettingsCardMargin}">
-                    <ToggleSwitch IsOn="{x:Bind IsEnabled,Mode=TwoWay}" Grid.Column="1" />
-
-                </controls:SettingsCard>
 
 
 
@@ -80,7 +73,7 @@
                             </StackPanel>
                         </controls:SettingsCard>
 
-                        <controls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+                        <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Related links" Margin="{StaticResource HyperlinkButtonNegativeMargin}" />
                                 <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Provide feedback</HyperlinkButton>
@@ -91,51 +84,6 @@
 
 
 
-                        <controls:SettingsCard Header="Quiet background processes beta feature description" Description="This feature can be activated for 2 hours, additional description text here. Learn more" CornerRadius="0,0,3,3">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                <!--
-                                <TextBlock Text="Quiet background processes beta feature description" Margin="{StaticResource XSmallTopBottomMargin}" />
-                                <TextBlock Text="This feature can be activated for 2 hours, additional description text here. Learn more" Margin="{StaticResource XSmallTopBottomMargin}" />
-                                -->
-
-
-                                <Button x:Name="analyticSummaryButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
-                                    <Grid ColumnSpacing="8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Analytic summary" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                    </Grid>
-                                </Button>
-
-
-                            </StackPanel>
-                        </controls:SettingsCard>
-
-
-
-                        <controls:SettingsCard Header="Quiet background processes beta feature description" Description="This feature can be activated for 2 hours, additional description text here. Learn more" CornerRadius="0,0,3,3">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                <!--
-                                <TextBlock Text="Quiet background processes beta feature description" Margin="{StaticResource XSmallTopBottomMargin}" />
-                                <TextBlock Text="This feature can be activated for 2 hours, additional description text here. Learn more" Margin="{StaticResource XSmallTopBottomMargin}" />
-                                -->
-
-
-                                <Button x:Name="analyticfSummaryButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
-                                    <Grid ColumnSpacing="8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Analytic summary" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                    </Grid>
-                                </Button>
-
-
-                            </StackPanel>
-                        </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
 
                 </controls:SettingsExpander>
