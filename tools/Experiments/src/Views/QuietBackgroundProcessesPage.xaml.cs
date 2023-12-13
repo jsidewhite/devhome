@@ -37,4 +37,9 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
         ViewModel = new QuietBackgroundProcessesViewModel();
         InitializeComponent();
     }
+
+    private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 }
