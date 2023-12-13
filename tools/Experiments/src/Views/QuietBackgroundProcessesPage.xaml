@@ -34,7 +34,7 @@
                     <StackPanel Orientation="Horizontal">
 
 
-                        <TextBlock Text="1:59:15" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource TextControlMarginThemeThickness}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="1:59:15" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
 
                         <Button x:Name="focusStartButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
                         <Grid ColumnSpacing="8">
@@ -55,8 +55,6 @@
                         <controls:SettingsCard Header="Quiet background processes beta feature description" Description="This feature can be activated for 2 hours, additional description text here. Learn more" HorizontalContentAlignment="Left" >
                             <StackPanel Orientation="Vertical">
 
-                                <controls:SettingsCard Header="Quiet background processes beta feature description" Description="This feature can be activated for 2 hours, additional description text here. Learn more" CornerRadius="0,0,3,3">
-                                </controls:SettingsCard>
 
 
 
@@ -75,7 +73,7 @@
 
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Related links" Margin="{StaticResource HyperlinkButtonNegativeMargin}" />
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">Related links</TextBlock>
                                 <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Provide feedback</HyperlinkButton>
                                 <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Link to docs</HyperlinkButton>
                             </StackPanel>
