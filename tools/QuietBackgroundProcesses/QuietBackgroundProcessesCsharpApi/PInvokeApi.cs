@@ -13,13 +13,13 @@ namespace DevHome.Experiments.QuietBackgroundProcesses;
 internal class PInvokeApi
 {
     [DllImport("QuietBackgroundProcessesApi.dll")]
-    private static extern int EnableQuietBackgroundProcesses();
+    public static extern int EnableQuietBackgroundProcesses();
 }
 
 public class PInvokeApiPublic
 {
     public static int EnableQuietBackgroundProcesses()
     {
-        return 342;
+        return PInvokeApi.EnableQuietBackgroundProcesses();
     }
 }
