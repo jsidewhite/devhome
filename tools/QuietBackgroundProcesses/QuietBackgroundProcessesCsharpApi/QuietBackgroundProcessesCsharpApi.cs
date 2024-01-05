@@ -16,6 +16,7 @@ public class QuietBackgroundProcessesCsharpApi
 
         set
         {
+            PInvokeApiPublic.EnableQuietBackgroundProcesses();
             _quietBackgroundProcessesEnabled = value;
         }
     }

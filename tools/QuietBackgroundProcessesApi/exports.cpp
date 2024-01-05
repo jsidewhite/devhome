@@ -1,3 +1,5 @@
+#include "pch.h"
+
 // stl
 #include <algorithm>
 #include <condition_variable>
@@ -24,13 +26,13 @@
 #include "windows.h"
 
 // wil
-#include <wil/com.h>
-#include <wrl/implements.h>
-#include <wil/resultmacros.h>
-#include <wil/resource.h>
-#include <wil/result.h>
-#include <wil/token_helpers.h>
-#include <wil/win32_helpers.h>
+//#include <wil/com.h>
+//#include <wrl/implements.h>
+//#include <wil/resultmacros.h>
+//#include <wil/resource.h>
+//#include <wil/result.h>
+//#include <wil/token_helpers.h>
+//#include <wil/win32_helpers.h>
 
 // other
 #include <shellapi.h>

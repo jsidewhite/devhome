@@ -41,8 +41,6 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 
     private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
     {
-        // winrt::QuietBackgroundProcessesWinrtApi::
-        var x = new QuietBackgroundProcessesCsharpApi();
-        throw new NotImplementedException();
+        QuietBackgroundProcessesCsharpApi.QuietBackgroundProcessesEnabled = true;
     }
 }
