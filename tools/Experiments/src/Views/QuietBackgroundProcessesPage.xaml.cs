@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using DevHome.Common;
+using DevHome.Experiments.QuietBackgroundProcesses;
 using DevHome.Experiments.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -15,7 +16,6 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using QuietBackgroundProcessesCsharpApi;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -42,7 +42,7 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
     private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
     {
         // winrt::QuietBackgroundProcessesWinrtApi::
-        var x = new Class1();
+        var x = new QuietBackgroundProcessesCsharpApi();
         throw new NotImplementedException();
     }
 }
