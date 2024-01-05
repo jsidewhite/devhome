@@ -70,5 +70,6 @@
 extern "C" HRESULT SetGameMode(bool enable)
 {
     int pid = (int)enable;
-    THROW_IF_NTSTATUS_FAILED(RtlPublishWnfStateData(WNF_RM_GAME_MODE_ACTIVE, NULL, &pid, sizeof(pid), NULL));
+    //THROW_IF_NTSTATUS_FAILED(RtlPublishWnfStateData(WNF_RM_GAME_MODE_ACTIVE, NULL, &pid, sizeof(pid), NULL));
+    return E_FAIL;
 }
