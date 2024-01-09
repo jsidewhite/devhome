@@ -15,12 +15,16 @@
   <files>
     <!--Support .NET 6, .NET Core 3, UAP, .NET Framework 4.6, C++ -->
     <!--Architecture-netural assemblies-->
-    <file src="..\..\_build\AnyCPU\Release\zruncomponent\bin\zruncomponent.dll" target="lib\net6.0-windows10.0.19041.0\SimpleMathzruncomponentProjection.dll" />
-    <file src="..\..\_build\x64\Release\zruncomponent\bin\zruncomponent\zruncomponent.winmd" target="lib\netcoreapp3.0\zruncomponent.winmd" />
-    <file src="..\..\_build\x64\Release\zruncomponent\bin\zruncomponent\zruncomponent.winmd" target="lib\uap10.0\zruncomponent.winmd" />
-    <file src="..\..\_build\x64\Release\zruncomponent\bin\zruncomponent\zruncomponent.winmd" target="lib\net46\zruncomponent.winmd" />
+    <!--C:\h\repo\devhome\_build\x64\Release\zprojection\bin-->
+    <!--C:\h\repo\devhome\x64\Release\zruncomponent-->
+    
+    <!--C:\h\repo\devhome\_build\x64\Release\zprojection\bin-->
+    <file src="..\..\..\_build\x64\Release\zprojection\bin\zprojection.dll" target="lib\net6.0-windows10.0.19041.0\zprojection.dll" />
+    <file src="..\..\..\x64\Release\zruncomponent\zruncomponent.winmd" target="lib\netcoreapp3.0\zruncomponent.winmd" />
+    <file src="..\..\..\x64\Release\zruncomponent\zruncomponent.winmd" target="lib\uap10.0\zruncomponent.winmd" />
+    <file src="..\..\..\x64\Release\zruncomponent\zruncomponent.winmd" target="lib\net46\zruncomponent.winmd" />
     <!--Architecture-specific implementation DLLs should be copied into RID-relative folders-->
-    <file src="..\..\_build\x64\Release\zruncomponent\bin\zruncomponent\zruncomponent.dll" target="runtimes\win10-x64\native\zruncomponent.dll" />
+    <file src="..\..\..\_build\x64\Release\zprojection\bin\zruncomponent.dll" target="runtimes\win10-x64\native\zruncomponent.dll" />
     <!--To support x86 and Arm64, build zruncomponent for those other architectures and uncomment the entries below.-->
     <!--<file src="..\..\_build\Win32\Release\zruncomponent\bin\zruncomponent\zruncomponent.dll" target="runtimes\win10-x86\native\zruncomponent.dll" />-->
     <!--<file src="..\..\_build\arm64\Release\zruncomponent\bin\zruncomponent\zruncomponent.dll" target="runtimes\win10-arm64\native\zruncomponent.dll" />-->
