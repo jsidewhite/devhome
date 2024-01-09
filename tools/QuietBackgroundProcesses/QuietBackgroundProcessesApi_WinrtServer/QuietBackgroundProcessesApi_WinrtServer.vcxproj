@@ -26,6 +26,12 @@
       <Platform>ARM</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
+  <PropertyGroup>
+      <CsWinRTIncludes>Microsoft.Windows.DevHome.SDK22222</CsWinRTIncludes>
+      <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
+  </PropertyGroup>
+
   <PropertyGroup>
     <SharedContentDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), LICENSE))\SharedContent</SharedContentDir>
   </PropertyGroup>
