@@ -9,12 +9,14 @@
   <ItemGroup>
     <None Remove="Views\QuietBackgroundProcessesPage.xaml" />
     <None Remove="Views\TestExperimentPage.xaml" />
-    <CsWinRTInputs Include="$(TargetDir)\Microsoft.Management.Deployment.winmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
-    <ProjectReference Include="..\..\QuietBackgroundProcesses\QuietBackgroundProcessesCsharpApi\QuietBackgroundProcessesCsharpApi.csproj" />
+    <ProjectReference Include="..\..\QuietBackgroundProcesses\QuietBackgroundProcessesApi_WinrtServer\QuietBackgroundProcessesApi_WinrtServer.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>

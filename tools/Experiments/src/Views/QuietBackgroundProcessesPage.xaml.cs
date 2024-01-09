@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using DevHome.Common;
-using DevHome.Experiments.QuietBackgroundProcesses;
 using DevHome.Experiments.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -41,6 +40,5 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 
     private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
     {
-        QuietBackgroundProcessesCsharpApi.QuietBackgroundProcessesEnabled = true;
     }
 }
