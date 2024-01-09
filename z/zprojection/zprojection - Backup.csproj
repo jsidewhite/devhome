@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
   
@@ -18,7 +18,7 @@
 
 <PropertyGroup>
   <GeneratedNugetDir>.\nuget\</GeneratedNugetDir>
-  <NuspecFile>$(GeneratedNugetDir)zprojection.nuspec</NuspecFile>
+  <NuspecFile>$(GeneratedNugetDir)SimpleMathProjection.nuspec</NuspecFile>
   <OutputPath>$(GeneratedNugetDir)</OutputPath>
   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 </PropertyGroup>
