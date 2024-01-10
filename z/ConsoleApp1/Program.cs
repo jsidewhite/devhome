@@ -3,6 +3,6 @@ Console.WriteLine("Hello, World!");
 
 var x = new zruncomponent.Class();
 
-int y = x.MyProperty;
+var y = x.MyProperty;
 
 Console.WriteLine("value is: " + y);
