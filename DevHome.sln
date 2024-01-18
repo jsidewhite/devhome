@@ -89,6 +89,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zserver", "z\zserver\WRLOut
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuietBackgroundProcesses.ElevatedServer", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.vcxproj", "{75945141-03AC-4C40-A586-16D463A0AC1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuietBackgroundProcesses.ElevatedServer.Projection", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\QuietBackgroundProcesses.ElevatedServer.Projection.csproj", "{092AC740-DA01-4872-8E93-B9557DAD6BE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -643,6 +645,26 @@ Global
 		{75945141-03AC-4C40-A586-16D463A0AC1B}.Release|x64.Build.0 = Release|x64
 		{75945141-03AC-4C40-A586-16D463A0AC1B}.Release|x86.ActiveCfg = Release|Win32
 		{75945141-03AC-4C40-A586-16D463A0AC1B}.Release|x86.Build.0 = Release|Win32
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|ARM.ActiveCfg = Debug|ARM
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|ARM.Build.0 = Debug|ARM
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|arm64.ActiveCfg = Debug|ARM64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|arm64.Build.0 = Debug|ARM64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x64.ActiveCfg = Debug|x64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x64.Build.0 = Debug|x64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x86.ActiveCfg = Debug|x86
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x86.Build.0 = Debug|x86
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|ARM.ActiveCfg = Release|ARM
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|ARM.Build.0 = Release|ARM
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|arm64.ActiveCfg = Release|ARM64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|arm64.Build.0 = Release|ARM64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x64.ActiveCfg = Release|x64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x64.Build.0 = Release|x64
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x86.ActiveCfg = Release|x86
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -671,6 +693,7 @@ Global
 		{DFC1183C-F84D-4F25-802F-7EA3C42ACDD2} = {00821CF9-60BA-492C-B3F4-2AD861CE0B65}
 		{E3CD922D-693A-4068-BC47-5BD82FEB8875} = {00821CF9-60BA-492C-B3F4-2AD861CE0B65}
 		{75945141-03AC-4C40-A586-16D463A0AC1B} = {D04CD3A1-0B45-4CB3-925F-204F5F6AE2D8}
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5} = {D04CD3A1-0B45-4CB3-925F-204F5F6AE2D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {030B5641-B206-46BB-BF71-36FF009088FA}
