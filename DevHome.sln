@@ -89,7 +89,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zserver", "z\zserver\WRLOut
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuietBackgroundProcesses.ElevatedServer", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.vcxproj", "{75945141-03AC-4C40-A586-16D463A0AC1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuietBackgroundProcesses.ElevatedServer.Projection", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\QuietBackgroundProcesses.ElevatedServer.Projection.csproj", "{092AC740-DA01-4872-8E93-B9557DAD6BE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuietBackgroundProcesses.ElevatedServer.Projection", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\QuietBackgroundProcesses.ElevatedServer.Projection.csproj", "{092AC740-DA01-4872-8E93-B9557DAD6BE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -647,24 +647,24 @@ Global
 		{75945141-03AC-4C40-A586-16D463A0AC1B}.Release|x86.Build.0 = Release|Win32
 		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|ARM.ActiveCfg = Debug|ARM
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|ARM.Build.0 = Debug|ARM
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|arm64.ActiveCfg = Debug|ARM64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|arm64.Build.0 = Debug|ARM64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x64.ActiveCfg = Debug|x64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x64.Build.0 = Debug|x64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x86.ActiveCfg = Debug|x86
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x86.Build.0 = Debug|x86
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|ARM.Build.0 = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|arm64.Build.0 = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x64.Build.0 = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Debug|x86.Build.0 = Debug|Any CPU
 		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|ARM.ActiveCfg = Release|ARM
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|ARM.Build.0 = Release|ARM
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|arm64.ActiveCfg = Release|ARM64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|arm64.Build.0 = Release|ARM64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x64.ActiveCfg = Release|x64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x64.Build.0 = Release|x64
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x86.ActiveCfg = Release|x86
-		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x86.Build.0 = Release|x86
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|ARM.ActiveCfg = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|ARM.Build.0 = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|arm64.ActiveCfg = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|arm64.Build.0 = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x64.ActiveCfg = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x64.Build.0 = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x86.ActiveCfg = Release|Any CPU
+		{092AC740-DA01-4872-8E93-B9557DAD6BE5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
