@@ -6,7 +6,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
     int32_t Class::MyProperty()
     {
-        throw hresult_not_implemented();
+        return static_cast<int32_t>(GetCurrentProcessId());
     }
 
     void Class::MyProperty(int32_t /* value */)

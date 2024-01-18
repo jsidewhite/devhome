@@ -18,9 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ClassLibrary1\ClassLibrary1.csproj" />
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
-    <ProjectReference Include="..\..\QuietBackgroundProcesses\QuietBackgroundProcessesApi_WinrtServer\QuietBackgroundProcessesApi_WinrtServer.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>
