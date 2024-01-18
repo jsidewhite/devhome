@@ -40,5 +40,6 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 
     private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
     {
+        var x = new QuietBackgroundProcesses_ElevatedServer.Class();
     }
 }
