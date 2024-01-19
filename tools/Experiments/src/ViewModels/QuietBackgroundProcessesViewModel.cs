@@ -34,36 +34,28 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
     }
 
-    private readonly int _timesToTick = 10;
     private DispatcherTimer _dispatcherTimer;
-    private DateTimeOffset _startTime;
-    private DateTimeOffset _lastTime;
-    private DateTimeOffset _stopTime;
-    private int _timesTicked = 1;
+    private TimeSpan _secondsLeft;
 
     public void DispatcherTimerSetup()
     {
         _dispatcherTimer = new DispatcherTimer();
         _dispatcherTimer.Tick += DispatcherTimer_Tick;
         _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-
-        _startTime = DateTimeOffset.Now;
-        _lastTime = _startTime;
+        _secondsLeft = new TimeSpan(0, 0, 7200);
         _dispatcherTimer.Start();
     }
 
     private void DispatcherTimer_Tick(object sender, object e)
     {
-        DateTimeOffset time = DateTimeOffset.Now;
-        TimeSpan span = time - _lastTime;
-        _lastTime = time;
-        TimeLeft = span.ToString(); // CultureInfo.InvariantCulture
-        _timesTicked++;
-        if (_timesTicked > _timesToTick)
+        _secondsLeft -= new TimeSpan(0, 0, 1);
+
+        if (_secondsLeft <= new TimeSpan(0, 0, 0))
         {
-            _stopTime = time;
             _dispatcherTimer.Stop();
         }
+
+        TimeLeft = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
     }
 
     private string _timeLeft = "1:59:15";
