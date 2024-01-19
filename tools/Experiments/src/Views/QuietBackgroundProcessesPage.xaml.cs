@@ -32,22 +32,6 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 {
     public override string ShortName => "Quiet Background Processes";
 
-    private bool _isExtensionEnabled = true;
-
-    public bool IsExtensionEnabled
-    {
-        get => _isExtensionEnabled;
-
-        set
-        {
-            if (_isExtensionEnabled != value)
-            {
-                _isExtensionEnabled = value;
-                DoThings(_isExtensionEnabled);
-            }
-        }
-    }
-
     public QuietBackgroundProcessesViewModel ViewModel
     {
         get;
@@ -63,10 +47,5 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
     {
         var x = new QuietBackgroundProcesses_ElevatedServer.Class();
         Log.Logger()?.ReportInfo("PackageDeploymentService", $"Found package {x.MyProperty}");
-    }
-
-    private void DoThings(bool iee)
-    {
-        Log.Logger()?.ReportInfo("PackageDeploymentService", $"Found package  IEEEEEEEEEEE {iee}");
     }
 }

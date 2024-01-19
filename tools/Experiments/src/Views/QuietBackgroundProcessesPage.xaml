@@ -20,11 +20,11 @@
 
 
 
+                <TextBlock Text="{Binding ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
 
 
-                
 
-                    <controls:SettingsExpander Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+                <controls:SettingsExpander Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
 
                     <controls:SettingsExpander.HeaderIcon>
                         <BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/DevHome.ico" />
@@ -34,11 +34,11 @@
                     <StackPanel Orientation="Horizontal">
 
 
-                        <TextBlock Text="1:59:15" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
 
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <ToggleSwitch IsOn="{x:Bind IsExtensionEnabled, Mode=TwoWay}"/>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsExtensionEnabled, Mode=TwoWay}"/>
                         </StackPanel>
 
 
