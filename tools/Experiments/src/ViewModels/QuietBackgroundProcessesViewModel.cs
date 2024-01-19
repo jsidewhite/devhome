@@ -4,9 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using DevHome.Common.Helpers;
 
 namespace DevHome.Experiments.ViewModels;
@@ -54,8 +56,11 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private void DoThings(bool iee)
     {
-        // TimeLeft = "1:11:11";
-        TimeLeft = iee.ToString();
+        // TimeLeft = DateTime.Now.ToString();
+        // TimeLeft = string.Create(CultureInfo.InvariantCulture, $"Hello {name}");
+        TimeLeft = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+
+        // TimeLeft = iee.ToString();
         Log.Logger()?.ReportInfo("PackageDeploymentService", $"Found package  IEEEEEEEEEEE {iee}");
     }
 
