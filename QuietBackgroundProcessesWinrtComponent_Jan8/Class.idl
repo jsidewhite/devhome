@@ -1,9 +1,0 @@
-namespace QuietBackgroundProcessesWinrtComponent_Jan8
-{
-    [default_interface]
-    runtimeclass Class
-    {
-        Class();
-        Int32 MyProperty;
-    }
-}

@@ -1,9 +1,0 @@
-namespace QuietBackgroundProcesses22_Server
-{
-    [default_interface]
-    runtimeclass Class
-    {
-        Class();
-        Int32 MyProperty;
-    }
-}
