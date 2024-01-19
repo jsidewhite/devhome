@@ -36,20 +36,13 @@
 
                         <TextBlock Text="1:59:15" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
 
-                        <Button x:Name="StartSessionButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}" Click="StartSessionButton_Clicked">
-                            
-                        <Grid ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Start session"  Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <ToggleSwitch IsOn="{x:Bind IsExtensionEnabled, Mode=TwoWay}"/>
+                        </StackPanel>
 
-                            </Grid>
-                    </Button>
 
-                  </StackPanel>
+                    </StackPanel>
 
                   <controls:SettingsExpander.Items>
 
