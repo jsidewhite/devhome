@@ -33,7 +33,7 @@ HRESULT ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
                                                    &activatableClassCount));
 
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        THROW_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"zserver.Class", true) != 0);
+        THROW_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"QuietBackgroundProcesses_ElevatedServer.Class", true) != 0);
 
         auto x = winrt::make<winrt::QuietBackgroundProcesses_ElevatedServer::factory_implementation::Class>();
         x.as<winrt::Windows::Foundation::IActivationFactory>();
