@@ -8,6 +8,13 @@
         <Interface Name="Microsoft.Windows.Widgets.Providers.IWidgetProvider2" InterfaceId="38C3A963-DD93-479D-9276-04BF84EE1816" />
       </ProxyStub>
     </Extension>
+    <Extension Category="windows.activatableClass.outOfProcessServer">
+      <OutOfProcessServer ServerName="QuietBackgroundProcesses.ElevatedServer">
+        <Path>QuietBackgroundProcesses.ElevatedServer.exe</Path>
+        <Instancing>singleInstance</Instancing>
+        <ActivatableClass ActivatableClassId="QuietBackgroundProcesses_ElevatedServer.Class" />
+      </OutOfProcessServer>
+    </Extension>
   </Extensions>
   <Identity Name="Microsoft.Windows.DevHome.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
@@ -228,6 +235,7 @@
       </Extensions>
     </Application>
   </Applications>
+  
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="unvirtualizedResources" />
