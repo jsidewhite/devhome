@@ -45,7 +45,7 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 
     private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
     {
-        var x = new QuietBackgroundProcesses_ElevatedServer.Class();
-        Log.Logger()?.ReportInfo("PackageDeploymentService", $"Found package {x.MyProperty}");
+        Log.Logger()?.ReportInfo("PackageDeploymentService", $"QuietWindow.IsActive = {QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive}");
+        Log.Logger()?.ReportInfo("PackageDeploymentService", $"QuietWindow.TimeLeftInSeconds = {QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds}");
     }
 }

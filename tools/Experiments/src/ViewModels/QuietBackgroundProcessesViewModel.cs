@@ -42,7 +42,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         _dispatcherTimer = new DispatcherTimer();
         _dispatcherTimer.Tick += DispatcherTimer_Tick;
         _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-        _secondsLeft = new TimeSpan(0, 0, 7200);
+        _secondsLeft = new TimeSpan(0, 0, QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds);
         _dispatcherTimer.Start();
     }
 
