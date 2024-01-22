@@ -48,7 +48,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
                 if (_isToggleOn)
                 {
-
                     StartCountdownTimer();
                 }
             }
