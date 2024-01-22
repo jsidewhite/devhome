@@ -20,14 +20,19 @@ HRESULT SendStopSignal()
     return S_OK;
 }
 
+using CallbackFunction = void (*)();
+
+
+std::mutex g_mutex;
 
 class TimeWindow
 {
 public:
-    TimeWindow(std::chrono::seconds seconds)
+    TimeWindow(std::chrono::seconds seconds, CallbackFunction callback)
     {
         m_startTime = std::chrono::steady_clock::now();
         m_duration = seconds;
+        m_callback = callback;
         m_futureWindowCloser = std::async(std::launch::async, [this]() {
             while (!this->m_cancelled)
             {
@@ -36,7 +41,11 @@ public:
 
                 if (elapsed >= m_duration)
                 {
-                    // callback();
+                    auto lock = std::scoped_lock(g_mutex);
+                    if (!this->m_cancelled)
+                    {
+                        this->m_callback();
+                    }
                     break;
                 }
 
@@ -61,10 +70,10 @@ private:
     std::chrono::steady_clock::time_point m_startTime{};
     std::chrono::seconds m_duration{};
     std::future<void> m_futureWindowCloser;
-    bool m_cancelled{};
+    std::atomic<bool> m_cancelled{};
+    CallbackFunction m_callback;
 };
 
-std::mutex g_mutex;
 std::optional<TimeWindow> g_activeTimeWindow;
 
 void CloseQuietWindow()
@@ -84,7 +93,10 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         }
 
         // Start
-        auto timeWindow = TimeWindow(std::chrono::seconds(6));
+        auto timeWindow = TimeWindow(std::chrono::seconds(6), []()
+        {
+            SendStopSignal();
+        });
         g_activeTimeWindow = std::move(timeWindow);
         return g_activeTimeWindow.value().TimeLeftInSeconds();
     }
