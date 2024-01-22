@@ -57,10 +57,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         // Detach and destruct the current time window
         TimeWindow oldWindow = std::move(g_activeTimeWindow.value());
         oldWindow.Cancel();
-
-        // Destruct old window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
-        std::thread([oldWindow = std::move(oldWindow)]() {
-        }).detach();
+        TimeWindow::Destroy(std::move(oldWindow));
 
         g_activeTimeWindow = std::nullopt;
     }

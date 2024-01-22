@@ -6,7 +6,7 @@
 
 namespace QuietWindowState
 {
-    std::atomic<std::mutex> g_mutex;
+    std::mutex g_mutex;
 
     void TurnOn()
     {

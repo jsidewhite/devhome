@@ -37,6 +37,13 @@ public:
         return *this;
     }
 
+    static void Destroy(TimeWindow&& timeWindow)
+    {
+        // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
+        std::thread([timeWindow = std::move(timeWindow)]() {
+        }).detach();
+    }
+
 
     TimeWindow(const TimeWindow&) = delete;
     TimeWindow& operator=(const TimeWindow&) = delete;
