@@ -122,6 +122,7 @@
     <ClInclude Include="QuietWindow.h">
       <DependentUpon>QuietWindow.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="QuietWindowState.h" />
     <ClInclude Include="TimeWindow.h" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +134,7 @@
       <DependentUpon>QuietWindow.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="QuietWindowState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="QuietWindow.idl" />

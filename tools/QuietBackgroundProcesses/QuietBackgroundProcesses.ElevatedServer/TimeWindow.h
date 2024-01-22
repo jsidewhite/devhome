@@ -20,6 +20,27 @@ public:
         m_timerThreadFuture = std::async(std::launch::async, &TimeWindow::TimerThread, this);
     }
 
+    TimeWindow(TimeWindow&& other)
+    {
+        m_startTime = std::move(other.m_startTime);
+        m_duration = std::move(other.m_duration);
+        m_callback = std::move(other.m_callback);
+        m_timerThreadFuture = std::move(other.m_timerThreadFuture);
+    }
+
+    TimeWindow& operator=(TimeWindow&& other)
+    {
+        m_startTime = std::move(other.m_startTime);
+        m_duration = std::move(other.m_duration);
+        m_callback = std::move(other.m_callback);
+        m_timerThreadFuture = std::move(other.m_timerThreadFuture);
+        return *this;
+    }
+
+
+    TimeWindow(const TimeWindow&) = delete;
+    TimeWindow& operator=(const TimeWindow&) = delete;
+
     void Cancel()
     {
         auto lock = std::scoped_lock(m_mutex);
@@ -60,6 +81,7 @@ private:
         }
     }
 
+    bool m_callbackCalled{};
     std::chrono::steady_clock::time_point m_startTime{};
     std::chrono::seconds m_duration{};
     std::future<void> m_timerThreadFuture;
