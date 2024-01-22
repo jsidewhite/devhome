@@ -1,9 +1,10 @@
 namespace QuietBackgroundProcesses_ElevatedServer
 {
-    [default_interface]
-    runtimeclass QuietWindow
+    [default_interface] runtimeclass QuietWindow
     {
+        static Int64 StartQuietWindow();
+        static void StopQuietWindow();
         static Boolean IsActive{ get; };
-        static Int32 TimeLeftInSeconds{ get; };
+        static Int64 TimeLeftInSeconds{ get; };
     }
 }

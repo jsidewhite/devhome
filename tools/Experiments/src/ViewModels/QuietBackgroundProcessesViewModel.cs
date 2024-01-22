@@ -16,20 +16,41 @@ using Windows.UI.Xaml;
 namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
-    public string Name3 => "sdfsdfdsf34534";
-
-    private bool _isExtensionEnabled = true;
-
-    public bool IsExtensionEnabled
+    public QuietBackgroundProcessesViewModel()
     {
-        get => _isExtensionEnabled;
+        // Resume countdown if there's an existing quiet window
+        if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
+        {
+            StartCountdownTimer();
+        }
+    }
+
+    private void StartCountdownTimer()
+    {
+        var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+        DispatcherTimer_StartCountdown(timeLeftInSeconds);
+    }
+
+    private bool _isToggleOn = true;
+
+    public bool IsToggleOn
+    {
+        get => _isToggleOn;
 
         set
         {
-            if (_isExtensionEnabled != value)
+            if (_isToggleOn != value)
             {
-                _isExtensionEnabled = value;
-                DoThings(_isExtensionEnabled);
+                _isToggleOn = value;
+
+                // Stop any existing timer
+                _dispatcherTimer?.Stop();
+
+                if (_isToggleOn)
+                {
+
+                    StartCountdownTimer();
+                }
             }
         }
     }
@@ -37,12 +58,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     private DispatcherTimer _dispatcherTimer;
     private TimeSpan _secondsLeft;
 
-    public void DispatcherTimerSetup()
+    public void DispatcherTimer_StartCountdown(int timeLeftInSeconds)
     {
         _dispatcherTimer = new DispatcherTimer();
         _dispatcherTimer.Tick += DispatcherTimer_Tick;
         _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-        _secondsLeft = new TimeSpan(0, 0, QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds);
+        _secondsLeft = new TimeSpan(0, 0, timeLeftInSeconds);
         _dispatcherTimer.Start();
     }
 
@@ -62,33 +83,13 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     public string TimeLeft
     {
-        get
-        {
-            return _timeLeft;
-        }
+        get => _timeLeft;
 
         set
         {
             _timeLeft = value;
-
-            // NotifyPropertyChanged();
             OnPropertyChanged(nameof(TimeLeft));
         }
-    }
-
-    public QuietBackgroundProcessesViewModel()
-    {
-    }
-
-    private void DoThings(bool iee)
-    {
-        // TimeLeft = DateTime.Now.ToString();
-        // TimeLeft = string.Create(CultureInfo.InvariantCulture, $"Hello {name}");
-        // TimeLeft = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-
-        // TimeLeft = iee.ToString();
-        DispatcherTimerSetup();
-        Log.Logger()?.ReportInfo("PackageDeploymentService", $"Found package  IEEEEEEEEEEE {iee}");
     }
 
     // INotifyPropertyChanged members
