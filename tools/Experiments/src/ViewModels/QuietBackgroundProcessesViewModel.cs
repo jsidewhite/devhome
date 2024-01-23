@@ -28,7 +28,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private void StartCountdownTimer(long timeLeftInSeconds)
     {
-        timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
         DispatcherTimer_StartCountdown(timeLeftInSeconds);
     }
 
@@ -49,17 +48,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
                 if (_isToggleOn)
                 {
-                    long timeLeftInSeconds = 0;
-                    if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
-                    {
-                        timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
-                    }
-                    else
-                    {
-                        timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
-                    }
-
+                    long timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
                     StartCountdownTimer(timeLeftInSeconds);
+                }
+                else
+                {
+                    QuietBackgroundProcesses_ElevatedServer.QuietWindow.StopQuietWindow();
                 }
             }
         }
@@ -79,11 +73,27 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private void DispatcherTimer_Tick(object sender, object e)
     {
-        _secondsLeft -= new TimeSpan(0, 0, 1);
+        var zero = new TimeSpan(0, 0, 0);
 
-        if (_secondsLeft <= new TimeSpan(0, 0, 0))
+        // _secondsLeft -= new TimeSpan(0, 0, 1);
+        var timeLeftInSeconds2 = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+        _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds2);
+
+        if (_secondsLeft.CompareTo(zero) <= 0)
         {
-            _dispatcherTimer.Stop();
+            // The window should be closed, but let's confirm with the server
+            if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
+            {
+                // There has been some drift
+                var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+                _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds);
+            }
+            else
+            {
+                _dispatcherTimer.Stop();
+                _secondsLeft = zero;
+                IsToggleOn = false;
+            }
         }
 
         TimeLeft = _secondsLeft.ToString(); // CultureInfo.InvariantCulture

@@ -32,7 +32,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         // Clean up old timer windows
         if (g_activeTimer && g_activeTimer->IsFinished())
         {
-            Timer::Destroy(std::move(*g_activeTimer));
+            g_activeTimer.reset();
         }
 
         if (g_activeTimer)
@@ -55,7 +55,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
     void QuietWindow::StopQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
-        if (!g_activeTimer)
+        if (!g_activeTimer || g_activeTimer->IsFinished())
         {
             return;
         }
@@ -75,13 +75,13 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
     bool QuietWindow::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
-        return g_activeTimer != nullptr;
+        return g_activeTimer && !g_activeTimer->IsFinished();
     }
 
     int64_t QuietWindow::TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(g_mutex);
-        if (!g_activeTimer)
+        if (!g_activeTimer || g_activeTimer->IsFinished())
         {
             return 0;
         }
