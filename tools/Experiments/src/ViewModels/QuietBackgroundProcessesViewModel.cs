@@ -48,13 +48,16 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
                 if (_isToggleOn)
                 {
-                    long timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
+                    TimeLeft = "Starting...";
+                    var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
                 else
                 {
                     QuietBackgroundProcesses_ElevatedServer.QuietWindow.StopQuietWindow();
                 }
+
+                OnPropertyChanged(nameof(IsToggleOn));
             }
         }
     }
@@ -73,6 +76,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private void DispatcherTimer_Tick(object sender, object e)
     {
+        var sessionEnded = false;
         var zero = new TimeSpan(0, 0, 0);
 
         // _secondsLeft -= new TimeSpan(0, 0, 1);
@@ -93,13 +97,21 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                 _dispatcherTimer.Stop();
                 _secondsLeft = zero;
                 IsToggleOn = false;
+                sessionEnded = true;
             }
         }
 
-        TimeLeft = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
+        if (sessionEnded)
+        {
+            TimeLeft = "Session ended";
+        }
+        else
+        {
+            TimeLeft = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
+        }
     }
 
-    private string _timeLeft = "1:59:15";
+    private string _timeLeft = string.Empty;
 
     public string TimeLeft
     {
