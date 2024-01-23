@@ -22,4 +22,12 @@ namespace QuietWindowState
     {
 
     }
+
+
+
+    unique_quietwindowclose_call turnOn()
+    {
+        TurnOn();
+        return {};
+    }
 }

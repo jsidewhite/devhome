@@ -21,12 +21,16 @@ std::mutex g_mutex;
 std::unique_ptr<TimeWindow> g_activeTimeWindow;
 bool g_timerFinished{};
 
+//std::unique_ptr<QuietWindowState::QuietWindowStateEnable> g_quietWindowState;
+QuietWindowState::unique_quietwindowclose_call g_quietWindowState;
+
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
     int64_t QuietWindow::StartQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
 
+        // Clean up old timer windows
         if (g_timerFinished)
         {
             TimeWindow::Destroy(std::move(*g_activeTimeWindow));
@@ -40,10 +44,12 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         // Start
         g_activeTimeWindow.reset(new TimeWindow(std::chrono::seconds(6), []()
         {
-            QuietWindowState::TurnOff();
+            auto lock = std::scoped_lock(g_mutex);
+            g_quietWindowState.reset();
         }));
 
-        QuietWindowState::TurnOn();
+        //*g_quietWindowState = QuietWindowState::QuietWindowStateEnable::Enable();
+        g_quietWindowState = QuietWindowState::turnOn();
         return g_activeTimeWindow->TimeLeftInSeconds();
     }
 
@@ -57,7 +63,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 
         // Turn off the quiet window no matter what
         auto signalStop = wil::scope_exit([]() {
-            QuietWindowState::TurnOff();
+            g_quietWindowState.reset();
             g_timerFinished = true;
         });
 

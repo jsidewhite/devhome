@@ -40,8 +40,8 @@ public:
     static void Destroy(TimeWindow&& timeWindow)
     {
         // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
-        std::thread([timeWindow = std::move(timeWindow)]() {
-        }).detach();
+        auto th = std::thread([timeWindow = std::move(timeWindow)]() {});
+        th.detach();
     }
 
 
