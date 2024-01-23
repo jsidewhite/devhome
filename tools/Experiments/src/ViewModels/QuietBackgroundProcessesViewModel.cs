@@ -55,6 +55,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                 else
                 {
                     QuietBackgroundProcesses_ElevatedServer.QuietWindow.StopQuietWindow();
+                    TimeLeft = "Session ended";
                 }
 
                 OnPropertyChanged(nameof(IsToggleOn));
