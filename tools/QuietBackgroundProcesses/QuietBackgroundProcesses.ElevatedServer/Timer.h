@@ -74,25 +74,29 @@ public:
 private:
     void TimerThread()
     {
-        while (!this->m_cancelled)
+        // Pause until timer expired or cancelled
+        while (true)
         {
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - this->m_startTime);
 
-            if (elapsed >= m_duration)
+            if (this->m_cancelled || elapsed >= m_duration)
             {
-                auto lock = std::scoped_lock(m_mutex);
-                m_isFinished = true;
-                if (!this->m_cancelled)
-                {
-                    this->m_callback();
-                }
                 break;
             }
 
             // Sleep for a short duration to avoid busy waiting
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
+
+        // Do the callback
+        auto lock = std::scoped_lock(m_mutex);
+        m_isFinished = true;
+        if (this->m_cancelled)
+        {
+            return;
+        }
+        this->m_callback();
     }
 
     bool m_callbackCalled{};

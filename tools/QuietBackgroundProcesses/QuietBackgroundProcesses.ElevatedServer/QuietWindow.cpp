@@ -66,9 +66,8 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         });
 
         // Detach and destruct the current time window
-        std::unique_ptr<Timer> oldWindow = std::move(g_activeTimer);
-        oldWindow->Cancel();
-        Timer::Destroy(std::move(*oldWindow));
+        g_activeTimer->Cancel();
+        Timer::Destroy(std::move(*g_activeTimer));
 
         g_activeTimer = nullptr;
     }
