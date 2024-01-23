@@ -68,7 +68,8 @@ public:
             return 0;
         }
         auto now = std::chrono::steady_clock::now();
-        return std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime).count();
+        //return m_duration - std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime).count();
+        return m_duration.count() - std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime).count();
     }
 
 private:
@@ -91,12 +92,11 @@ private:
 
         // Do the callback
         auto lock = std::scoped_lock(m_mutex);
-        m_isFinished = true;
-        if (this->m_cancelled)
+        if (!this->m_cancelled)
         {
-            return;
+            this->m_callback();
         }
-        this->m_callback();
+        m_isFinished = true;
     }
 
     bool m_callbackCalled{};
@@ -106,5 +106,5 @@ private:
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
     CallbackFunction m_callback;
-    bool m_isFinished{};
+    std::atomic<bool> m_isFinished{};
 };
