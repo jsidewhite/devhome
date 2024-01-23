@@ -12,13 +12,13 @@
 #include <wil/win32_helpers.h>
 #include <wil/result_macros.h>
 
-#include "TimeWindow.h"
+#include "Timer.h"
 #include "QuietWindowState.h"
 #include "QuietWindow.h"
 #include "QuietWindow.g.cpp"
 
 std::mutex g_mutex;
-std::unique_ptr<TimeWindow> g_activeTimeWindow;
+std::unique_ptr<Timer> g_activeTimer;
 bool g_timerFinished{};
 
 //std::unique_ptr<QuietWindowState::QuietWindowStateEnable> g_quietWindowState;
@@ -33,16 +33,16 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         // Clean up old timer windows
         if (g_timerFinished)
         {
-            TimeWindow::Destroy(std::move(*g_activeTimeWindow));
+            Timer::Destroy(std::move(*g_activeTimer));
         }
 
-        if (g_activeTimeWindow)
+        if (g_activeTimer)
         {
-            return g_activeTimeWindow->TimeLeftInSeconds();
+            return g_activeTimer->TimeLeftInSeconds();
         }
 
         // Start
-        g_activeTimeWindow.reset(new TimeWindow(std::chrono::seconds(6), []()
+        g_activeTimer.reset(new Timer(std::chrono::seconds(6), []()
         {
             auto lock = std::scoped_lock(g_mutex);
             g_quietWindowState.reset();
@@ -50,13 +50,13 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 
         //*g_quietWindowState = QuietWindowState::QuietWindowStateEnable::Enable();
         g_quietWindowState = QuietWindowState::turnOn();
-        return g_activeTimeWindow->TimeLeftInSeconds();
+        return g_activeTimer->TimeLeftInSeconds();
     }
 
     void QuietWindow::StopQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
-        if (!g_activeTimeWindow)
+        if (!g_activeTimer)
         {
             return;
         }
@@ -68,26 +68,26 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         });
 
         // Detach and destruct the current time window
-        std::unique_ptr<TimeWindow> oldWindow = std::move(g_activeTimeWindow);
+        std::unique_ptr<Timer> oldWindow = std::move(g_activeTimer);
         oldWindow->Cancel();
-        TimeWindow::Destroy(std::move(*oldWindow));
+        Timer::Destroy(std::move(*oldWindow));
 
-        g_activeTimeWindow = nullptr;
+        g_activeTimer = nullptr;
     }
 
     bool QuietWindow::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
-        return g_activeTimeWindow != nullptr;
+        return g_activeTimer != nullptr;
     }
 
     int64_t QuietWindow::TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(g_mutex);
-        if (!g_activeTimeWindow)
+        if (!g_activeTimer)
         {
             return 0;
         }
-        return g_activeTimeWindow->TimeLeftInSeconds();
+        return g_activeTimer->TimeLeftInSeconds();
     }
 }

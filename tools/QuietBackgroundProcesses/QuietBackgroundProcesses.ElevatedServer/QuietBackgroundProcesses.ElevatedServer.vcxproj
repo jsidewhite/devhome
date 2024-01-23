@@ -123,7 +123,7 @@
       <DependentUpon>QuietWindow.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="QuietWindowState.h" />
-    <ClInclude Include="TimeWindow.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

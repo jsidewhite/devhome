@@ -9,18 +9,18 @@
 
 using CallbackFunction = void (*)();
 
-class TimeWindow
+class Timer
 {
 public:
-    TimeWindow(std::chrono::seconds seconds, CallbackFunction callback)
+    Timer(std::chrono::seconds seconds, CallbackFunction callback)
     {
         m_startTime = std::chrono::steady_clock::now();
         m_duration = seconds;
         m_callback = callback;
-        m_timerThreadFuture = std::async(std::launch::async, &TimeWindow::TimerThread, this);
+        m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
     }
 
-    TimeWindow(TimeWindow&& other)
+    Timer(Timer&& other)
     {
         m_startTime = std::move(other.m_startTime);
         m_duration = std::move(other.m_duration);
@@ -28,7 +28,7 @@ public:
         m_timerThreadFuture = std::move(other.m_timerThreadFuture);
     }
 
-    TimeWindow& operator=(TimeWindow&& other)
+    Timer& operator=(Timer&& other)
     {
         m_startTime = std::move(other.m_startTime);
         m_duration = std::move(other.m_duration);
@@ -37,7 +37,7 @@ public:
         return *this;
     }
 
-    static void Destroy(TimeWindow&& timeWindow)
+    static void Destroy(Timer&& timeWindow)
     {
         // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
         auto th = std::thread([timeWindow = std::move(timeWindow)]() {});
@@ -45,8 +45,8 @@ public:
     }
 
 
-    TimeWindow(const TimeWindow&) = delete;
-    TimeWindow& operator=(const TimeWindow&) = delete;
+    Timer(const Timer&) = delete;
+    Timer& operator=(const Timer&) = delete;
 
     void Cancel()
     {
