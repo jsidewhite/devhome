@@ -32,7 +32,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         DispatcherTimer_StartCountdown(timeLeftInSeconds);
     }
 
-    private bool _isToggleOn = true;
+    private bool _isToggleOn;
 
     public bool IsToggleOn
     {
@@ -49,11 +49,17 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
                 if (_isToggleOn)
                 {
-                    if (!QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
+                    long timeLeftInSeconds = 0;
+                    if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
                     {
-                        var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
-                        StartCountdownTimer(timeLeftInSeconds);
+                        timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
                     }
+                    else
+                    {
+                        timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
+                    }
+
+                    StartCountdownTimer(timeLeftInSeconds);
                 }
             }
         }

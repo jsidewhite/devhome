@@ -4,6 +4,7 @@
 #include <chrono>
 #include <functional>
 #include <future>
+#include <memory>
 #include <mutex>
 #include <optional>
 
@@ -17,7 +18,7 @@
 #include "QuietWindow.g.cpp"
 
 std::mutex g_mutex;
-std::optional<TimeWindow> g_activeTimeWindow;
+std::unique_ptr<TimeWindow> g_activeTimeWindow;
 bool g_timerFinished{};
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
@@ -33,18 +34,17 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 
         if (g_activeTimeWindow)
         {
-            return g_activeTimeWindow.value().TimeLeftInSeconds();
+            return g_activeTimeWindow->TimeLeftInSeconds();
         }
 
         // Start
-        auto timeWindow = TimeWindow(std::chrono::seconds(6), []()
+        g_activeTimeWindow.reset(new TimeWindow(std::chrono::seconds(6), []()
         {
             QuietWindowState::TurnOff();
-        });
-        *g_activeTimeWindow = std::move(timeWindow);
+        }));
 
         QuietWindowState::TurnOn();
-        return g_activeTimeWindow.value().TimeLeftInSeconds();
+        return g_activeTimeWindow->TimeLeftInSeconds();
     }
 
     void QuietWindow::StopQuietWindow()
@@ -62,17 +62,17 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         });
 
         // Detach and destruct the current time window
-        TimeWindow oldWindow = std::move(g_activeTimeWindow.value());
-        oldWindow.Cancel();
-        TimeWindow::Destroy(std::move(oldWindow));
+        std::unique_ptr<TimeWindow> oldWindow = std::move(g_activeTimeWindow);
+        oldWindow->Cancel();
+        TimeWindow::Destroy(std::move(*oldWindow));
 
-        g_activeTimeWindow = std::nullopt;
+        g_activeTimeWindow = nullptr;
     }
 
     bool QuietWindow::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
-        return g_activeTimeWindow.has_value();
+        return g_activeTimeWindow != nullptr;
     }
 
     int64_t QuietWindow::TimeLeftInSeconds()
@@ -82,6 +82,6 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         {
             return 0;
         }
-        return g_activeTimeWindow.value().TimeLeftInSeconds();
+        return g_activeTimeWindow->TimeLeftInSeconds();
     }
 }
