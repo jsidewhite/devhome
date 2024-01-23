@@ -4,12 +4,15 @@
 
 namespace QuietState
 {
-    void TurnOn();
-    void TurnOff();
-    void IsOn();
+    namespace details
+    {
+        void TurnOn();
+        void TurnOff();
+        void IsOn();
+    }
 
-    using unique_quietwindowclose_call = wil::unique_call<decltype(&QuietState::TurnOff), QuietState::TurnOff>;
+    using unique_quietwindowclose_call = wil::unique_call<decltype(&details::TurnOff), details::TurnOff>;
     
-    unique_quietwindowclose_call turnOn();
+    unique_quietwindowclose_call TurnOn();
 }
 

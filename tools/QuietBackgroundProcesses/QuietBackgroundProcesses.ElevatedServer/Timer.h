@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <functional>
@@ -54,12 +55,6 @@ public:
         m_cancelled = true;
     }
 
-    bool IsFinished()
-    {
-        auto lock = std::scoped_lock(m_mutex);
-        return m_isFinished;
-    }
-
     int64_t TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(m_mutex);
@@ -68,8 +63,10 @@ public:
             return 0;
         }
         auto now = std::chrono::steady_clock::now();
-        //return m_duration - std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime).count();
-        return m_duration.count() - std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime).count();
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime);
+
+        auto left = m_duration.count() - elapsed.count();
+        return std::max(left, 0ll);
     }
 
 private:
@@ -96,7 +93,6 @@ private:
         {
             this->m_callback();
         }
-        m_isFinished = true;
     }
 
     bool m_callbackCalled{};
@@ -106,5 +102,4 @@ private:
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
     CallbackFunction m_callback;
-    std::atomic<bool> m_isFinished{};
 };

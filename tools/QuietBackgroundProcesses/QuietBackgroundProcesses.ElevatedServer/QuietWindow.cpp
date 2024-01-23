@@ -7,6 +7,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <vector>
 
 #include <wil/resource.h>
 #include <wil/win32_helpers.h>
@@ -19,9 +20,25 @@
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
+std::vector<Timer> g_discardedTimers;
 
 //std::unique_ptr<QuietWindowState::QuietWindowStateEnable> g_quietWindowState;
 QuietState::unique_quietwindowclose_call g_quietState;
+
+static void CleanupDiscardedTimers()
+{
+    // g_discardedTimers
+}
+
+static void DiscardTimer(Timer* timer)
+{
+    if (!timer)
+    {
+        return;
+    }
+    timer->Cancel();
+    g_discardedTimers.push_back(std::move(*timer));
+}
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
@@ -29,59 +46,45 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
     {
         auto lock = std::scoped_lock(g_mutex);
 
-        // Clean up old timer windows
-        if (g_activeTimer && g_activeTimer->IsFinished())
-        {
-            g_activeTimer.reset();
-        }
+        // Clean up old timers
+        DiscardTimer(g_activeTimer.release());
+        CleanupDiscardedTimers();
 
-        if (g_activeTimer)
-        {
-            return g_activeTimer->TimeLeftInSeconds();
-        }
-
-        // Start
+        // Start timer
         g_activeTimer.reset(new Timer(std::chrono::seconds(6), []()
         {
             auto lock = std::scoped_lock(g_mutex);
             g_quietState.reset();
         }));
 
-        //*g_quietWindowState = QuietWindowState::QuietWindowStateEnable::Enable();
-        g_quietState = QuietState::turnOn();
+        // Turn on quiet mode
+        g_quietState = QuietState::TurnOn();
+
+        // Return duration for showing countdown
         return g_activeTimer->TimeLeftInSeconds();
     }
 
     void QuietWindow::StopQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
-        if (!g_activeTimer || g_activeTimer->IsFinished())
-        {
-            return;
-        }
 
-        // Turn off the quiet window no matter what
-        auto signalStop = wil::scope_exit([]() {
-            g_quietState.reset();
-        });
+        // Turn off quiet mode
+        g_quietState.reset();
 
         // Detach and destruct the current time window
-        g_activeTimer->Cancel();
-        Timer::Destroy(std::move(*g_activeTimer));
-
-        g_activeTimer = nullptr;
+        DiscardTimer(g_activeTimer.release());
     }
 
     bool QuietWindow::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
-        return g_activeTimer && !g_activeTimer->IsFinished();
+        return !!g_quietState;
     }
 
     int64_t QuietWindow::TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(g_mutex);
-        if (!g_activeTimer || g_activeTimer->IsFinished())
+        if (!g_quietState || !g_activeTimer)
         {
             return 0;
         }
