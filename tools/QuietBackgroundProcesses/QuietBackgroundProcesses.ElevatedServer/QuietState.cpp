@@ -2,9 +2,9 @@
 
 #include <mutex>
 
-#include "QuietWindowState.h"
+#include "QuietState.h"
 
-namespace QuietWindowState
+namespace QuietState
 {
     std::mutex g_mutex;
 

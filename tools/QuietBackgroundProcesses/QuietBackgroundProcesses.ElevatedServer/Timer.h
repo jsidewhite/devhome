@@ -54,6 +54,12 @@ public:
         m_cancelled = true;
     }
 
+    bool IsFinished()
+    {
+        auto lock = std::scoped_lock(m_mutex);
+        return m_isFinished;
+    }
+
     int64_t TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(m_mutex);
@@ -76,6 +82,7 @@ private:
             if (elapsed >= m_duration)
             {
                 auto lock = std::scoped_lock(m_mutex);
+                m_isFinished = true;
                 if (!this->m_cancelled)
                 {
                     this->m_callback();
@@ -95,4 +102,5 @@ private:
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
     CallbackFunction m_callback;
+    bool m_isFinished{};
 };

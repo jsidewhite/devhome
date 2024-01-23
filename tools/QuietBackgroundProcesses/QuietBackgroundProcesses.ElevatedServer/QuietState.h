@@ -2,13 +2,13 @@
 
 #include <wil/resource.h>
 
-namespace QuietWindowState
+namespace QuietState
 {
     void TurnOn();
     void TurnOff();
     void IsOn();
 
-    using unique_quietwindowclose_call = wil::unique_call<decltype(&QuietWindowState::TurnOff), QuietWindowState::TurnOff>;
+    using unique_quietwindowclose_call = wil::unique_call<decltype(&QuietState::TurnOff), QuietState::TurnOff>;
     
     unique_quietwindowclose_call turnOn();
 }

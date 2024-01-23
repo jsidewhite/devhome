@@ -13,16 +13,15 @@
 #include <wil/result_macros.h>
 
 #include "Timer.h"
-#include "QuietWindowState.h"
+#include "QuietState.h"
 #include "QuietWindow.h"
 #include "QuietWindow.g.cpp"
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
-bool g_timerFinished{};
 
 //std::unique_ptr<QuietWindowState::QuietWindowStateEnable> g_quietWindowState;
-QuietWindowState::unique_quietwindowclose_call g_quietWindowState;
+QuietState::unique_quietwindowclose_call g_quietState;
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
@@ -31,7 +30,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         auto lock = std::scoped_lock(g_mutex);
 
         // Clean up old timer windows
-        if (g_timerFinished)
+        if (g_activeTimer && g_activeTimer->IsFinished())
         {
             Timer::Destroy(std::move(*g_activeTimer));
         }
@@ -45,11 +44,11 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         g_activeTimer.reset(new Timer(std::chrono::seconds(6), []()
         {
             auto lock = std::scoped_lock(g_mutex);
-            g_quietWindowState.reset();
+            g_quietState.reset();
         }));
 
         //*g_quietWindowState = QuietWindowState::QuietWindowStateEnable::Enable();
-        g_quietWindowState = QuietWindowState::turnOn();
+        g_quietState = QuietState::turnOn();
         return g_activeTimer->TimeLeftInSeconds();
     }
 
@@ -63,8 +62,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 
         // Turn off the quiet window no matter what
         auto signalStop = wil::scope_exit([]() {
-            g_quietWindowState.reset();
-            g_timerFinished = true;
+            g_quietState.reset();
         });
 
         // Detach and destruct the current time window
