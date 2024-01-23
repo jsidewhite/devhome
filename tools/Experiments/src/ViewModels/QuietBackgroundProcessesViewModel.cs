@@ -21,13 +21,14 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         // Resume countdown if there's an existing quiet window
         if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
         {
-            StartCountdownTimer();
+            var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+            StartCountdownTimer(timeLeftInSeconds);
         }
     }
 
-    private void StartCountdownTimer()
+    private void StartCountdownTimer(long timeLeftInSeconds)
     {
-        var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+        timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
         DispatcherTimer_StartCountdown(timeLeftInSeconds);
     }
 
@@ -48,7 +49,11 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
                 if (_isToggleOn)
                 {
-                    StartCountdownTimer();
+                    if (!QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
+                    {
+                        var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
+                        StartCountdownTimer(timeLeftInSeconds);
+                    }
                 }
             }
         }
@@ -57,12 +62,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     private DispatcherTimer _dispatcherTimer;
     private TimeSpan _secondsLeft;
 
-    public void DispatcherTimer_StartCountdown(int timeLeftInSeconds)
+    public void DispatcherTimer_StartCountdown(long timeLeftInSeconds)
     {
         _dispatcherTimer = new DispatcherTimer();
         _dispatcherTimer.Tick += DispatcherTimer_Tick;
         _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-        _secondsLeft = new TimeSpan(0, 0, timeLeftInSeconds);
+        _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds);
         _dispatcherTimer.Start();
     }
 

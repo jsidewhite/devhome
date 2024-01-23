@@ -18,12 +18,18 @@
 
 std::mutex g_mutex;
 std::optional<TimeWindow> g_activeTimeWindow;
+bool g_timerFinished{};
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
     int64_t QuietWindow::StartQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
+
+        if (g_timerFinished)
+        {
+            TimeWindow::Destroy(std::move(*g_activeTimeWindow));
+        }
 
         if (g_activeTimeWindow)
         {
@@ -52,6 +58,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         // Turn off the quiet window no matter what
         auto signalStop = wil::scope_exit([]() {
             QuietWindowState::TurnOff();
+            g_timerFinished = true;
         });
 
         // Detach and destruct the current time window
