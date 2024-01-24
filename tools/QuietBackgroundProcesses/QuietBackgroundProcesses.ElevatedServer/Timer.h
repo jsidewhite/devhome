@@ -21,7 +21,7 @@ public:
         m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
     }
 
-    Timer(Timer&& other)
+    Timer(Timer&& other) noexcept
     {
         m_startTime = std::move(other.m_startTime);
         m_duration = std::move(other.m_duration);
@@ -29,7 +29,7 @@ public:
         m_timerThreadFuture = std::move(other.m_timerThreadFuture);
     }
 
-    Timer& operator=(Timer&& other)
+    Timer& operator=(Timer&& other) noexcept
     {
         m_startTime = std::move(other.m_startTime);
         m_duration = std::move(other.m_duration);
@@ -37,6 +37,8 @@ public:
         m_timerThreadFuture = std::move(other.m_timerThreadFuture);
         return *this;
     }
+
+    static void Discard(Timer* timer);
 
     static void Destroy(Timer&& timeWindow)
     {

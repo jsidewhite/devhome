@@ -20,25 +20,8 @@
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
-std::vector<Timer> g_discardedTimers;
 
-//std::unique_ptr<QuietWindowState::QuietWindowStateEnable> g_quietWindowState;
 QuietState::unique_quietwindowclose_call g_quietState;
-
-static void CleanupDiscardedTimers()
-{
-    // g_discardedTimers
-}
-
-static void DiscardTimer(Timer* timer)
-{
-    if (!timer)
-    {
-        return;
-    }
-    timer->Cancel();
-    g_discardedTimers.push_back(std::move(*timer));
-}
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
@@ -46,9 +29,8 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
     {
         auto lock = std::scoped_lock(g_mutex);
 
-        // Clean up old timers
-        DiscardTimer(g_activeTimer.release());
-        CleanupDiscardedTimers();
+        // Discard the active timer
+        Timer::Discard(g_activeTimer.release());
 
         // Start timer
         g_activeTimer.reset(new Timer(std::chrono::seconds(6), []()
@@ -72,7 +54,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         g_quietState.reset();
 
         // Detach and destruct the current time window
-        DiscardTimer(g_activeTimer.release());
+        Timer::Discard(g_activeTimer.release());
     }
 
     bool QuietWindow::IsActive()
