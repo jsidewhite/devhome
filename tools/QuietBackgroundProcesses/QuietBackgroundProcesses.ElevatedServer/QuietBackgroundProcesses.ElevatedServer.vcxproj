@@ -119,8 +119,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="QuietWindow.h">
-      <DependentUpon>QuietWindow.idl</DependentUpon>
+    <ClInclude Include="QuietBackgroundProcessesManager.h">
+      <DependentUpon>QuietBackgroundProcessesManager.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
@@ -130,15 +130,15 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="QuietWindow.cpp">
-      <DependentUpon>QuietWindow.idl</DependentUpon>
+    <ClCompile Include="QuietBackgroundProcessesManager.cpp">
+      <DependentUpon>QuietBackgroundProcessesManager.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="QuietWindow.idl" />
+    <Midl Include="QuietBackgroundProcessesManager.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

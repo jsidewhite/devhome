@@ -15,8 +15,8 @@
 
 #include "Timer.h"
 #include "QuietState.h"
-#include "QuietWindow.h"
-#include "QuietWindow.g.cpp"
+#include "QuietBackgroundProcessesManager.h"
+#include "QuietBackgroundProcessesManager.g.cpp"
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
@@ -25,7 +25,7 @@ QuietState::unique_quietwindowclose_call g_quietState;
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
-    int64_t QuietWindow::StartQuietWindow()
+    int64_t QuietBackgroundProcessesManager::StartQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
 
@@ -46,7 +46,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         return g_activeTimer->TimeLeftInSeconds();
     }
 
-    void QuietWindow::StopQuietWindow()
+    void QuietBackgroundProcessesManager::StopQuietWindow()
     {
         auto lock = std::scoped_lock(g_mutex);
 
@@ -57,13 +57,13 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         Timer::Discard(std::move(g_activeTimer));
     }
 
-    bool QuietWindow::IsActive()
+    bool QuietBackgroundProcessesManager::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
         return !!g_quietState;
     }
 
-    int64_t QuietWindow::TimeLeftInSeconds()
+    int64_t QuietBackgroundProcessesManager::TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(g_mutex);
         if (!g_quietState || !g_activeTimer)

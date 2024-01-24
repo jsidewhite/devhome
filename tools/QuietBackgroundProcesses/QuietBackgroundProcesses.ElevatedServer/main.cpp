@@ -8,7 +8,7 @@
 #include <memory>
 #include <wil/result_macros.h>
 #include <wil/win32_helpers.h>
-#include <QuietWindow.h>
+#include <QuietBackgroundProcessesManager.h>
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -33,9 +33,9 @@ HRESULT ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
                                                    &activatableClassCount));
 
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        THROW_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"QuietBackgroundProcesses_ElevatedServer.QuietWindow", true) != 0);
+        THROW_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager", true) != 0);
 
-        auto x = winrt::make<winrt::QuietBackgroundProcesses_ElevatedServer::factory_implementation::QuietWindow>();
+        auto x = winrt::make<winrt::QuietBackgroundProcesses_ElevatedServer::factory_implementation::QuietBackgroundProcessesManager>();
         x.as<winrt::Windows::Foundation::IActivationFactory>();
         *factory = static_cast<IActivationFactory*>(winrt::detach_abi(x));
         return S_OK;
