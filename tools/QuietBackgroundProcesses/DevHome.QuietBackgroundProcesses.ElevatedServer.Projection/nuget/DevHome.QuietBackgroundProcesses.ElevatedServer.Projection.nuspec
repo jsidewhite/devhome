@@ -19,12 +19,12 @@
     <!--C:\h\repo\devhome\x64\Release\QuietBackgroundProcesses.ElevatedServer-->
     
     <!--C:\h\repo\devhome\_build\x64\Release\QuietBackgroundProcesses.ElevatedServer.Projection\bin-->
-    <file src="..\..\..\..\_build\AnyCPU\Release\QuietBackgroundProcesses.ElevatedServer.Projection\bin\QuietBackgroundProcesses.ElevatedServer.Projection.dll" target="lib\net6.0-windows10.0.19041.0\QuietBackgroundProcesses.ElevatedServer.Projection.dll" />
-    <file src="..\..\..\..\x64\Release\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses_ElevatedServer.winmd" target="lib\netcoreapp3.0\QuietBackgroundProcesses_ElevatedServer.winmd" />
-    <file src="..\..\..\..\x64\Release\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses_ElevatedServer.winmd" target="lib\uap10.0\QuietBackgroundProcesses_ElevatedServer.winmd" />
-    <file src="..\..\..\..\x64\Release\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses_ElevatedServer.winmd" target="lib\net46\QuietBackgroundProcesses_ElevatedServer.winmd" />
+    <file src="..\..\..\..\_build\AnyCPU\Release\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\bin\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.dll" target="lib\net6.0-windows10.0.19041.0\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.dll" />
+    <file src="..\..\..\..\x64\Release\DevHome.QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses_ElevatedServer.winmd" target="lib\netcoreapp3.0\DevHome.QuietBackgroundProcesses_ElevatedServer.winmd" />
+    <file src="..\..\..\..\x64\Release\DevHome.QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses_ElevatedServer.winmd" target="lib\uap10.0\DevHome.QuietBackgroundProcesses_ElevatedServer.winmd" />
+    <file src="..\..\..\..\x64\Release\DevHome.QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses_ElevatedServer.winmd" target="lib\net46\DevHome.QuietBackgroundProcesses_ElevatedServer.winmd" />
     <!--Architecture-specific implementation DLLs should be copied into RID-relative folders-->
-    <file src="..\..\..\..\x64\Release\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win10-x64\native\QuietBackgroundProcesses.ElevatedServer.exe" />
+    <file src="..\..\..\..\x64\Release\DevHome.QuietBackgroundProcesses.ElevatedServer\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win10-x64\native\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" />
     <!--To support x86 and Arm64, build QuietBackgroundProcesses.ElevatedServer for those other architectures and uncomment the entries below.-->
     <!--<file src="..\..\..\..\_build\Win32\Release\QuietBackgroundProcesses.ElevatedServer\bin\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.dll" target="runtimes\win10-x86\native\QuietBackgroundProcesses.ElevatedServer.dll" />-->
     <!--<file src="..\..\..\..\_build\arm64\Release\QuietBackgroundProcesses.ElevatedServer\bin\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.dll" target="runtimes\win10-arm64\native\QuietBackgroundProcesses.ElevatedServer.dll" />-->

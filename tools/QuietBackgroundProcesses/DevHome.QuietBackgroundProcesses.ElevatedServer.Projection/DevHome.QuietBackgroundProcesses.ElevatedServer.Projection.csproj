@@ -16,7 +16,7 @@
 
   <PropertyGroup>
     <GeneratedNugetDir>.\nuget\</GeneratedNugetDir>
-    <NuspecFile>$(GeneratedNugetDir)QuietBackgroundProcesses.ElevatedServer.Projection.nuspec</NuspecFile>
+    <NuspecFile>$(GeneratedNugetDir)DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.nuspec</NuspecFile>
     <OutputPath>$(GeneratedNugetDir)</OutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.vcxproj" />
+    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer\DevHome.QuietBackgroundProcesses.ElevatedServer.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="nuget\QuietBackgroundProcesses.ElevatedServer.Projection.nuspec" />
+    <None Include="nuget\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.nuspec" />
   </ItemGroup>
 
 </Project>
