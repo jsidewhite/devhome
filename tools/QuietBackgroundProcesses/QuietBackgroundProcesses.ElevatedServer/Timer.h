@@ -15,7 +15,7 @@ class Timer
 public:
     // Cleanup functions
     static void Discard(std::unique_ptr<Timer> timer);
-    static void WaitForDiscardedTimerCleanupThread();
+    static void WaitForAllDiscardedTimersToDestruct();
 
     Timer(std::chrono::seconds seconds, CallbackFunction callback)
     {
@@ -66,7 +66,7 @@ private:
             }
 
             // Sleep for a short duration to avoid busy waiting
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1));//todo:jw make 30 seconds
         }
 
         // Do the callback

@@ -4,7 +4,7 @@
 std::mutex g_discardMutex;
 std::thread g_discardThread;
 
-void Timer::WaitForDiscardedTimerCleanupThread()
+void Timer::WaitForAllDiscardedTimersToDestruct()
 {
     auto lock = std::scoped_lock(g_discardMutex);
     if (g_discardThread.joinable())
