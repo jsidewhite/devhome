@@ -1,4 +1,4 @@
-namespace QuietBackgroundProcesses_ElevatedServer
+namespace DevHome.QuietBackgroundProcesses
 {
     [default_interface] runtimeclass QuietBackgroundProcessesManager
     {

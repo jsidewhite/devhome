@@ -1,7 +1,7 @@
 #pragma once
-#include "QuietBackgroundProcessesManager.g.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.g.h"
 
-namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
+namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
     struct QuietBackgroundProcessesManager : QuietBackgroundProcessesManagerT<QuietBackgroundProcessesManager>
     {
@@ -13,7 +13,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         static int64_t TimeLeftInSeconds();
     };
 }
-namespace winrt::QuietBackgroundProcesses_ElevatedServer::factory_implementation
+namespace winrt::DevHome::QuietBackgroundProcesses::factory_implementation
 {
     struct QuietBackgroundProcessesManager : QuietBackgroundProcessesManagerT<QuietBackgroundProcessesManager, implementation::QuietBackgroundProcessesManager>
     {

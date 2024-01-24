@@ -15,15 +15,15 @@
 
 #include "Timer.h"
 #include "QuietState.h"
-#include "QuietBackgroundProcessesManager.h"
-#include "QuietBackgroundProcessesManager.g.cpp"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.g.cpp"
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
 
 QuietState::unique_quietwindowclose_call g_quietState;
 
-namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
+namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
     int64_t QuietBackgroundProcessesManager::Start()
     {
