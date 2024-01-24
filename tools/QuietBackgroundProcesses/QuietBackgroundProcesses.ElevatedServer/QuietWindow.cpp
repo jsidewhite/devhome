@@ -30,7 +30,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         auto lock = std::scoped_lock(g_mutex);
 
         // Discard the active timer
-        Timer::Discard(g_activeTimer.release());
+        Timer::Discard(std::move(g_activeTimer));
 
         // Start timer
         g_activeTimer.reset(new Timer(std::chrono::seconds(6), []()
@@ -54,7 +54,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         g_quietState.reset();
 
         // Detach and destruct the current time window
-        Timer::Discard(g_activeTimer.release());
+        Timer::Discard(std::move(g_activeTimer));
     }
 
     bool QuietWindow::IsActive()

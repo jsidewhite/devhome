@@ -15,10 +15,8 @@ static void CleanupDiscardedTimers()
     }
 }
 
-void Timer::Discard(Timer* timer)
+void Timer::Discard(std::unique_ptr<Timer> timer)
 {
-    ::CleanupDiscardedTimers();
-
     if (!timer)
     {
         return;
@@ -32,4 +30,5 @@ void Timer::Discard(Timer* timer)
     }
 
     // Clear the discard pile
+
 }

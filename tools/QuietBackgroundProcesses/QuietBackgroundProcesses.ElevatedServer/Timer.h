@@ -13,6 +13,8 @@ using CallbackFunction = void (*)();
 class Timer
 {
 public:
+    static void Discard(std::unique_ptr<Timer> timer);
+
     Timer(std::chrono::seconds seconds, CallbackFunction callback)
     {
         m_startTime = std::chrono::steady_clock::now();
@@ -37,16 +39,6 @@ public:
         m_timerThreadFuture = std::move(other.m_timerThreadFuture);
         return *this;
     }
-
-    static void Discard(Timer* timer);
-
-    static void Destroy(Timer&& timeWindow)
-    {
-        // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
-        auto th = std::thread([timeWindow = std::move(timeWindow)]() {});
-        th.detach();
-    }
-
 
     Timer(const Timer&) = delete;
     Timer& operator=(const Timer&) = delete;
