@@ -89,7 +89,6 @@ private:
         }
     }
 
-    bool m_callbackCalled{};
     std::chrono::steady_clock::time_point m_startTime{};
     std::chrono::seconds m_duration{};
     std::future<void> m_timerThreadFuture;
