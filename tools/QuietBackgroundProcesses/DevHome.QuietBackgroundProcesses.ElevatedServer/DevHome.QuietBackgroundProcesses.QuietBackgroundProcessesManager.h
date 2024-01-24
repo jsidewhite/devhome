@@ -1,5 +1,5 @@
 #pragma once
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.g.h"
+#include "QuietBackgroundProcessesManager.g.h"
 
 namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {

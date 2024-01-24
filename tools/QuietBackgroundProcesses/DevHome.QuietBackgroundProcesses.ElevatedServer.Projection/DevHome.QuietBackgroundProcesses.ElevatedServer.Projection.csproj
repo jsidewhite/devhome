@@ -10,7 +10,7 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <CsWinRTIncludes>QuietBackgroundProcesses_ElevatedServer</CsWinRTIncludes>
+    <CsWinRTIncludes>DevHome.QuietBackgroundProcesses</CsWinRTIncludes>
     <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
   </PropertyGroup>
 

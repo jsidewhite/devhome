@@ -8,7 +8,7 @@
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{75945141-03ac-4c40-a586-16d463a0ac1b}</ProjectGuid>
     <ProjectName>DevHome.QuietBackgroundProcesses.ElevatedServer</ProjectName>
-    <RootNamespace>QuietBackgroundProcesses_ElevatedServer</RootNamespace>
+    <RootNamespace>DevHome.QuietBackgroundProcesses</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>

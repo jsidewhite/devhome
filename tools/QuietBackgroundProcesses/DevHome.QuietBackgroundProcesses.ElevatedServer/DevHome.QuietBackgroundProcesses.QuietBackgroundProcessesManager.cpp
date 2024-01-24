@@ -16,7 +16,7 @@
 #include "Timer.h"
 #include "QuietState.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h"
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.g.cpp"
+#include "QuietBackgroundProcessesManager.g.cpp"
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
