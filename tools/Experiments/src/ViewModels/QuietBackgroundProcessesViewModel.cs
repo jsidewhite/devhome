@@ -19,9 +19,9 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     public QuietBackgroundProcessesViewModel()
     {
         // Resume countdown if there's an existing quiet window
-        if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
+        if (QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.IsActive)
         {
-            var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+            var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.TimeLeftInSeconds;
             StartCountdownTimer(timeLeftInSeconds);
         }
     }
@@ -49,12 +49,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                 if (_isToggleOn)
                 {
                     TimeLeft = "Starting...";
-                    var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.StartQuietWindow();
+                    var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.Start();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
                 else
                 {
-                    QuietBackgroundProcesses_ElevatedServer.QuietWindow.StopQuietWindow();
+                    QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.Stop();
                     TimeLeft = "Session ended";
                 }
 
@@ -81,16 +81,16 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         var zero = new TimeSpan(0, 0, 0);
 
         // _secondsLeft -= new TimeSpan(0, 0, 1);
-        var timeLeftInSeconds2 = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+        var timeLeftInSeconds2 = QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.TimeLeftInSeconds;
         _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds2);
 
         if (_secondsLeft.CompareTo(zero) <= 0)
         {
             // The window should be closed, but let's confirm with the server
-            if (QuietBackgroundProcesses_ElevatedServer.QuietWindow.IsActive)
+            if (QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.IsActive)
             {
                 // There has been some drift
-                var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietWindow.TimeLeftInSeconds;
+                var timeLeftInSeconds = QuietBackgroundProcesses_ElevatedServer.QuietBackgroundProcessesManager.TimeLeftInSeconds;
                 _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds);
             }
             else

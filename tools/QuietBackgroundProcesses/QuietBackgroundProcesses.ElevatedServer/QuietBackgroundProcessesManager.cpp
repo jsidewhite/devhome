@@ -25,7 +25,7 @@ QuietState::unique_quietwindowclose_call g_quietState;
 
 namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
 {
-    int64_t QuietBackgroundProcessesManager::StartQuietWindow()
+    int64_t QuietBackgroundProcessesManager::Start()
     {
         auto lock = std::scoped_lock(g_mutex);
 
@@ -46,7 +46,7 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
         return g_activeTimer->TimeLeftInSeconds();
     }
 
-    void QuietBackgroundProcessesManager::StopQuietWindow()
+    void QuietBackgroundProcessesManager::Stop()
     {
         auto lock = std::scoped_lock(g_mutex);
 

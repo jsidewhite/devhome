@@ -7,8 +7,8 @@ namespace winrt::QuietBackgroundProcesses_ElevatedServer::implementation
     {
         QuietBackgroundProcessesManager() = default;
 
-        static int64_t StartQuietWindow();
-        static void StopQuietWindow();
+        static int64_t Start();
+        static void Stop();
         static bool IsActive();
         static int64_t TimeLeftInSeconds();
     };
