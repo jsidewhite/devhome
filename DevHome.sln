@@ -75,9 +75,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Experiments", "tool
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QuietBackgroundProcesses", "QuietBackgroundProcesses", "{D04CD3A1-0B45-4CB3-925F-204F5F6AE2D8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuietBackgroundProcesses.ElevatedServer", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.vcxproj", "{75945141-03AC-4C40-A586-16D463A0AC1B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.QuietBackgroundProcesses.ElevatedServer", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.vcxproj", "{75945141-03AC-4C40-A586-16D463A0AC1B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuietBackgroundProcesses.ElevatedServer.Projection", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\QuietBackgroundProcesses.ElevatedServer.Projection.csproj", "{092AC740-DA01-4872-8E93-B9557DAD6BE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.QuietBackgroundProcesses.ElevatedServer.Projection", "tools\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj", "{092AC740-DA01-4872-8E93-B9557DAD6BE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

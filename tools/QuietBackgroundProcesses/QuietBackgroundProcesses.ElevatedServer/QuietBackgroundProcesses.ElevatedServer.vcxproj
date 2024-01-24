@@ -7,7 +7,7 @@
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{75945141-03ac-4c40-a586-16d463a0ac1b}</ProjectGuid>
-    <ProjectName>QuietBackgroundProcesses.ElevatedServer</ProjectName>
+    <ProjectName>DevHome.QuietBackgroundProcesses.ElevatedServer</ProjectName>
     <RootNamespace>QuietBackgroundProcesses_ElevatedServer</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>

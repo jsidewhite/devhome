@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
-    <ProjectReference Include="..\..\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
+    <ProjectReference Include="..\..\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
     <ProjectReference Include="..\..\QuietBackgroundProcesses\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.vcxproj" />
   </ItemGroup>
 
