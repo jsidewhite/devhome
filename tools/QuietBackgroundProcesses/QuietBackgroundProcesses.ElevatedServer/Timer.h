@@ -13,7 +13,9 @@ using CallbackFunction = void (*)();
 class Timer
 {
 public:
+    // Cleanup functions
     static void Discard(std::unique_ptr<Timer> timer);
+    static void WaitForDiscardedTimerCleanupThread();
 
     Timer(std::chrono::seconds seconds, CallbackFunction callback)
     {
@@ -23,22 +25,8 @@ public:
         m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
     }
 
-    Timer(Timer&& other) noexcept
-    {
-        m_startTime = std::move(other.m_startTime);
-        m_duration = std::move(other.m_duration);
-        m_callback = std::move(other.m_callback);
-        m_timerThreadFuture = std::move(other.m_timerThreadFuture);
-    }
-
-    Timer& operator=(Timer&& other) noexcept
-    {
-        m_startTime = std::move(other.m_startTime);
-        m_duration = std::move(other.m_duration);
-        m_callback = std::move(other.m_callback);
-        m_timerThreadFuture = std::move(other.m_timerThreadFuture);
-        return *this;
-    }
+    Timer(Timer&& other) noexcept = default;
+    Timer& operator=(Timer&& other) noexcept = default;
 
     Timer(const Timer&) = delete;
     Timer& operator=(const Timer&) = delete;

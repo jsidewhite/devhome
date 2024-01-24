@@ -4,8 +4,9 @@
 std::mutex g_discardMutex;
 std::thread g_discardThread;
 
-void WaitForDiscardedTimerCleanupThread()
+void Timer::WaitForDiscardedTimerCleanupThread()
 {
+    auto lock = std::scoped_lock(g_discardMutex);
     if (g_discardThread.joinable())
     {
         g_discardThread.join();
@@ -29,7 +30,7 @@ void Timer::Discard(std::unique_ptr<Timer> timer)
     // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
     // 
     // (Make a new discard thread and chain the existing one to it)
-    g_discardThread = std::thread([timer = std::move(timer), previousThread = std::move(previousThread)]() {
+    g_discardThread = std::thread([timer = std::move(timer), previousThread = std::move(previousThread)]() mutable {
         // Delete the timer (blocking)
         timer.reset();
 
