@@ -2,6 +2,7 @@
 
 #include <mutex>
 
+#include <QuietBackgroundProcesses.h>
 #include "QuietState.h"
 
 namespace QuietState
@@ -10,28 +11,17 @@ namespace QuietState
 
     namespace details
     {
-        void TurnOn()
-        {
-            auto lock = std::scoped_lock(g_mutex);
-        }
-
         void TurnOff()
         {
             auto lock = std::scoped_lock(g_mutex);
+            DisableQuietBackgroundProcesses();
         }
-
-        void IsOn()
-        {
-
-        }
-
-
-
     }
 
     unique_quietwindowclose_call TurnOn()
     {
-        details::TurnOn();
+        auto lock = std::scoped_lock(g_mutex);
+        EnableQuietBackgroundProcesses();
         return {};
     }
 }

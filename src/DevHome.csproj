@@ -112,7 +112,7 @@
 
 <!--  THIS ONE WORKS too -->
 <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <Content Include="C:\h\repo\devhome\packages\Microsoft.Internal.Windows.DevHome.Win32.1.0.20240125-x1445\runtimes\native\x64\Microsoft.Internal.Windows.DevHome.Win32.dll">
+    <Content Include="C:\h\repo\devhome\packages\Microsoft.Internal.Windows.DevHome.Win32.1.0.20240126-x1032\runtimes\native\x64\Microsoft.Internal.Windows.DevHome.Win32.dll">
     </Content>
   </ItemGroup>
 
