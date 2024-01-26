@@ -51,6 +51,10 @@
         </PackageReference>
     </ItemGroup>
 
+<PropertyGroup>
+        <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+</PropertyGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\common\DevHome.Common.csproj" />
         <ProjectReference Include="..\CoreWidgetProvider\CoreWidgetProvider.csproj" />
@@ -59,7 +63,8 @@
         <ProjectReference Include="..\tools\Experiments\src\DevHome.Experiments.csproj" />
         <ProjectReference Include="..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
         <ProjectReference Include="..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer\DevHome.QuietBackgroundProcesses.ElevatedServer.vcxproj">
-          <ReferenceOutputAssembly>True</ReferenceOutputAssembly>
+          <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+          <Private>True</Private>
         </ProjectReference>
         <ProjectReference Include="..\tools\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj" />
         <ProjectReference Include="..\tools\ExtensionLibrary\DevHome.ExtensionLibrary\DevHome.ExtensionLibrary.csproj" />
@@ -71,6 +76,11 @@
         <None Update="NavConfig.jsonc">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+
+        <None Update="DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+
         <Page Update="Styles\WindowTitleBar_ThemeResources.xaml">
           <Generator>MSBuild:Compile</Generator>
         </Page>
@@ -86,6 +96,12 @@
     <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="C:\h\repo\devhome\src\bin\x64\Release\net6.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
     <PropertyGroup>
         <DefineConstants Condition="'$(BuildRing)'=='Canary'">$(DefineConstants);CANARY_BUILD</DefineConstants>
