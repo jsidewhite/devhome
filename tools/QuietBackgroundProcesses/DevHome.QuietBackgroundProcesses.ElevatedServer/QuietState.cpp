@@ -21,7 +21,7 @@ namespace QuietState
     unique_quietwindowclose_call TurnOn()
     {
         auto lock = std::scoped_lock(g_mutex);
-        EnableQuietBackgroundProcesses();
+        THROW_IF_FAILED(EnableQuietBackgroundProcesses());
         return {};
     }
 }
