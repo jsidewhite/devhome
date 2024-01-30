@@ -21,8 +21,6 @@
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 
-
-Event g_shutdownEvent;
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
@@ -34,11 +32,8 @@ bool IsTokenElevated(HANDLE token)
     return levelRid == SECURITY_MANDATORY_HIGH_RID;
 }
 
-wil::unique_ro_registration_cookie ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
+wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName)
 {
-    g_shutdownEvent.Attach(CreateEvent(nullptr, true, false, nullptr));
-    THROW_LAST_ERROR_IF(!g_shutdownEvent.IsValid());
-
     Module<OutOfProc>::Create([] {
         // The last instance object of the module is released
         {
@@ -55,9 +50,9 @@ wil::unique_ro_registration_cookie ExeServerRegisterWinrtClasses(_In_ PCWSTR ser
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
         RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
 
-        auto x = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesManager>();
-        x.as<winrt::Windows::Foundation::IActivationFactory>();
-        *factory = static_cast<IActivationFactory*>(winrt::detach_abi(x));
+        auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesManager>();
+        manager.as<winrt::Windows::Foundation::IActivationFactory>();
+        *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
         return S_OK;
     };
 
@@ -82,15 +77,14 @@ try
         return E_ACCESSDENIED;
     }
 
-    // To be safe, force quiet mode off to begin the proceedings
+    // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     QuietState::TurnOff();
 
     PCWSTR serverName = wargv + wcslen(serverNamePrefix);
     auto unique_rouninitialize_call = wil::RoInitialize();
 
-    auto registrationCookie = ExeServerRegisterWinrtClasses(serverName);
-
-    WaitForSingleObject(g_shutdownEvent.Get(), INFINITE);
+    // Register WinRT activatable classes
+    auto registrationCookie = RegisterWinrtClasses(serverName);
 
     // Wait for the module objects to be released and the timer threads to finish
     {
