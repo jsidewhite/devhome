@@ -3,6 +3,7 @@
 
 #include <pch.h>
 
+#include <functional>
 #include <mutex>
 
 #include <objbase.h>
@@ -21,6 +22,8 @@
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 
+using unique_hstring_array_ptr = wil::unique_any_array_ptr<HSTRING, wil::cotaskmem_deleter, wil::function_deleter<decltype(::WindowsDeleteString), ::WindowsDeleteString>>;
+
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
@@ -32,21 +35,15 @@ bool IsTokenElevated(HANDLE token)
     return levelRid == SECURITY_MANDATORY_HIGH_RID;
 }
 
-wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName)
+wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
-    Module<OutOfProc>::Create([] {
-        // The last instance object of the module is released
-        {
-            auto lock = std::unique_lock<std::mutex>(g_finishMutex);
-            g_lastInstanceOfTheModuleObjectIsReleased = true;
-        }
-        g_finishCondition.notify_one();
-    });
+    Module<OutOfProc>::Create(objectsReleasedCallback);
 
-    HSTRING* activatableClasses;
-    DWORD activatableClassCount;
-    THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &activatableClasses, &activatableClassCount));
+    // Get module classes
+    unique_hstring_array_ptr classes;
+    THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
 
+    // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
         RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
 
@@ -56,9 +53,10 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName)
         return S_OK;
     };
 
+    // Register
     wil::unique_ro_registration_cookie registrationCookie;
     PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
-    THROW_IF_FAILED(RoRegisterActivationFactories(activatableClasses, callbacks, activatableClassCount, &registrationCookie));
+    THROW_IF_FAILED(RoRegisterActivationFactories(classes.get(), callbacks, static_cast<UINT32>(classes.size()), &registrationCookie));
     return registrationCookie;
 }
 
@@ -84,7 +82,14 @@ try
     auto unique_rouninitialize_call = wil::RoInitialize();
 
     // Register WinRT activatable classes
-    auto registrationCookie = RegisterWinrtClasses(serverName);
+    auto registrationCookie = RegisterWinrtClasses(serverName, [] {
+        // The last instance object of the module is released
+        {
+            auto lock = std::unique_lock<std::mutex>(g_finishMutex);
+            g_lastInstanceOfTheModuleObjectIsReleased = true;
+        }
+        g_finishCondition.notify_one();
+    });
 
     // Wait for the module objects to be released and the timer threads to finish
     {
