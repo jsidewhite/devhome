@@ -44,6 +44,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
         {
+            _isToggleOn = true;
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
