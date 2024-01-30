@@ -18,7 +18,7 @@
         <ScrollViewer Grid.Row="1" VerticalAlignment="Top">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                <controls:SettingsExpander Header="Quiet background processes" Description="Silence and track background processes that may hinder device performance" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+                <controls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
 
                     <!-- Header icon -->
                     <controls:SettingsExpander.HeaderIcon>
@@ -35,9 +35,11 @@
 
                     <!-- Expander -->
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard Header="Quiet background processes beta feature description" Description="This feature can be activated for 2 hours, additional description text here. Learn more" HorizontalContentAlignment="Left" >
+                        <controls:SettingsCard x:Uid="QuietBackgroundProcessesExplanation" HorizontalContentAlignment="Left" >
+                            <!-- Analytic Summary button -->
+                            <!--
                             <StackPanel Orientation="Vertical">
-                                <Button x:Name="analyticSummaryButtosdfsdfn" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
+                                <Button x:Name="analyticSummaryButton" AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}" IsTextScaleFactorEnabled="True" Style="{StaticResource AccentButtonStyle}">
                                     <Grid ColumnSpacing="8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -47,12 +49,13 @@
                                     </Grid>
                                 </Button>
                             </StackPanel>
+                            -->
                         </controls:SettingsCard>
 
                         <!-- Hyperlinks -->
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">Related links</TextBlock>
+                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center" x:Uid="QuietBackgroundProcessesExplanation_RelatedLinks" />
                                 <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Provide feedback</HyperlinkButton>
                                 <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Link to docs</HyperlinkButton>
                             </StackPanel>
