@@ -42,10 +42,4 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
         ViewModel = new QuietBackgroundProcessesViewModel();
         InitializeComponent();
     }
-
-    private void StartSessionButton_Clicked(object sender, RoutedEventArgs e)
-    {
-        Log.Logger()?.ReportInfo("PackageDeploymentService", $"QuietWindow.IsActive = {DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.IsActive}");
-        Log.Logger()?.ReportInfo("PackageDeploymentService", $"QuietWindow.TimeLeftInSeconds = {DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds}");
-    }
 }

@@ -27,7 +27,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
         var osVersion = Environment.OSVersion;
         _validOsVersion = osVersion.Version.Build >= 26024;
-        _validOsVersion = true; // TODO: remove
+        _validOsVersion = true; // TODO:jw remove
 
         if (!_validOsVersion)
         {
