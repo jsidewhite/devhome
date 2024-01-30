@@ -26,7 +26,7 @@
     <file src="..\..\DevHome.QuietBackgroundProcesses.ElevatedServer\x64\Release\Merged\DevHome.QuietBackgroundProcesses.winmd" target="lib\net46\DevHome.DevHome.QuietBackgroundProcesses.winmd" />
     
     <!--Architecture-specific implementation DLLs should be copied into RID-relative folders-->
-    <file src="..\..\..\..\src\bin\x64\Release\net6.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win10-x64\native\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" />
+    <file src="..\..\..\..\src\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win10-x64\native\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" />
     <!--To support x86 and Arm64, build QuietBackgroundProcesses.ElevatedServer for those other architectures and uncomment the entries below.-->
     <!--<file src="..\..\..\..\_build\Win32\Release\QuietBackgroundProcesses.ElevatedServer\bin\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.dll" target="runtimes\win10-x86\native\QuietBackgroundProcesses.ElevatedServer.dll" />-->
     <!--<file src="..\..\..\..\_build\arm64\Release\QuietBackgroundProcesses.ElevatedServer\bin\QuietBackgroundProcesses.ElevatedServer\QuietBackgroundProcesses.ElevatedServer.dll" target="runtimes\win10-arm64\native\QuietBackgroundProcesses.ElevatedServer.dll" />-->
