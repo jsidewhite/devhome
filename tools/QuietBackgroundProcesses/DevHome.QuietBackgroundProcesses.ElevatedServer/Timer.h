@@ -24,7 +24,7 @@ public:
     {
         m_startTime = std::chrono::steady_clock::now();
         m_duration = seconds;
-        m_callback = callback;
+        m_callback = std::move(callback);
         m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
     }
 

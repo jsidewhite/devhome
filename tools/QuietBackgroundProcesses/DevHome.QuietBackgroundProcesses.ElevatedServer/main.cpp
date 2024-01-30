@@ -4,18 +4,20 @@
 #include <pch.h>
 
 #include <functional>
+#include <memory>
 #include <mutex>
 
-#include <objbase.h>
-#include <roregistrationapi.h>
 #include <wrl/client.h>
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
-#include <memory>
 #include <wil/result_macros.h>
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
+
+#include <objbase.h>
+#include <roregistrationapi.h>
+
 #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
 #include "QuietState.h"
 
