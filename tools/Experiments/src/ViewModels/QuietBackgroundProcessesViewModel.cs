@@ -18,8 +18,8 @@ namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
     private readonly TimeSpan _zero;
-    private bool _isElevated;
-    private bool _validOsVersion;
+    private readonly bool _isElevated;
+    private readonly bool _validOsVersion;
 
     public QuietBackgroundProcessesViewModel()
     {
