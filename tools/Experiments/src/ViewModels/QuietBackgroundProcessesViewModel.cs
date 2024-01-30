@@ -59,7 +59,10 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     public bool IsToggleEnabled
     {
-        get => _isElevated && _validOsVersion;
+        get
+        {
+            return _isElevated && _validOsVersion;
+        }
     }
 
     private bool _isToggleOn;

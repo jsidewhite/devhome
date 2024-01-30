@@ -91,12 +91,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="C:\h\repo\devhome\src\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-    
-    <ItemGroup>
         <Content Include="$(DevHomeInternal_Win32RuntimePath)Microsoft.Internal.Windows.DevHome.Win32.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
