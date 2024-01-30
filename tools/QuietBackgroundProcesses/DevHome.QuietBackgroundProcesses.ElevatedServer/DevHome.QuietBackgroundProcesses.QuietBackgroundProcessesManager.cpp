@@ -36,7 +36,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         Timer::Discard(std::move(g_activeTimer));
 
         // Start timer
-        g_activeTimer.reset(new Timer(std::chrono::seconds(6), []()
+        g_activeTimer.reset(new Timer(std::chrono::seconds(150), []()
         {
             auto lock = std::scoped_lock(g_mutex);
             g_quietState.reset();

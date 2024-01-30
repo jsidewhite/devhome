@@ -4,20 +4,29 @@
 #include <pch.h>
 #include <objbase.h>
 #include <roregistrationapi.h>
-#include <wrl\client.h>
-#include <wrl\wrappers\corewrappers.h>
-#include <wrl\implements.h>
-#include <wrl\module.h>
+#include <wrl/client.h>
+#include <wrl/wrappers/corewrappers.h>
+#include <wrl/implements.h>
+#include <wrl/module.h>
 #include <memory>
 #include <wil/result_macros.h>
+#include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
 #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 
+
 Event g_shutdownEvent;
 RO_REGISTRATION_COOKIE g_registrationCookie = nullptr;
+
+bool IsTokenElevated(HANDLE token)
+{
+    auto mandatoryLabel = wil::get_token_information<TOKEN_MANDATORY_LABEL>(token);
+    LONG levelRid = static_cast<SID*>(mandatoryLabel->Label.Sid)->SubAuthority[0];
+    return levelRid == SECURITY_MANDATORY_HIGH_RID;
+}
 
 HRESULT ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
 {
@@ -59,6 +68,11 @@ try
     if (_wcsnicmp(wargv, serverNamePrefix, wcslen(serverNamePrefix)) != 0)
     {
         return E_UNEXPECTED;
+    }
+
+    if (!IsTokenElevated(GetCurrentProcessToken()))
+    {
+        return E_ACCESSDENIED;
     }
 
     PCWSTR serverName = wargv + wcslen(serverNamePrefix);
