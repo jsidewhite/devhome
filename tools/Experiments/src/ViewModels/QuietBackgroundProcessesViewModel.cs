@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -16,17 +17,51 @@ using Windows.UI.Xaml;
 namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
-    private TimeSpan _zero;
+    private readonly TimeSpan _zero;
 
     public QuietBackgroundProcessesViewModel()
     {
         _zero = new TimeSpan(0, 0, 0);
 
+        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+        {
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            _isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
         {
+            TimeLeft = "234432243243";
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
+        }
+        else
+        {
+            TimeLeft = "sdfsdfds";
+            if (!_isElevated)
+            {
+                TimeLeft = "This feature requires running as admin";
+            }
+        }
+    }
+
+    private bool _isElevated;
+
+    public bool IsToggleEnabled
+    {
+        get => _isElevated;
+
+        set
+        {
+            if (_isElevated == value)
+            {
+                return;
+            }
+
+            _isElevated = value;
+
+            OnPropertyChanged(nameof(IsToggleEnabled));
         }
     }
 
@@ -58,7 +93,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                 }
                 catch
                 {
-                    TimeLeft = "This feature requires running Dev Home as admin";
+                    TimeLeft = "Service error";
                 }
             }
             else
@@ -110,6 +145,11 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private void StartCountdownTimer(long timeLeftInSeconds)
     {
+        if (timeLeftInSeconds <= 0)
+        {
+            return;
+        }
+
         _dispatcherTimer = new DispatcherTimer();
         _dispatcherTimer.Tick += DispatcherTimer_Tick;
         _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);

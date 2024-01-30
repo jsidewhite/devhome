@@ -38,7 +38,7 @@
 
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsToggleOn, Mode=TwoWay}"/>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsToggleOn, Mode=TwoWay}" IsEnabled="{x:Bind ViewModel.IsToggleEnabled, Mode=OneWay}" />
                         </StackPanel>
 
 

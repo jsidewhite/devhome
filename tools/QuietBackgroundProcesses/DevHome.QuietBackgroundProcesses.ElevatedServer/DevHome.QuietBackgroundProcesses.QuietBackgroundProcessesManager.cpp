@@ -21,7 +21,7 @@
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
 
-QuietState::unique_quietwindowclose_call g_quietState;
+QuietState::unique_quietwindowclose_call g_quietState{false};
 
 namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
@@ -60,7 +60,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
     bool QuietBackgroundProcessesManager::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
-        return !!g_quietState;
+        return (bool)g_quietState;
     }
 
     int64_t QuietBackgroundProcessesManager::TimeLeftInSeconds()
