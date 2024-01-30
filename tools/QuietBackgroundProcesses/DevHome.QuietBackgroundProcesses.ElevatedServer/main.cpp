@@ -73,7 +73,7 @@ try
     PCWSTR serverName = wargv + wcslen(serverNamePrefix);
     Microsoft::WRL::Wrappers::RoInitializeWrapper roInit(RO_INIT_MULTITHREADED);
 
-    THROW_IF_FAILED(ExeServerRegisterWinrtClasses(serverName));
+    ExeServerRegisterWinrtClasses(serverName);
 
     WaitForSingleObject(g_shutdownEvent.Get(), INFINITE);
 
