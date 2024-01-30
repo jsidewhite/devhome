@@ -2,6 +2,9 @@
 // Licensed under the MIT license.
 
 #include <pch.h>
+
+#include <mutex>
+
 #include <objbase.h>
 #include <roregistrationapi.h>
 #include <wrl/client.h>
@@ -13,13 +16,16 @@
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
 #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
+#include "QuietState.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 
 
 Event g_shutdownEvent;
-RO_REGISTRATION_COOKIE g_registrationCookie = nullptr;
+std::mutex g_finishMutex;
+std::condition_variable g_finishCondition;
+bool g_lastInstanceOfTheModuleObjectIsReleased;
 
 bool IsTokenElevated(HANDLE token)
 {
@@ -28,18 +34,23 @@ bool IsTokenElevated(HANDLE token)
     return levelRid == SECURITY_MANDATORY_HIGH_RID;
 }
 
-void ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
+wil::unique_ro_registration_cookie ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
 {
     g_shutdownEvent.Attach(CreateEvent(nullptr, true, false, nullptr));
     THROW_LAST_ERROR_IF(!g_shutdownEvent.IsValid());
 
-    Module<OutOfProc>::Create([] { SetEvent(g_shutdownEvent.Get()); });
+    Module<OutOfProc>::Create([] {
+        // The last instance object of the module is released
+        {
+            auto lock = std::unique_lock<std::mutex>(g_finishMutex);
+            g_lastInstanceOfTheModuleObjectIsReleased = true;
+        }
+        g_finishCondition.notify_one();
+    });
 
     HSTRING* activatableClasses;
     DWORD activatableClassCount;
-    THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(),
-                                                   &activatableClasses,
-                                                   &activatableClassCount));
+    THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &activatableClasses, &activatableClassCount));
 
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
         RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
@@ -50,9 +61,10 @@ void ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
         return S_OK;
     };
 
+    wil::unique_ro_registration_cookie registrationCookie;
     PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
-
-    THROW_IF_FAILED(RoRegisterActivationFactories(activatableClasses, callbacks, activatableClassCount, &g_registrationCookie));
+    THROW_IF_FAILED(RoRegisterActivationFactories(activatableClasses, callbacks, activatableClassCount, &registrationCookie));
+    return registrationCookie;
 }
 
 //int _cdecl wmain(int argc, __in_ecount(argc) PWSTR wargv[])
@@ -70,18 +82,28 @@ try
         return E_ACCESSDENIED;
     }
 
-    PCWSTR serverName = wargv + wcslen(serverNamePrefix);
-    Microsoft::WRL::Wrappers::RoInitializeWrapper roInit(RO_INIT_MULTITHREADED);
+    // To be safe, force quiet mode off to begin the proceedings
+    QuietState::TurnOff();
 
-    ExeServerRegisterWinrtClasses(serverName);
+    PCWSTR serverName = wargv + wcslen(serverNamePrefix);
+    auto unique_rouninitialize_call = wil::RoInitialize();
+
+    auto registrationCookie = ExeServerRegisterWinrtClasses(serverName);
 
     WaitForSingleObject(g_shutdownEvent.Get(), INFINITE);
 
-    if (g_registrationCookie)
+    // Wait for the module objects to be released and the timer threads to finish
     {
-        RoRevokeActivationFactories(g_registrationCookie);
-        g_registrationCookie = nullptr;
+        auto lock = std::unique_lock<std::mutex>(g_finishMutex);
+
+        // Wait for both events to complete
+        g_finishCondition.wait(lock, [] {
+            return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesManager::IsActive();
+        });
     }
+
+    // To be safe, force quiet mode off
+    QuietState::TurnOff();
 
     return 0;
 }
