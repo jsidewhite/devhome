@@ -28,24 +28,21 @@ bool IsTokenElevated(HANDLE token)
     return levelRid == SECURITY_MANDATORY_HIGH_RID;
 }
 
-HRESULT ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
+void ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
 {
     g_shutdownEvent.Attach(CreateEvent(nullptr, true, false, nullptr));
-    if (!g_shutdownEvent.IsValid())
-    {
-        return HRESULT_FROM_WIN32(GetLastError());
-    }
+    THROW_LAST_ERROR_IF(!g_shutdownEvent.IsValid());
 
     Module<OutOfProc>::Create([] { SetEvent(g_shutdownEvent.Get()); });
 
     HSTRING* activatableClasses;
     DWORD activatableClassCount;
-    RETURN_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(),
+    THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(),
                                                    &activatableClasses,
                                                    &activatableClassCount));
 
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        THROW_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
+        RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
 
         auto x = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesManager>();
         x.as<winrt::Windows::Foundation::IActivationFactory>();
@@ -55,9 +52,7 @@ HRESULT ExeServerRegisterWinrtClasses(_In_ PCWSTR serverName)
 
     PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
 
-    RETURN_IF_FAILED(RoRegisterActivationFactories(activatableClasses, callbacks, activatableClassCount, &g_registrationCookie));
-
-    return S_OK;
+    THROW_IF_FAILED(RoRegisterActivationFactories(activatableClasses, callbacks, activatableClassCount, &g_registrationCookie));
 }
 
 //int _cdecl wmain(int argc, __in_ecount(argc) PWSTR wargv[])
