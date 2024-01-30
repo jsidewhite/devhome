@@ -55,9 +55,13 @@
                         <!-- Hyperlinks -->
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Margin="0,0,12,0" VerticalAlignment="Center" x:Uid="QuietBackgroundProcessesExplanation_RelatedLinks" />
-                                <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Provide feedback</HyperlinkButton>
-                                <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">Link to docs</HyperlinkButton>
+                                <TextBlock x:Uid="QuietBackgroundProcessesExplanation_RelatedLinks" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">
+                                    <TextBlock x:Uid="QuietBackgroundProcessesExplanation_ProvideFeedback" />
+                                </HyperlinkButton>
+                                <HyperlinkButton Margin="{StaticResource HyperlinkButtonNegativeMargin}">
+                                    <TextBlock x:Uid="QuietBackgroundProcessesExplanation_LinkToDocs" />
+                                </HyperlinkButton>
                             </StackPanel>
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
