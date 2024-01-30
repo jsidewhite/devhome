@@ -542,18 +542,6 @@
     <value>Silence and track background processes that may hinder device performance</value>
   </data>
   <data name="QuietBackgroundProcessesExperiment_Name" xml:space="preserve">
-    <value>Quiet background processes</value>
-  </data>
-  <data name="SettingsPage_ExperimentalFeature_QuietBackgroundProcessesExperiment_Name" xml:space="preserve">
-    <value>sdf1</value>
-  </data>
-  <data name="SettingsPage_QuietBackgroundProcessesExperiment_Name" xml:space="preserve">
-    <value>sdf3</value>
-  </data>
-  <data name="Settings_ExperimentalFeature_QuietBackgroundProcessesExperiment_Name" xml:space="preserve">
-    <value>qbp name</value>
-  </data>
-  <data name="Settings_QuietBackgroundProcessesExperiment_Name" xml:space="preserve">
-    <value>sdf2</value>
+    <value>Quiet background processes experiment</value>
   </data>
 </root>
