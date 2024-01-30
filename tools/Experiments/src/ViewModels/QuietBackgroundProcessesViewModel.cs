@@ -18,10 +18,22 @@ namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
     private readonly TimeSpan _zero;
+    private bool _isElevated;
+    private bool _validOsVersion;
 
     public QuietBackgroundProcessesViewModel()
     {
         _zero = new TimeSpan(0, 0, 0);
+
+        var osVersion = Environment.OSVersion;
+        _validOsVersion = osVersion.Version.Build >= 26024;
+        _validOsVersion = true; // TODO: remove
+
+        if (!_validOsVersion)
+        {
+            TimeLeft = "This feature requires OS version 10.0.26024.0+";
+            return;
+        }
 
         using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
         {
@@ -44,23 +56,9 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
     }
 
-    private bool _isElevated;
-
     public bool IsToggleEnabled
     {
-        get => _isElevated;
-
-        set
-        {
-            if (_isElevated == value)
-            {
-                return;
-            }
-
-            _isElevated = value;
-
-            OnPropertyChanged(nameof(IsToggleEnabled));
-        }
+        get => _isElevated && _validOsVersion;
     }
 
     private bool _isToggleOn;
