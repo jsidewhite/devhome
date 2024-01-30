@@ -16,19 +16,18 @@ using Windows.UI.Xaml;
 namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
+    private TimeSpan _zero;
+
     public QuietBackgroundProcessesViewModel()
     {
+        _zero = new TimeSpan(0, 0, 0);
+
         // Resume countdown if there's an existing quiet window
-        if (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.IsActive)
+        if (GetIsActive())
         {
-            var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds;
+            var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
-    }
-
-    private void StartCountdownTimer(long timeLeftInSeconds)
-    {
-        DispatcherTimer_StartCountdown(timeLeftInSeconds);
     }
 
     private bool _isToggleOn;
@@ -39,34 +38,77 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
         set
         {
-            if (_isToggleOn != value)
+            if (_isToggleOn == value)
             {
-                _isToggleOn = value;
+                return;
+            }
 
-                // Stop any existing timer
-                _dispatcherTimer?.Stop();
+            _isToggleOn = value;
 
-                if (_isToggleOn)
+            // Stop any existing timer
+            _dispatcherTimer?.Stop();
+
+            if (_isToggleOn)
+            {
+                try
                 {
                     TimeLeft = "Starting...";
                     var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Start();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
-                else
+                catch
+                {
+                    TimeLeft = "This feature requires running Dev Home as admin";
+                }
+            }
+            else
+            {
+                try
                 {
                     DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Stop();
-                    TimeLeft = "Session ended";
                 }
-
-                OnPropertyChanged(nameof(IsToggleOn));
+                catch
+                {
+                    TimeLeft = "Unable to cancel session";
+                }
             }
+
+            OnPropertyChanged(nameof(IsToggleOn));
+        }
+    }
+
+    private bool GetIsActive()
+    {
+        try
+        {
+            return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.IsActive;
+        }
+        catch (Exception ex)
+        {
+            _timeLeft = "Session error";
+            Log.Logger()?.ReportInfo("QuietBackgroundProcesses", $"IsActive = {ex.ToString()}");
+            return false;
+        }
+    }
+
+    private int GetTimeRemaining()
+    {
+        try
+        {
+            return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds;
+        }
+        catch (Exception ex)
+        {
+            _timeLeft = "Session error";
+            Log.Logger()?.ReportInfo("QuietBackgroundProcesses", $"TimeLeftInSeconds = {ex.ToString()}");
+            return 0;
         }
     }
 
     private DispatcherTimer _dispatcherTimer;
     private TimeSpan _secondsLeft;
 
-    public void DispatcherTimer_StartCountdown(long timeLeftInSeconds)
+    private void StartCountdownTimer(long timeLeftInSeconds)
     {
         _dispatcherTimer = new DispatcherTimer();
         _dispatcherTimer.Tick += DispatcherTimer_Tick;
@@ -78,25 +120,21 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     private void DispatcherTimer_Tick(object sender, object e)
     {
         var sessionEnded = false;
-        var zero = new TimeSpan(0, 0, 0);
 
-        // _secondsLeft -= new TimeSpan(0, 0, 1);
-        var timeLeftInSeconds2 = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds;
-        _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds2);
+        _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 
-        if (_secondsLeft.CompareTo(zero) <= 0)
+        if (_secondsLeft.CompareTo(_zero) <= 0)
         {
             // The window should be closed, but let's confirm with the server
-            if (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.IsActive)
+            if (GetIsActive())
             {
                 // There has been some drift
-                var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds;
-                _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds);
+                _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
             }
             else
             {
                 _dispatcherTimer.Stop();
-                _secondsLeft = zero;
+                _secondsLeft = _zero;
                 IsToggleOn = false;
                 sessionEnded = true;
             }
