@@ -1,7 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
   <Import Project="$(SolutionDir)ToolingVersions.props" />
   <PropertyGroup>
     <RootNamespace>DevHome.Experiments</RootNamespace>
