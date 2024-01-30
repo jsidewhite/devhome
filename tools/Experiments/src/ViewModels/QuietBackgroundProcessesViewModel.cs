@@ -32,13 +32,11 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
         {
-            TimeLeft = "234432243243";
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
         else
         {
-            TimeLeft = "sdfsdfds";
             if (!_isElevated)
             {
                 TimeLeft = "This feature requires running as admin";
@@ -87,7 +85,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    TimeLeft = "Starting...";
                     var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Start();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
@@ -120,7 +117,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            _timeLeft = "Session error";
+            TimeLeft = "Session error";
             Log.Logger()?.ReportInfo("QuietBackgroundProcesses", $"IsActive = {ex.ToString()}");
             return false;
         }
@@ -134,7 +131,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            _timeLeft = "Session error";
+            TimeLeft = "Session error";
             Log.Logger()?.ReportInfo("QuietBackgroundProcesses", $"TimeLeftInSeconds = {ex.ToString()}");
             return 0;
         }
@@ -155,6 +152,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
         _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds);
         _dispatcherTimer.Start();
+
+        TimeLeft = _secondsLeft.ToString();
     }
 
     private void DispatcherTimer_Tick(object sender, object e)
