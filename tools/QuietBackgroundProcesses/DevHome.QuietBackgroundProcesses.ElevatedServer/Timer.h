@@ -69,7 +69,7 @@ private:
             }
 
             // Sleep for a short duration to avoid busy waiting
-            std::this_thread::sleep_for(std::chrono::seconds(1));//todo:jw make 30 seconds
+            std::this_thread::sleep_for(std::chrono::seconds(30));
         }
 
         // Do the callback

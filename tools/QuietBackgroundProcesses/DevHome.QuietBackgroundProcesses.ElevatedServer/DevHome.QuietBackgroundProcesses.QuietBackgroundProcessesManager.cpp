@@ -21,6 +21,8 @@
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h"
 #include "QuietBackgroundProcessesManager.g.cpp"
 
+constexpr auto QUIET_DURATION = std::chrono::hours(2);
+
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
 
@@ -36,7 +38,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         Timer::Discard(std::move(g_activeTimer));
 
         // Start timer
-        g_activeTimer.reset(new Timer(std::chrono::seconds(26), []()
+        g_activeTimer.reset(new Timer(QUIET_DURATION, []()
         {
             auto lock = std::scoped_lock(g_mutex);
             g_quietState.reset();
