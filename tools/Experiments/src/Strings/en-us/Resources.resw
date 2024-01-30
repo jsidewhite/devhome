@@ -122,10 +122,7 @@
     <comment>The name is Experiments</comment>
   </data>
   <data name="NavigationPane.Content" xml:space="preserve">
-    <value>Test Experiment page</value>
-    <comment>The name of the Experiments page</comment>
-  </data>
-  <data name="Qbm.Name" xml:space="preserve">
-    <value>qbm name</value>
+    <value>Quiet Background Processes</value>
+    <comment>The name of the Quiet Background Processes page</comment>
   </data>
 </root>
