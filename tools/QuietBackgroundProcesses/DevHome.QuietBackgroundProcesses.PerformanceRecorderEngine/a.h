@@ -156,4 +156,25 @@ const typename public_type_traits<PublicT>::internal_type& as_internal_type(cons
 }
 
 
-;
+__kernel_entry NTSTATUS
+    NTAPI
+    NtQuerySystemInformation(
+        IN SYSTEM_INFORMATION_CLASS ,
+        OUT PVOID ,
+        IN ULONG ,
+        OUT PULONG  )
+{
+    return STATUS_INFO_LENGTH_MISMATCH;
+}
+
+__kernel_entry NTSTATUS
+    NTAPI
+    NtQueryInformationThread(
+        IN HANDLE ,
+        IN THREADINFOCLASS ,
+        OUT PVOID ,
+        IN ULONG ,
+        OUT PULONG ReturnLength )
+{
+    return STATUS_INFO_LENGTH_MISMATCH;
+}
