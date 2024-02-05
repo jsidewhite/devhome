@@ -20,7 +20,7 @@
 #include <vector>
 
 // windows
-#include "windows.h"
+#include <windows.h>
 // other
 //#include <shlobj.h>
 //#include <shlobj_core.h>
@@ -34,6 +34,7 @@
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
 
+/*
 // other
 #include <shellapi.h>
 #include "windows.h"
@@ -47,7 +48,6 @@
 #include "shlguid.h"
 #include "propkey.h"
 #include "propkeyp.h"
-
 
 
 // wnf stuff
@@ -65,9 +65,11 @@
 
 // process stuff
 #include <tlhelp32.h>
+*/
 
 // mine
 //#include <..\inc\include_crm.h>
+#include <..\inc\include_crm.h>
 
 
 //
