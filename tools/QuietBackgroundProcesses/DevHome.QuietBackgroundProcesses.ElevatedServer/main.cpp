@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include <pch.h>
 
@@ -11,6 +11,7 @@
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
+#include <wil/com.h>
 #include <wil/result_macros.h>
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
@@ -18,28 +19,46 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
-#include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
+//#include "QuietBackgroundProcessesSessionManager.h"
+//#include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
-
-using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers;
-
-using unique_hstring_array_ptr = wil::unique_any_array_ptr<HSTRING, wil::cotaskmem_deleter, wil::function_deleter<decltype(::WindowsDeleteString), ::WindowsDeleteString>>;
+#include "Utility.h"
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
 
-bool IsTokenElevated(HANDLE token)
-{
-    auto mandatoryLabel = wil::get_token_information<TOKEN_MANDATORY_LABEL>(token);
-    LONG levelRid = static_cast<SID*>(mandatoryLabel->Label.Sid)->SubAuthority[0];
-    return levelRid == SECURITY_MANDATORY_HIGH_RID;
-}
 
-wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
+
+/// <summary>
+
+//ActivatableClass(QuietBackgroundProcessesSessionManager);
+//ActivatableClass(QuietBackgroundProcessesSession);
+
+//ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
+//ActivatableClassWithFactory(QuietBackgroundProcessesSession, QuietBackgroundProcessesSessionStatics);
+
+/// </summary>
+/// <typeparam name="FactoryT"></typeparam>
+/// <param name="out"></param>
+/// <returns></returns>
+
+template <typename FactoryT>
+static HRESULT make_factory(IActivationFactory** out) noexcept
+try
 {
-    Module<OutOfProc>::Create(objectsReleasedCallback);
+    auto factoryObject = winrt::make<FactoryT>();
+    auto factoryInterface = factoryObject.as<winrt::Windows::Foundation::IActivationFactory>();
+    *out = static_cast<IActivationFactory*>(winrt::detach_abi(factoryInterface));
+    return S_OK;
+}
+CATCH_RETURN()
+
+static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
+{
+    using namespace Microsoft::WRL::Wrappers;
+
+    Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create(objectsReleasedCallback);
 
     // Get module classes
     unique_hstring_array_ptr classes;
@@ -47,11 +66,11 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
 
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
-
-        auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesManager>();
-        manager.as<winrt::Windows::Foundation::IActivationFactory>();
-        *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
+        //auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
+        //Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetActivationFactory();
+        //RETURN_IF_FAILED(hr);
+        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
+        RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
         return S_OK;
     };
 
@@ -62,29 +81,84 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
     return registrationCookie;
 }
 
-//int _cdecl wmain(int argc, __in_ecount(argc) PWSTR wargv[])
-int CALLBACK wWinMain(_In_ HINSTANCE, _In_ HINSTANCE, _In_ LPWSTR wargv, _In_ int)
-try
+static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 {
-    constexpr WCHAR serverNamePrefix[] = L"-ServerName:";
-    if (_wcsnicmp(wargv, serverNamePrefix, wcslen(serverNamePrefix)) != 0)
+    constexpr wchar_t serverNamePrefix[] = L"-ServerName:";
+    if (_wcsnicmp(wargv.data(), serverNamePrefix, wcslen(serverNamePrefix)) != 0)
     {
-        return E_UNEXPECTED;
+        THROW_HR(E_UNEXPECTED);
+    }
+    return { wargv.data() + wcslen(serverNamePrefix) };
+}
+
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
+{
+    //while (!IsDebuggerPresent())
+    {
+        //Sleep(100);
+    };
+    //DebugBreak();
+    if (wargc < 1)
+    {
+        THROW_HR(E_INVALIDARG);
     }
 
-    if (!IsTokenElevated(GetCurrentProcessToken()))
+    // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
+    auto serverName = ParseServerNameArgument(wargv);
+
+    if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
     {
-        return E_ACCESSDENIED;
     }
+    else if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) == 0)
+    {
+        if (!IsTokenElevated(GetCurrentProcessToken()))
+        {
+            SelfElevate(wargv);
+            Sleep(30000);
+            return 0;
+        }
+        else
+        {
+            while (!IsDebuggerPresent())
+            {
+                Sleep(100);
+            };
+            DebugBreak();
+        }
+    }
+    else
+    {
+        THROW_HR(E_INVALIDARG);
+    }
+
+    
+    auto unique_rouninitialize_call = wil::RoInitialize();
+
+wil::com_ptr<IGlobalOptions> pGlobalOptions;
+    THROW_IF_FAILED(CoCreateInstance(CLSID_GlobalOptions, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pGlobalOptions)));
+//THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_UNMARSHALING_POLICY, COMGLB_UNMARSHALING_POLICY_STRONG)); // to opt-out pass COMGLB_UNMARSHALING_POLICY_NORMAL
+
+    // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated
+    // synchronously during the CCI from the manager process to reflect the fact that the manager has
+    // a broker interface proxy.
+    // COMGLB_ENABLE_AGILE_OOP_PROXIES – makes all COM proxies agile, avoid the need to marshal and use things like AgileRef. Simpler/faster code.
+    // COMGLB_ENABLE_SHARED_FTM. – avoids an allocation per agile object. By default FtmBase uses the free threaded marshaler and without this option a new unique one is allocated per object.
+//THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN | COMGLB_ENABLE_AGILE_OOP_PROXIES | COMGLB_ENABLE_SHARED_FTM));
+    
+    //THROW_IF_FAILED(pGlobalOptions->Set());
+    //THROW_IF_FAILED(pGlobalOptions->Set());
+    THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN));
+    THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_EXCEPTION_HANDLING, COMGLB_EXCEPTION_DONOT_HANDLE_ANY));
+
+
 
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     QuietState::TurnOff();
 
-    PCWSTR serverName = wargv + wcslen(serverNamePrefix);
-    auto unique_rouninitialize_call = wil::RoInitialize();
 
     // Register WinRT activatable classes
-    auto registrationCookie = RegisterWinrtClasses(serverName, [] {
+    auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
+        __debugbreak();
         // The last instance object of the module is released
         {
             auto lock = std::unique_lock<std::mutex>(g_finishMutex);
@@ -93,13 +167,16 @@ try
         g_finishCondition.notify_one();
     });
 
+
     // Wait for the module objects to be released and the timer threads to finish
     {
         auto lock = std::unique_lock<std::mutex>(g_finishMutex);
 
         // Wait for both events to complete
         g_finishCondition.wait(lock, [] {
-            return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesManager::IsActive();
+            // return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession::IsActive();
+            // todo:jw
+            return g_lastInstanceOfTheModuleObjectIsReleased;
         });
     }
 
@@ -108,4 +185,6 @@ try
 
     return 0;
 }
-CATCH_RETURN();
+CATCH_RETURN()
+
+// ActivatableClass(CentennialLifetimeManager)

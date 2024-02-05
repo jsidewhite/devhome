@@ -1,0 +1,27 @@
+// Copyright (c) Microsoft Corporation and Contributors
+// Licensed under the MIT license.
+
+import "inspectable.idl";
+import "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl";
+
+namespace DevHome.QuietBackgroundProcesses
+{
+    /*
+    [uuid(5a3545a0-0357-4a73-ac29-5d2918755cc2), version(1.0)]
+        interface IQuietBackgroundProcessesSessionManager : IInspectable
+    {
+        //static QuietBackgroundProcessesSession GetSingleton();
+
+        Int32 GetInt();
+    }
+    */
+
+    [default_interface]
+    runtimeclass QuietBackgroundProcessesSessionManager{
+        QuietBackgroundProcessesSessionManager();
+        static QuietBackgroundProcessesSession GetSession();
+        static QuietBackgroundProcessesSession TryGetSession();
+        Int32 GetInt();
+        //[default] interface IQuietBackgroundProcessesSessionManager;
+    }
+}

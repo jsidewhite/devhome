@@ -1,28 +1,77 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DevHome.Common;
 using DevHome.Common.Helpers;
+using DevHome.QuietBackgroundProcesses;
 using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
+using Windows.Win32;
 
 namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
     private readonly TimeSpan _zero;
-    private readonly bool _isElevated;
     private readonly bool _validOsVersion;
+#nullable enable
+    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
+#nullable disable
+
+    // [DllImport("ole32.dll", ExactSpelling = true, EntryPoint = "CoCreateInstance", PreserveSig = true)]
+    // private static extern Result CoCreateInstance([In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid, IntPtr pUnkOuter, CLSCTX dwClsContext, [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid, out IntPtr comObject);
+    /*
+    internal static void CreateComInstance(Guid clsid, CLSCTX clsctx, Guid riid, ComObject comObject)
+    {
+        IntPtr pointer;
+        var result = CoCreateInstance(clsid, IntPtr.Zero, clsctx, riid, out pointer);
+        result.CheckError();
+        comObject.NativePointer = pointer;
+    }
+    */
+
+    private bool IsQuietModeServerRunning()
+    {
+        try
+        {
+            // var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
+            var u = new DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager();
+            var x = u.GetInt();
+
+            // var x = u.GetInt();
+            // return x != 34;
+            return true;
+        }
+        catch
+        {
+        }
+
+        return false;
+    }
+
+    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
+    {
+        if (_session == null)
+        {
+            _session = QuietBackgroundProcessesSessionManager.GetSession();
+        }
+
+        return _session;
+    }
 
     public QuietBackgroundProcessesViewModel()
     {
+        // TimeLeft = "" + (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get());
         _zero = new TimeSpan(0, 0, 0);
 
         var osVersion = Environment.OSVersion;
@@ -35,10 +84,10 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             return;
         }
 
-        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+        if (!IsQuietModeServerRunning())
         {
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            _isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            // Make sure not to launch the elevated server (which shows UAC) until the user hits the Start button
+            return;
         }
 
         // Resume countdown if there's an existing quiet window
@@ -48,20 +97,14 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
-        else
-        {
-            if (!_isElevated)
-            {
-                TimeLeft = "This feature requires running as admin";
-            }
-        }
     }
 
     public bool IsToggleEnabled
     {
         get
         {
-            return _isElevated && _validOsVersion;
+            CpuUsageCode = "IsToggleEnabled: ";
+            return _validOsVersion;
         }
     }
 
@@ -87,7 +130,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Start();
+                    // Launch the server, which then elevates itself, showing a UAC prompt
+                    var timeLeftInSeconds = GetSession().Start();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
                 catch
@@ -99,7 +143,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Stop();
+                    GetSession().Stop();
                     TimeLeft = "Session ended";
                 }
                 catch
@@ -116,7 +160,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.IsActive;
+            return GetSession().IsActive;
         }
         catch (Exception ex)
         {
@@ -130,7 +174,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds;
+            return (int)GetSession().TimeLeftInSeconds;
         }
         catch (Exception ex)
         {
@@ -168,7 +212,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         if (_secondsLeft.CompareTo(_zero) <= 0)
         {
             // The window should be closed, but let's confirm with the server
-            if (GetIsActive())
+            if (GetSession().IsActive)
             {
                 // There has been some drift
                 _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
@@ -214,6 +258,19 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         if (handler != null)
         {
             handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    private string _cpuUsageCode = "werw";
+
+    public string CpuUsageCode
+    {
+        get => _cpuUsageCode;
+
+        set
+        {
+            _cpuUsageCode = value;
+            OnPropertyChanged(nameof(CpuUsageCode));
         }
     }
 }
