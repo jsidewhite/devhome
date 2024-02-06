@@ -43,7 +43,7 @@
 // other
 #include <shellapi.h>
 #include "windows.h"
-#include <ActivityCoordinator.h>
+// #include <ActivityCoordinator.h>
 #include "werapi.h"
 
 /*
