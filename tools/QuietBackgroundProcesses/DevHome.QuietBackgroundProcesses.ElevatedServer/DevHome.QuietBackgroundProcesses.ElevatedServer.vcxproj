@@ -120,6 +120,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -143,6 +144,7 @@
       <DependentUpon>DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="pre.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -155,6 +157,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine.vcxproj">
+      <Project>{af5a7fa0-e3e8-44c8-8830-31dd08f583e8}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

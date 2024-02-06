@@ -17,7 +17,9 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="1" VerticalAlignment="Top">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{x:Bind ViewModel.CpuUsageCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="Red" />
+                <!-- <TextBlock Text="SDFSDF"                                                                             FontSize="16" Foreground="LightBlue"  Margin="{StaticResource MediumLeftRightMargin}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" /> -->
+                <TextBlock Text="{Binding ViewModel.TimeLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="LightBlue"  Grid.Column="1" Margin="{StaticResource MediumLeftRightMargin}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                 <controls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
 
                     <!-- Header icon -->
@@ -69,6 +71,7 @@
                     </controls:SettingsExpander.Items>
 
                 </controls:SettingsExpander>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

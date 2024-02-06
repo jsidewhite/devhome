@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-double GetProcessCpuUsage(DWORD processId)
+extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId)
 {
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
 
@@ -35,7 +35,7 @@ double GetProcessCpuUsage(DWORD processId)
 
     CloseHandle(hProcess);
 
-    return cpuUsage;
+    return 5.1;
 }
 
 void MonitorCpuUsage()

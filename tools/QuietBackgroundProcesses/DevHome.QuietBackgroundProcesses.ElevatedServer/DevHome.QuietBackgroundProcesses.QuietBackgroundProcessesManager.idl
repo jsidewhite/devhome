@@ -9,5 +9,6 @@ namespace DevHome.QuietBackgroundProcesses
         static void Stop();
         static Boolean IsActive{ get; };
         static Int64 TimeLeftInSeconds{ get; };
+        static UInt64 GetProcessCpuUsage2(UInt32 processId);
     }
 }

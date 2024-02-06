@@ -61,6 +61,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         get
         {
+            CpuUsageCode = "IsToggleEnabled: ";
             return _isElevated && _validOsVersion;
         }
     }
@@ -163,6 +164,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         var sessionEnded = false;
 
+        CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.GetProcessCpuUsage2(18928);
+
         _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 
         if (_secondsLeft.CompareTo(_zero) <= 0)
@@ -214,6 +217,19 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         if (handler != null)
         {
             handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    private string _cpuUsageCode = "werw";
+
+    public string CpuUsageCode
+    {
+        get => _cpuUsageCode;
+
+        set
+        {
+            _cpuUsageCode = value;
+            OnPropertyChanged(nameof(CpuUsageCode));
         }
     }
 }
