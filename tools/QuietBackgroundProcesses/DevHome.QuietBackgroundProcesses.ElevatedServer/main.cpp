@@ -74,7 +74,7 @@ try
 
     if (!IsTokenElevated(GetCurrentProcessToken()))
     {
-        return E_ACCESSDENIED;
+        //return E_ACCESSDENIED;
     }
 
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously

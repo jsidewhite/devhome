@@ -83,7 +83,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
     uint64_t QuietBackgroundProcessesManager::GetProcessCpuUsage2(uint32_t processId)
     {
         auto x = ::GetProcessCpuUsage(processId);
-        //return *reinterpret_cast<uint64_t*>(&x);
-        return 6255;
+        return *reinterpret_cast<uint64_t*>(&x);
+        //return 6255;
     }
 }

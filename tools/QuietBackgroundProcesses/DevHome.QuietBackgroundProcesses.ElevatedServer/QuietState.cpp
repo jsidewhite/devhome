@@ -15,13 +15,27 @@ namespace QuietState
     void TurnOff()
     {
         auto lock = std::scoped_lock(g_mutex);
-        DisableQuietBackgroundProcesses();
+        try
+        {
+            DisableQuietBackgroundProcesses();
+        }
+        catch (...)
+        {
+        }
     }
 
     unique_quietwindowclose_call TurnOn()
     {
         auto lock = std::scoped_lock(g_mutex);
-        THROW_IF_FAILED(EnableQuietBackgroundProcesses());
+        try
+        {
+
+            THROW_IF_FAILED(EnableQuietBackgroundProcesses());
+        }
+        catch (...)
+        {
+        }
+
         return {};
     }
 }

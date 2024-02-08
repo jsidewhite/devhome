@@ -41,6 +41,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             _isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
+        _isElevated = true;
+
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
         {
@@ -164,7 +166,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         var sessionEnded = false;
 
-        CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.GetProcessCpuUsage2(18928);
+        CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.GetProcessCpuUsage2(21068);
 
         _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 

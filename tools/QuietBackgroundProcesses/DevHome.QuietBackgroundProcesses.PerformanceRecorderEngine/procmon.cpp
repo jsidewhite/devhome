@@ -1,12 +1,22 @@
 #include "pch.h"
 
 #include <windows.h>
+#include <wil/token_helpers.h>
 #include <psapi.h>
 #include <iostream>
 #include <string>
 
+BOOL SetPrivilege(
+    HANDLE hToken, // access token handle
+    LPCTSTR lpszPrivilege, // name of privilege to enable/disable
+    BOOL bEnablePrivilege // to enable or disable privilege
+);
+
 extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId)
 {
+    auto token = wil::open_current_access_token(TOKEN_ADJUST_PRIVILEGES);
+    SetPrivilege(token.get(), L"SeDebugPrivilege", TRUE);
+
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
 
     if (hProcess == NULL)
@@ -35,7 +45,7 @@ extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId)
 
     CloseHandle(hProcess);
 
-    return 5.1;
+    return cpuUsage;
 }
 
 void MonitorCpuUsage()
