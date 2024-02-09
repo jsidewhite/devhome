@@ -150,6 +150,7 @@
   <ItemGroup>
     <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl" />
     <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl" />
+    <Midl Include="DevHomeQuietBackgroundProcessesElevatedServerRunningProbe.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

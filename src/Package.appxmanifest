@@ -12,8 +12,21 @@
       <OutOfProcessServer ServerName="DevHome.QuietBackgroundProcesses.ElevatedServer" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>DevHome.QuietBackgroundProcesses.ElevatedServer.exe</Path>
         <Instancing>singleInstance</Instancing>
-        <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager" />
+        <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession" />
       </OutOfProcessServer>
+    </Extension>
+        <com:Extension Category="windows.comServer">
+          <!-- Note: the schema restrictions on LaunchAndActivationPermission require:
+               1. ACEs to match \([A-Z0-9\-;]*\)), which in turn doesn't allow rights to be specified like 0xb,
+                  only 0XB, or the more readable 11 used here
+               2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
+                  are not relevant in COM security descriptors so we use P=protected -->
+          <com:ComServer>
+            <com:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe" LaunchAndActivationPermission="O:BAG:BAD:(A;;CCSW;;;BU)">
+              <com:Class Id="33a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
     </Extension>
   </Extensions>
   <Identity Name="Microsoft.Windows.DevHome.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />

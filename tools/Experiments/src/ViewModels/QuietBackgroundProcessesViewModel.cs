@@ -90,8 +90,9 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Start();
-                    StartCountdownTimer(timeLeftInSeconds);
+                    // var x = new DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get;
+                    // var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Start();
+                    // StartCountdownTimer(timeLeftInSeconds);
                 }
                 catch
                 {
@@ -102,7 +103,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Stop();
+                    // DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Stop();
                     TimeLeft = "Session ended";
                 }
                 catch
@@ -119,7 +120,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.IsActive;
+            // return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.IsActive;
+            return true;
         }
         catch (Exception ex)
         {
@@ -133,7 +135,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.TimeLeftInSeconds;
+            // return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.TimeLeftInSeconds;
+            return 0;
         }
         catch (Exception ex)
         {
@@ -166,8 +169,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         var sessionEnded = false;
 
-        CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.GetProcessCpuUsage(21068);
-
+        // CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.GetProcessCpuUsage(21068);
         _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 
         if (_secondsLeft.CompareTo(_zero) <= 0)
