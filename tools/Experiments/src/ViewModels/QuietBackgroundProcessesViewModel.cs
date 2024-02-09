@@ -6,13 +6,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DevHome.Common;
 using DevHome.Common.Helpers;
 using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
+using Windows.Win32;
 
 namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
@@ -20,6 +24,26 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     private readonly TimeSpan _zero;
     private readonly bool _isElevated;
     private readonly bool _validOsVersion;
+
+    // [DllImport("ole32.dll", ExactSpelling = true, EntryPoint = "CoCreateInstance", PreserveSig = true)]
+    // private static extern Result CoCreateInstance([In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid, IntPtr pUnkOuter, CLSCTX dwClsContext, [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid, out IntPtr comObject);
+    /*
+    internal static void CreateComInstance(Guid clsid, CLSCTX clsctx, Guid riid, ComObject comObject)
+    {
+        IntPtr pointer;
+        var result = CoCreateInstance(clsid, IntPtr.Zero, clsctx, riid, out pointer);
+        result.CheckError();
+        comObject.NativePointer = pointer;
+    }
+    */
+
+    [DllImport("ole32.Dll")]
+    private static extern int CoCreateInstance(
+        ref Guid clsid,
+        [MarshalAs(UnmanagedType.IUnknown)] object inner,
+        int context,
+        ref Guid uuid,
+        [MarshalAs(UnmanagedType.IDispatch)] out object rReturnedComObject);
 
     public QuietBackgroundProcessesViewModel()
     {
@@ -29,6 +53,29 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         _validOsVersion = osVersion.Version.Build >= 26024;
         _validOsVersion = true;
 
+        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+        {
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            _isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        unsafe
+        {
+            Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe = new Guid("33a0a1a0-b89c-44af-ba17-c828cea010c2");
+            Guid the_IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
+            const int CLSCTX_LOCAL_SERVER = 4;
+
+            int hr = 0;
+            object pIShellWindows;
+            hr = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pIShellWindows);
+            if (hr != 0)
+            {
+                // return false;
+            }
+        }
+
+        return;
+         /*
         if (!_validOsVersion)
         {
             TimeLeft = "This feature requires OS version 10.0.26024.0+";
@@ -57,6 +104,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                 TimeLeft = "This feature requires running as admin";
             }
         }
+         */
     }
 
     public bool IsToggleEnabled
