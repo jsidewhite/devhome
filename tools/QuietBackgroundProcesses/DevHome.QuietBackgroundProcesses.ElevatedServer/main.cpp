@@ -19,7 +19,9 @@
 #include <roregistrationapi.h>
 #include <shellapi.h>
 
-#include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
+// #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
+#include "QuietBackgroundProcessesSession.h"
+#include "QuietBackgroundProcessesSessionManager.h"
 #include "QuietState.h"
 
 using namespace Microsoft::WRL;
@@ -48,9 +50,9 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
 
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager", true) != 0);
+        RETURN_HR_IF(E_UNEXPECTED, wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager", true) != 0);
 
-        auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesManager>();
+        auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSessionManager>();
         manager.as<winrt::Windows::Foundation::IActivationFactory>();
         *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
         return S_OK;
@@ -140,7 +142,7 @@ try
 
         // Wait for both events to complete
         g_finishCondition.wait(lock, [] {
-            return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesManager::IsActive();
+            return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession::IsActive();
         });
     }
 

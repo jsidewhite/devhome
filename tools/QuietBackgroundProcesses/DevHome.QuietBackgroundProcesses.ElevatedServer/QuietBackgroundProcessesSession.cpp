@@ -18,8 +18,10 @@
 
 #include "Timer.h"
 #include "QuietState.h"
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h"
-#include "QuietBackgroundProcessesManager.g.cpp"
+
+// Generated files
+#include "QuietBackgroundProcessesSession.h"
+#include "QuietBackgroundProcessesSession.g.cpp"
 
 constexpr auto QUIET_DURATION = std::chrono::hours(2);
 
@@ -28,11 +30,11 @@ std::unique_ptr<Timer> g_activeTimer;
 
 extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId);
 
-QuietState::unique_quietwindowclose_call g_quietState{false};
+QuietState::unique_quietwindowclose_call g_quietState{ false };
 
 namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
-    int64_t QuietBackgroundProcessesManager::Start()
+    int64_t QuietBackgroundProcessesSession::Start()
     {
         auto lock = std::scoped_lock(g_mutex);
 
@@ -40,8 +42,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         Timer::Discard(std::move(g_activeTimer));
 
         // Start timer
-        g_activeTimer.reset(new Timer(QUIET_DURATION, []()
-        {
+        g_activeTimer.reset(new Timer(QUIET_DURATION, []() {
             auto lock = std::scoped_lock(g_mutex);
             g_quietState.reset();
         }));
@@ -53,7 +54,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         return g_activeTimer->TimeLeftInSeconds();
     }
 
-    void QuietBackgroundProcessesManager::Stop()
+    void QuietBackgroundProcessesSession::Stop()
     {
         auto lock = std::scoped_lock(g_mutex);
 
@@ -64,13 +65,13 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         Timer::Discard(std::move(g_activeTimer));
     }
 
-    bool QuietBackgroundProcessesManager::IsActive()
+    bool QuietBackgroundProcessesSession::IsActive()
     {
         auto lock = std::scoped_lock(g_mutex);
         return (bool)g_quietState;
     }
 
-    int64_t QuietBackgroundProcessesManager::TimeLeftInSeconds()
+    int64_t QuietBackgroundProcessesSession::TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(g_mutex);
         if (!g_quietState || !g_activeTimer)
@@ -80,7 +81,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         return g_activeTimer->TimeLeftInSeconds();
     }
 
-    uint64_t QuietBackgroundProcessesManager::GetProcessCpuUsage2(uint32_t processId)
+    uint64_t QuietBackgroundProcessesSession::GetProcessCpuUsage(uint32_t processId)
     {
         auto x = ::GetProcessCpuUsage(processId);
         return *reinterpret_cast<uint64_t*>(&x);

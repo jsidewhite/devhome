@@ -130,9 +130,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h">
-      <DependentUpon>DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.idl</DependentUpon>
-    </ClInclude>
+    <ClInclude Include="QuietBackgroundProcessesSession.h" />
+    <ClInclude Include="QuietBackgroundProcessesSessionManager.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
@@ -141,16 +140,16 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.cpp">
-      <DependentUpon>DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.idl</DependentUpon>
-    </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="pre.cpp" />
+    <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
+    <ClCompile Include="QuietBackgroundProcessesSessionManager.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.idl" />
+    <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl" />
+    <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

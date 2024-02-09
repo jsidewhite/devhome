@@ -1,0 +1,20 @@
+// Copyright (c) Microsoft Corporation and Contributors
+// Licensed under the MIT license.
+
+namespace DevHome.QuietBackgroundProcesses
+{
+        [default_interface] runtimeclass QuietBackgroundProcessesSession
+    {
+        static Int64 Start();
+        static void Stop();
+        static Boolean IsActive
+        {
+            get;
+        };
+        static Int64 TimeLeftInSeconds
+        {
+            get;
+        };
+        static UInt64 GetProcessCpuUsage(UInt32 processId);
+    }
+}
