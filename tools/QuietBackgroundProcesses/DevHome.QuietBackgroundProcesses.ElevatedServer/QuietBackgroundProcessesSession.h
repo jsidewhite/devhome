@@ -11,11 +11,12 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
     {
         QuietBackgroundProcessesSession() = default;
 
-        static int64_t Start();
-        static void Stop();
-        static bool IsActive();
-        static int64_t TimeLeftInSeconds();
-        static uint64_t GetProcessCpuUsage(uint32_t processId);
+        static winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession GetSingleton();
+        int64_t Start();
+        void Stop();
+        bool IsActive();
+        int64_t TimeLeftInSeconds();
+        uint64_t GetProcessCpuUsage(uint32_t processId);
     };
 }
 namespace winrt::DevHome::QuietBackgroundProcesses::factory_implementation

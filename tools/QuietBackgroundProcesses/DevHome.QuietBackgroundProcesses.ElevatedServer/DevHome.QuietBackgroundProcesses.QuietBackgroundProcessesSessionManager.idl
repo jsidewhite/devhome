@@ -5,7 +5,8 @@ import "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
-    [default_interface] runtimeclass QuietBackgroundProcessesSessionManager {
+    [default_interface] runtimeclass QuietBackgroundProcessesSessionManager
+    {
         static QuietBackgroundProcessesSession GetInstance();
         static QuietBackgroundProcessesSession CreateInstance();
     }

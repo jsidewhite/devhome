@@ -19,7 +19,7 @@
 #include <roregistrationapi.h>
 #include <shellapi.h>
 
-// #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.h>
+// #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h>
 #include "QuietBackgroundProcessesSession.h"
 #include "QuietBackgroundProcessesSessionManager.h"
 #include "QuietState.h"
@@ -142,7 +142,9 @@ try
 
         // Wait for both events to complete
         g_finishCondition.wait(lock, [] {
-            return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession::IsActive();
+            // return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession::IsActive();
+            // todo:jw
+            return g_lastInstanceOfTheModuleObjectIsReleased;
         });
     }
 

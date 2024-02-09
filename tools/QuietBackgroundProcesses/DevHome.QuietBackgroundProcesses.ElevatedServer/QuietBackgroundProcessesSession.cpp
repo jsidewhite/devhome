@@ -19,7 +19,7 @@
 #include "Timer.h"
 #include "QuietState.h"
 
-// Generated files
+// Generated Files
 #include "QuietBackgroundProcessesSession.h"
 #include "QuietBackgroundProcessesSession.g.cpp"
 
@@ -34,6 +34,11 @@ QuietState::unique_quietwindowclose_call g_quietState{ false };
 
 namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
+    winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession QuietBackgroundProcessesSession::GetSingleton()
+    {
+        throw hresult_not_implemented();
+    }
+
     int64_t QuietBackgroundProcessesSession::Start()
     {
         auto lock = std::scoped_lock(g_mutex);

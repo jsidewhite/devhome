@@ -3,18 +3,20 @@
 
 namespace DevHome.QuietBackgroundProcesses
 {
-        [default_interface] runtimeclass QuietBackgroundProcessesSession
+    [default_interface] runtimeclass QuietBackgroundProcessesSession
     {
-        static Int64 Start();
-        static void Stop();
-        static Boolean IsActive
+        static QuietBackgroundProcessesSession GetSingleton();
+
+        Int64 Start();
+        void Stop();
+        Boolean IsActive
         {
             get;
         };
-        static Int64 TimeLeftInSeconds
+        Int64 TimeLeftInSeconds
         {
             get;
         };
-        static UInt64 GetProcessCpuUsage(UInt32 processId);
+        UInt64 GetProcessCpuUsage(UInt32 processId);
     }
 }

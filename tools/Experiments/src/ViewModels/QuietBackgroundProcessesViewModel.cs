@@ -90,7 +90,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Start();
+                    var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Start();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
                 catch
@@ -102,7 +102,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.Stop();
+                    DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Stop();
                     TimeLeft = "Session ended";
                 }
                 catch
@@ -119,7 +119,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.IsActive;
+            return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.IsActive;
         }
         catch (Exception ex)
         {
@@ -133,7 +133,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.TimeLeftInSeconds;
+            return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.TimeLeftInSeconds;
         }
         catch (Exception ex)
         {
@@ -166,7 +166,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         var sessionEnded = false;
 
-        CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesManager.GetProcessCpuUsage2(21068);
+        CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.GetProcessCpuUsage(21068);
 
         _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 
