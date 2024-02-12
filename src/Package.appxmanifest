@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" IgnorableNamespaces="uap uap3 uap5 rescap genTemplate desktop6">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" xmlns:com4="http://schemas.microsoft.com/appx/manifest/com/windows10/4" IgnorableNamespaces="uap uap3 uap5 rescap genTemplate desktop6 com4">
   <Extensions>
     <Extension Category="windows.activatableClass.proxyStub">
       <ProxyStub ClassId="00000355-0000-0000-C000-000000000046">
@@ -8,6 +8,7 @@
         <Interface Name="Microsoft.Windows.Widgets.Providers.IWidgetProvider2" InterfaceId="38C3A963-DD93-479D-9276-04BF84EE1816" />
       </ProxyStub>
     </Extension>
+
     <Extension Category="windows.activatableClass.outOfProcessServer">
       <OutOfProcessServer ServerName="DevHome.QuietBackgroundProcesses.ElevatedServer" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>DevHome.QuietBackgroundProcesses.ElevatedServer.exe</Path>
@@ -15,19 +16,7 @@
         <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession" />
       </OutOfProcessServer>
     </Extension>
-        <com:Extension Category="windows.comServer">
-          <!-- Note: the schema restrictions on LaunchAndActivationPermission require:
-               1. ACEs to match \([A-Z0-9\-;]*\)), which in turn doesn't allow rights to be specified like 0xb,
-                  only 0XB, or the more readable 11 used here
-               2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
-                  are not relevant in COM security descriptors so we use P=protected -->
-          <com:ComServer>
-            <com:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe" LaunchAndActivationPermission="O:BAG:BAD:(A;;CCSW;;;BU)">
-              <com:Class Id="33a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe"/>
-            </com:ExeServer>
-          </com:ComServer>
-        </com:Extension>
-    </Extension>
+
   </Extensions>
   <Identity Name="Microsoft.Windows.DevHome.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
@@ -46,6 +35,8 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
+
+    
       <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Preview\MedTile.png" Square44x44Logo="Assets\Preview\AppList.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Preview\WideTile.png" />
         <uap:SplashScreen Image="Assets\Preview\SplashScreen.png" />
@@ -260,6 +251,34 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
+
+
+    <com4:Extension Category="windows.comServer">
+      <!-- Note: the schema restrictions on LaunchAndActivationPermission require:
+            1. ACEs to match \([A-Z0-9\-;]*\)), which in turn doesn't allow rights to be specified like 0xb,
+              only 0XB, or the more readable 11 used here
+            2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
+              are not relevant in COM security descriptors so we use P=protected -->
+      <com4:ComServer>
+        <com4:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe" LaunchAndActivationPermission="O:BAG:BAD:(A;;CCSW;;;BU)">
+          <com4:Class Id="33a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe"/>
+        </com4:ExeServer>
+      </com4:ComServer>
+    </com4:Extension>
+
+    <com4:Extension Category="windows.comServer">
+      <!-- Note: the schema restrictions on LaunchAndActivationPermission require:
+            1. ACEs to match \([A-Z0-9\-;]*\)), which in turn doesn't allow rights to be specified like 0xb,
+              only 0XB, or the more readable 11 used here
+            2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
+              are not relevant in COM security descriptors so we use P=protected -->
+      <com4:ComServer>
+        <com4:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe1" LaunchAndActivationPermission="O:BAG:BAD:(A;;CCDCSW;;;BU)">
+          <com4:Class Id="13a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe1"/>
+        </com4:ExeServer>
+      </com4:ComServer>
+    </com4:Extension>
+    
       </Extensions>
     </Application>
   </Applications>

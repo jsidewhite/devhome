@@ -62,6 +62,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         unsafe
         {
             Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe = new Guid("33a0a1a0-b89c-44af-ba17-c828cea010c2");
+            Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe1 = new Guid("13a0a1a0-b89c-44af-ba17-c828cea010c2");
             Guid the_IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
             const int CLSCTX_LOCAL_SERVER = 4;
 
@@ -69,6 +70,14 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             object pIShellWindows;
             hr = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pIShellWindows);
             if (hr != 0)
+            {
+                // return false;
+            }
+
+            int hr1 = 0;
+            object pIShellWindows1;
+            hr1 = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe1, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pIShellWindows1);
+            if (hr1 != 0)
             {
                 // return false;
             }
