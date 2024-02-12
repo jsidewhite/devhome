@@ -265,21 +265,8 @@
         </com4:ExeServer>
       </com4:ComServer>
     </com4:Extension>
+  </Extensions>
 
-    <com4:Extension Category="windows.comServer">
-      <!-- Note: the schema restrictions on LaunchAndActivationPermission require:
-            1. ACEs to match \([A-Z0-9\-;]*\)), which in turn doesn't allow rights to be specified like 0xb,
-              only 0XB, or the more readable 11 used here
-            2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
-              are not relevant in COM security descriptors so we use P=protected -->
-      <com4:ComServer>
-        <com4:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe1" LaunchAndActivationPermission="O:BAG:BAD:(A;;CCDCSW;;;BU)">
-          <com4:Class Id="13a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe1"/>
-        </com4:ExeServer>
-      </com4:ComServer>
-    </com4:Extension>
-    
-      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

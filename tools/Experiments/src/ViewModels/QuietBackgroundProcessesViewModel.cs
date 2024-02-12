@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DevHome.Common;
 using DevHome.Common.Helpers;
+using DevHome.QuietBackgroundProcesses;
 using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
 using Windows.Win32;
@@ -22,8 +23,10 @@ namespace DevHome.Experiments.ViewModels;
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
     private readonly TimeSpan _zero;
-    private readonly bool _isElevated;
     private readonly bool _validOsVersion;
+#nullable enable
+    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
+#nullable disable
 
     // [DllImport("ole32.dll", ExactSpelling = true, EntryPoint = "CoCreateInstance", PreserveSig = true)]
     // private static extern Result CoCreateInstance([In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid, IntPtr pUnkOuter, CLSCTX dwClsContext, [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid, out IntPtr comObject);
@@ -36,6 +39,43 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         comObject.NativePointer = pointer;
     }
     */
+
+    private bool IsQuietModeServerRunning()
+    {
+        unsafe
+        {
+            Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe = new Guid("33a0a1a0-b89c-44af-ba17-c828cea010c2");
+            Guid the_IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
+            const int CLSCTX_LOCAL_SERVER = 4;
+
+            const int E_ACCESSDENIED = -2147024891;
+            const int CO_E_SERVER_EXEC_FAILURE = -2146959355;
+
+            int hresult = 0;
+            object pComServer;
+            hresult = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pComServer);
+            if (hresult == E_ACCESSDENIED)
+            {
+                return false;
+            }
+            else if (hresult == CO_E_SERVER_EXEC_FAILURE)
+            {
+                return true;
+            }
+        }
+
+        throw new System.BadImageFormatException();
+    }
+
+    private QuietBackgroundProcessesSession GetSession()
+    {
+        if (_session == null)
+        {
+            _session = QuietBackgroundProcessesSession.GetSingleton();
+        }
+
+        return _session;
+    }
 
     [DllImport("ole32.Dll")]
     private static extern int CoCreateInstance(
@@ -53,51 +93,17 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         _validOsVersion = osVersion.Version.Build >= 26024;
         _validOsVersion = true;
 
-        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
-        {
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            _isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-
-        unsafe
-        {
-            Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe = new Guid("33a0a1a0-b89c-44af-ba17-c828cea010c2");
-            Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe1 = new Guid("13a0a1a0-b89c-44af-ba17-c828cea010c2");
-            Guid the_IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
-            const int CLSCTX_LOCAL_SERVER = 4;
-
-            int hr = 0;
-            object pIShellWindows;
-            hr = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pIShellWindows);
-            if (hr != 0)
-            {
-                // return false;
-            }
-
-            int hr1 = 0;
-            object pIShellWindows1;
-            hr1 = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe1, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pIShellWindows1);
-            if (hr1 != 0)
-            {
-                // return false;
-            }
-        }
-
-        return;
-         /*
         if (!_validOsVersion)
         {
             TimeLeft = "This feature requires OS version 10.0.26024.0+";
             return;
         }
 
-        using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+        if (!IsQuietModeServerRunning())
         {
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            _isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            // Make sure not to launch the elevated server (which shows UAC) until the user hits the Start button
+            return;
         }
-
-        _isElevated = true;
 
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
@@ -106,14 +112,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
-        else
-        {
-            if (!_isElevated)
-            {
-                TimeLeft = "This feature requires running as admin";
-            }
-        }
-         */
     }
 
     public bool IsToggleEnabled
@@ -121,7 +119,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         get
         {
             CpuUsageCode = "IsToggleEnabled: ";
-            return _isElevated && _validOsVersion;
+            return _validOsVersion;
         }
     }
 
@@ -147,9 +145,9 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    // var x = new DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get;
-                    // var timeLeftInSeconds = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Start();
-                    // StartCountdownTimer(timeLeftInSeconds);
+                    // Launch the server, which then elevates itself, showing a UAC prompt
+                    var timeLeftInSeconds = GetSession().Start();
+                    StartCountdownTimer(timeLeftInSeconds);
                 }
                 catch
                 {
@@ -160,7 +158,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    // DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.Stop();
+                    GetSession().Stop();
                     TimeLeft = "Session ended";
                 }
                 catch
@@ -177,8 +175,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            // return DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.IsActive;
-            return true;
+            return GetSession().IsActive;
         }
         catch (Exception ex)
         {
@@ -192,8 +189,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            // return (int)DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.TimeLeftInSeconds;
-            return 0;
+            return (int)GetSession().TimeLeftInSeconds;
         }
         catch (Exception ex)
         {
@@ -226,13 +222,13 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         var sessionEnded = false;
 
-        // CpuUsageCode = "18928: " + DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.GetProcessCpuUsage(21068);
+        CpuUsageCode = "18928: " + GetSession().GetProcessCpuUsage(21068);
         _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 
         if (_secondsLeft.CompareTo(_zero) <= 0)
         {
             // The window should be closed, but let's confirm with the server
-            if (GetIsActive())
+            if (GetSession().IsActive)
             {
                 // There has been some drift
                 _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());

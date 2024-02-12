@@ -36,7 +36,10 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
     winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession QuietBackgroundProcessesSession::GetSingleton()
     {
-        throw hresult_not_implemented();
+        //static winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession s_instance{};
+        //return s_instance;
+        //return nullptr;
+        return winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
     }
 
     int64_t QuietBackgroundProcessesSession::Start()
