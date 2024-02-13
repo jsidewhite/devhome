@@ -10,6 +10,14 @@
     </Extension>
 
     <Extension Category="windows.activatableClass.outOfProcessServer">
+      <OutOfProcessServer ServerName="DevHome.QuietBackgroundProcesses.Server" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
+        <Path>DevHome.QuietBackgroundProcesses.Server.exe</Path>
+        <Instancing>singleInstance</Instancing>
+        <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager" />
+      </OutOfProcessServer>
+    </Extension>
+
+    <Extension Category="windows.activatableClass.outOfProcessServer">
       <OutOfProcessServer ServerName="DevHome.QuietBackgroundProcesses.ElevatedServer" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>DevHome.QuietBackgroundProcesses.ElevatedServer.exe</Path>
         <Instancing>singleInstance</Instancing>

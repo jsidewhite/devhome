@@ -60,13 +60,28 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
 
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession", true) == 0)
+        //if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
         {
-            auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>();
-            manager.as<winrt::Windows::Foundation::IActivationFactory>();
-            *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
-            return S_OK;
+            if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager", true) == 0)
+            {
+                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>();
+                manager.as<winrt::Windows::Foundation::IActivationFactory>();
+                *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
+                return S_OK;
+            }
         }
+
+        //if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) == 0)
+        {
+            if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession", true) == 0)
+            {
+                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>();
+                manager.as<winrt::Windows::Foundation::IActivationFactory>();
+                *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
+                return S_OK;
+            }
+        }
+
         
         RETURN_HR(E_UNEXPECTED);
     };
@@ -135,15 +150,21 @@ try
         */
 
 
-        SelfElevate(wargv);
+        //SelfElevate(wargv);
         //return E_ACCESSDENIED;
-        Sleep(60000);
-        return 0;
+        // Sleep(600000);
+        // return 0;
     }
     else
     {
 
     }
+
+        while (!IsDebuggerPresent())
+    {
+        Sleep(100);
+    };
+    DebugBreak();
 
     auto serverName = std::wstring{} + (wargv + wcslen(serverNamePrefix));
 

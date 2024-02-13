@@ -22,6 +22,7 @@
     <file src="..\..\DevHome.QuietBackgroundProcesses.ElevatedServer\x64\Release\Merged\DevHome.QuietBackgroundProcesses.winmd" target="lib\net46\DevHome.DevHome.QuietBackgroundProcesses.winmd" />
     
     <!-- Runtime -->
+    <file src="..\..\..\..\src\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win10-x64\native\DevHome.QuietBackgroundProcesses.Server.exe" />
     <file src="..\..\..\..\src\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win10-x64\native\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" />
   </files>
 </package>

@@ -42,6 +42,19 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private bool IsQuietModeServerRunning()
     {
+        try
+        {
+            var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
+            return x != null;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private bool IsQuietModeServerRunning22()
+    {
         unsafe
         {
             Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe = new Guid("33a0a1a0-b89c-44af-ba17-c828cea010c2");
@@ -103,7 +116,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         if (!IsQuietModeServerRunning())
         {
             // Make sure not to launch the elevated server (which shows UAC) until the user hits the Start button
-            return;
+            // return;
         }
 
         // Resume countdown if there's an existing quiet window

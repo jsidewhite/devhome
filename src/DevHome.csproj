@@ -132,6 +132,9 @@
               <PackagePath>$(ModulePath)Modules</PackagePath>
             </AdditionalPackageFile>
             <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
+              <PackagePath>.\DevHome.QuietBackgroundProcesses.Server.exe</PackagePath>
+            </AdditionalPackageFile>
+            <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
               <PackagePath>.\</PackagePath>
             </AdditionalPackageFile>
             <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine.dll">

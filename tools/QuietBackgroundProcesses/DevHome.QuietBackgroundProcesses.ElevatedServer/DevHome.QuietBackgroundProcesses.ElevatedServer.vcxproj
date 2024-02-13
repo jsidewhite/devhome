@@ -132,6 +132,7 @@
     <ClInclude Include="classfactory.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietBackgroundProcessesSession.h" />
+    <ClInclude Include="QuietBackgroundProcessesSessionManager.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="simpleclass.h" />
     <ClInclude Include="Timer.h" />
@@ -144,11 +145,13 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="pre.cpp" />
     <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
+    <ClCompile Include="QuietBackgroundProcessesSessionManager.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl" />
+    <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
