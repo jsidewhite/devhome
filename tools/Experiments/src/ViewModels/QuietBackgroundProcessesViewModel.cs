@@ -119,6 +119,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             // return;
         }
 
+        return;
+        /*
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
         {
@@ -126,6 +128,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
+        */
     }
 
     public bool IsToggleEnabled

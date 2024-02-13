@@ -131,8 +131,8 @@
             <AdditionalPackageFile Include="$(TargetDir)\Modules\**\*.*">
               <PackagePath>$(ModulePath)Modules</PackagePath>
             </AdditionalPackageFile>
-            <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
-              <PackagePath>.\DevHome.QuietBackgroundProcesses.Server.exe</PackagePath>
+            <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.Server.exe">
+              <PackagePath>.\</PackagePath>
             </AdditionalPackageFile>
             <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
               <PackagePath>.\</PackagePath>

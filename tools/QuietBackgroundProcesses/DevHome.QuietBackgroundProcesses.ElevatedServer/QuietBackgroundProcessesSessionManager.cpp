@@ -19,6 +19,7 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
             //static auto x = winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
             //return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
         }
-        return nullptr;
+        //return nullptr;
+        return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
     }
 }
