@@ -14,6 +14,7 @@
         <Path>DevHome.QuietBackgroundProcesses.Server.exe</Path>
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager" />
+        <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesThingy" />
       </OutOfProcessServer>
     </Extension>
 

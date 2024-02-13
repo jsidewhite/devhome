@@ -22,4 +22,15 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         //return nullptr;
         return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
     }
+    winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesThingy QuietBackgroundProcessesSessionManager::TryGetThingy()
+    {
+        return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesThingy();
+        //return winrt::make<winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesThingy>();
+    }
+
+    
+    int32_t QuietBackgroundProcessesSessionManager::GetInt()
+    {
+        return 823;
+    }
 }

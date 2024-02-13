@@ -5,8 +5,18 @@ import "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
-    [default_interface] runtimeclass QuietBackgroundProcessesSessionManager {
+
+    [default_interface] runtimeclass QuietBackgroundProcessesThingy {
+        QuietBackgroundProcessesThingy();
+        Int32 Thingy();
+    }
+
+        [default_interface] runtimeclass QuietBackgroundProcessesSessionManager
+    {
         static QuietBackgroundProcessesSession GetSession();
         static QuietBackgroundProcessesSession TryGetSession();
+        static QuietBackgroundProcessesThingy TryGetThingy();
+
+        static Int32 GetInt();
     }
 }

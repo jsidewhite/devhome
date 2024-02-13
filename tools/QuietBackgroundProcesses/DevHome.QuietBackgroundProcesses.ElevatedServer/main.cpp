@@ -29,7 +29,9 @@ DEFINE_GUID(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, 0x3
 #include <shellapi.h>
 
 // #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h>
+#include "QuietBackgroundProcessesSessionManager.h"
 #include "QuietBackgroundProcessesSession.h"
+#include "QuietBackgroundProcessesThingy.h"
 #include "QuietState.h"
 
 #include "classfactory.h"
@@ -64,7 +66,17 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
         {
             if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager", true) == 0)
             {
-                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>();
+                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSessionManager>();
+                manager.as<winrt::Windows::Foundation::IActivationFactory>();
+                *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
+                return S_OK;
+            }
+        }
+
+        {
+            if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesThingy", true) == 0)
+            {
+                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesThingy>();
                 manager.as<winrt::Windows::Foundation::IActivationFactory>();
                 *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
                 return S_OK;

@@ -49,8 +49,27 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
         catch
         {
-            return false;
         }
+
+        try
+        {
+            var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetThingy();
+            return x != null;
+        }
+        catch
+        {
+        }
+
+        try
+        {
+            int y = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.GetInt();
+            return y == 823;
+        }
+        catch
+        {
+        }
+
+        return false;
     }
 
     private bool IsQuietModeServerRunning22()
