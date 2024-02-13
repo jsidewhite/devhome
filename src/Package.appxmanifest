@@ -260,7 +260,7 @@
             2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
               are not relevant in COM security descriptors so we use P=protected -->
       <com4:ComServer>
-        <com4:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe" LaunchAndActivationPermission="O:BAG:BAD:(A;;CCSW;;;BU)">
+        <com4:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe" LaunchAndActivationPermission="O:BAG:BAD:(A;;0X9;;;BA)">
           <com4:Class Id="33a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe"/>
         </com4:ExeServer>
       </com4:ComServer>

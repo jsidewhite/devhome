@@ -129,9 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="classfactory.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietBackgroundProcessesSession.h" />
     <ClInclude Include="QuietState.h" />
+    <ClInclude Include="simpleclass.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>

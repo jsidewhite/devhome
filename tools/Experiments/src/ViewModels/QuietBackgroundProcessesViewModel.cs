@@ -64,7 +64,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             }
         }
 
-        throw new System.BadImageFormatException();
+        // throw new System.BadImageFormatException();
+        return true;
     }
 
     private QuietBackgroundProcessesSession GetSession()

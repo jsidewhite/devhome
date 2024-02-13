@@ -3,6 +3,14 @@
 
 #include <pch.h>
 
+#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+    EXTERN_C const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
+
+// 33a0a1a0-b89c-44af-ba17-c828cea010c2
+#define INITGUID
+DEFINE_GUID(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, 0x33a0a1a0, 0xb89c, 0x44af, 0xba, 0x17, 0xc8, 0x28, 0xce, 0xa0, 0x10, 0xc2);
+
+
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -11,6 +19,7 @@
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
+#include <wil/com.h>
 #include <wil/result_macros.h>
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
@@ -22,6 +31,8 @@
 // #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h>
 #include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
+
+#include "classfactory.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -95,6 +106,7 @@ void SelfElevate(std::optional<std::wstring> const& arguments)
     
 }
 
+
 //int _cdecl wmain(int argc, __in_ecount(argc) PWSTR wargv[])
 int CALLBACK wWinMain(_In_ HINSTANCE, _In_ HINSTANCE, _In_ LPWSTR wargv, _In_ int)
 try
@@ -106,9 +118,22 @@ try
         return E_UNEXPECTED;
     }
     
+    auto unique_rouninitialize_call = wil::RoInitialize();
 
     if (!IsTokenElevated(GetCurrentProcessToken()))
     {
+        /*
+            while (!IsDebuggerPresent())
+        {
+            Sleep(100);
+        };
+        DebugBreak();
+        //THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pIFactory, CLSCTX_LOCAL_SERVER, REGCLS_SUSPENDED | REGCLS_MULTIPLEUSE, &dwWimSandboxRegistered));
+        wil::com_ptr<IClassFactory> pFactory = new SimpleClassFactory2();
+        DWORD isRegistered = 0;
+        THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &isRegistered));
+        */
+
 
         SelfElevate(wargv);
         //return E_ACCESSDENIED;
@@ -126,7 +151,7 @@ try
     QuietState::TurnOff();
 
     // PCWSTR serverName = wargv + wcslen(serverNamePrefix);
-    auto unique_rouninitialize_call = wil::RoInitialize();
+//    auto unique_rouninitialize_call = wil::RoInitialize();
 
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
@@ -137,6 +162,7 @@ try
         }
         g_finishCondition.notify_one();
     });
+
 
     // Wait for the module objects to be released and the timer threads to finish
     {
