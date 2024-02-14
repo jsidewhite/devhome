@@ -18,30 +18,21 @@
 
 #include <objbase.h>
 #include <roregistrationapi.h>
-#include <shellapi.h>
 
 #include "QuietBackgroundProcessesSessionManager.h"
 #include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
+#include "Utility.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
-
-using unique_hstring_array_ptr = wil::unique_any_array_ptr<HSTRING, wil::cotaskmem_deleter, wil::function_deleter<decltype(::WindowsDeleteString), ::WindowsDeleteString>>;
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
 
-bool IsTokenElevated(HANDLE token)
-{
-    auto mandatoryLabel = wil::get_token_information<TOKEN_MANDATORY_LABEL>(token);
-    LONG levelRid = static_cast<SID*>(mandatoryLabel->Label.Sid)->SubAuthority[0];
-    return levelRid == SECURITY_MANDATORY_HIGH_RID;
-}
-
 template <typename FactoryT>
-HRESULT make_factory(IActivationFactory** out) noexcept
+static HRESULT make_factory(IActivationFactory** out) noexcept
 try
 {
     auto factoryObject = winrt::make<FactoryT>();
@@ -51,7 +42,7 @@ try
 }
 CATCH_RETURN()
 
-wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
+static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
     Module<OutOfProc>::Create(objectsReleasedCallback);
 
@@ -82,38 +73,12 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
     return registrationCookie;
 }
 
-void SelfElevate(std::optional<std::wstring> const& arguments)
+int wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    wchar_t szPath[MAX_PATH];
-    if (!GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath)))
+    if (wargc < 1)
     {
-        // MessageBox(hwnd, L"Couldn't find module file name", L"Couldn't find module file name", 0);
-        THROW_LAST_ERROR();
+        THROW_HR(E_INVALIDARG);
     }
-
-    SHELLEXECUTEINFO sei = { sizeof(sei) };
-    sei.lpVerb = L"runas";
-    sei.lpFile = szPath;
-    sei.lpParameters = arguments.value().c_str();
-    sei.hwnd = NULL;
-    sei.nShow = SW_NORMAL;
-
-    if (!ShellExecuteEx(&sei))
-    {
-        // Elevated instance launched; close this one.
-        // _exit(1);
-        //THROW_HR(E_APPLICATION_EXITING);
-
-        THROW_LAST_ERROR();
-    }
-
-    
-}
-
-
-//int _cdecl wmain(int argc, __in_ecount(argc) PWSTR wargv[])
-int CALLBACK wWinMain(_In_ HINSTANCE, _In_ HINSTANCE, _In_ LPWSTR wargv, _In_ int) try
-{
     // -ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer
     constexpr WCHAR serverNamePrefix[] = L"-ServerName:";
     if (_wcsnicmp(wargv, serverNamePrefix, wcslen(serverNamePrefix)) != 0)
