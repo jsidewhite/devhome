@@ -40,13 +40,16 @@ bool IsTokenElevated(HANDLE token)
     return levelRid == SECURITY_MANDATORY_HIGH_RID;
 }
 
-/*
-template <typename T>
-winrt::Windows::Foundation::IActivationFactory get_factory()
+template <typename FactoryT>
+HRESULT make_factory(IActivationFactory** out) noexcept
+try
 {
-
+    auto factoryObject = winrt::make<FactoryT>();
+    auto factoryInterface = factoryObject.as<winrt::Windows::Foundation::IActivationFactory>();
+    *out = static_cast<IActivationFactory*>(winrt::detach_abi(factoryInterface));
+    return S_OK;
 }
-*/
+CATCH_RETURN()
 
 wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
@@ -57,30 +60,18 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
     THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
 
     // Creation callback
-    PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** iFactory) -> HRESULT {
-        //if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
+    PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
+        if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager", true) == 0)
         {
-            if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager", true) == 0)
-            {
-                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSessionManager>();
-                auto factory = manager.as<winrt::Windows::Foundation::IActivationFactory>();
-                *iFactory = static_cast<IActivationFactory*>(winrt::detach_abi(factory));
-                return S_OK;
-            }
+            RETURN_IF_FAILED(make_factory<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSessionManager>(factory));
+            return S_OK;
+        }
+        else if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession", true) == 0)
+        {
+            RETURN_IF_FAILED(make_factory<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>(factory));
+            return S_OK;
         }
 
-        //if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) == 0)
-        {
-            if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession", true) == 0)
-            {
-                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>();
-                auto factory = manager.as<winrt::Windows::Foundation::IActivationFactory>();
-                *iFactory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
-                return S_OK;
-            }
-        }
-
-        
         RETURN_HR(E_UNEXPECTED);
     };
 
