@@ -104,7 +104,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         if (_session == null)
         {
-            _session = QuietBackgroundProcessesSession.GetSingleton();
+            // _session = QuietBackgroundProcessesSession.GetSingleton();
+            _session = QuietBackgroundProcessesSessionManager.GetSession();
         }
 
         return _session;
@@ -135,11 +136,9 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         if (!IsQuietModeServerRunning())
         {
             // Make sure not to launch the elevated server (which shows UAC) until the user hits the Start button
-            // return;
+            return;
         }
 
-        return;
-        /*
         // Resume countdown if there's an existing quiet window
         if (GetIsActive())
         {
@@ -147,7 +146,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             var timeLeftInSeconds = GetTimeRemaining();
             StartCountdownTimer(timeLeftInSeconds);
         }
-        */
     }
 
     public bool IsToggleEnabled

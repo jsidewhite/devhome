@@ -135,17 +135,49 @@ void SelfElevate(std::optional<std::wstring> const& arguments)
 
 
 //int _cdecl wmain(int argc, __in_ecount(argc) PWSTR wargv[])
-int CALLBACK wWinMain(_In_ HINSTANCE, _In_ HINSTANCE, _In_ LPWSTR wargv, _In_ int)
-try
+int CALLBACK wWinMain(_In_ HINSTANCE, _In_ HINSTANCE, _In_ LPWSTR wargv, _In_ int) try
 {
     // -ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer
     constexpr WCHAR serverNamePrefix[] = L"-ServerName:";
     if (_wcsnicmp(wargv, serverNamePrefix, wcslen(serverNamePrefix)) != 0)
     {
-        return E_UNEXPECTED;
+        THROW_HR(E_UNEXPECTED);
     }
+    auto serverName = std::wstring{} + (wargv + wcslen(serverNamePrefix));
     
     auto unique_rouninitialize_call = wil::RoInitialize();
+
+
+    if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
+    {
+
+    }
+    else if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) == 0)
+    {
+        if (!IsTokenElevated(GetCurrentProcessToken()))
+        {
+            /*
+            while (!IsDebuggerPresent())
+        {
+            Sleep(100);
+        };
+        DebugBreak();
+        //THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pIFactory, CLSCTX_LOCAL_SERVER, REGCLS_SUSPENDED | REGCLS_MULTIPLEUSE, &dwWimSandboxRegistered));
+        wil::com_ptr<IClassFactory> pFactory = new SimpleClassFactory2();
+        DWORD isRegistered = 0;
+        THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &isRegistered));
+        */
+
+            SelfElevate(wargv);
+            //return E_ACCESSDENIED;
+            Sleep(600000);
+            return 0;
+        }
+    }
+    else
+    {
+        THROW_HR(E_INVALIDARG);
+    }
 
     if (!IsTokenElevated(GetCurrentProcessToken()))
     {
@@ -160,9 +192,10 @@ try
         DWORD isRegistered = 0;
         THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &isRegistered));
         */
+        
 
 
-        //SelfElevate(wargv);
+        // SelfElevate(wargv);
         //return E_ACCESSDENIED;
         // Sleep(600000);
         // return 0;
@@ -172,13 +205,14 @@ try
 
     }
 
+    /*
         while (!IsDebuggerPresent())
     {
         Sleep(100);
     };
     DebugBreak();
+    */
 
-    auto serverName = std::wstring{} + (wargv + wcslen(serverNamePrefix));
 
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     QuietState::TurnOff();
