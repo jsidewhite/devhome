@@ -136,7 +136,6 @@
     <ClInclude Include="QuietBackgroundProcessesSession.h" />
     <ClInclude Include="QuietBackgroundProcessesSessionManager.h" />
     <ClInclude Include="QuietState.h" />
-    <ClInclude Include="simpleclass.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>

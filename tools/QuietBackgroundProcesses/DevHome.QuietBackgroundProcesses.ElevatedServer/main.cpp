@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include <pch.h>
 
@@ -24,9 +24,6 @@
 #include "QuietState.h"
 #include "Utility.h"
 
-using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers;
-
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
@@ -44,7 +41,9 @@ CATCH_RETURN()
 
 static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
-    Module<OutOfProc>::Create(objectsReleasedCallback);
+    using namespace Microsoft::WRL::Wrappers;
+
+    Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create(objectsReleasedCallback);
 
     // Get module classes
     unique_hstring_array_ptr classes;
@@ -73,45 +72,34 @@ static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serve
     return registrationCookie;
 }
 
-int wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
+static std::wstring ParseServerNameArgument(std::wstring_view wargv)
+{
+    constexpr wchar_t serverNamePrefix[] = L"-ServerName:";
+    if (_wcsnicmp(wargv.data(), serverNamePrefix, wcslen(serverNamePrefix)) != 0)
+    {
+        THROW_HR(E_UNEXPECTED);
+    }
+    return { wargv.data() + wcslen(serverNamePrefix) };
+}
+
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
     }
-    // -ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer
-    constexpr WCHAR serverNamePrefix[] = L"-ServerName:";
-    if (_wcsnicmp(wargv, serverNamePrefix, wcslen(serverNamePrefix)) != 0)
-    {
-        THROW_HR(E_UNEXPECTED);
-    }
-    auto serverName = std::wstring{} + (wargv + wcslen(serverNamePrefix));
-    
-    auto unique_rouninitialize_call = wil::RoInitialize();
 
+    // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
+    auto serverName = ParseServerNameArgument(wargv);
 
     if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
     {
-
     }
     else if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) == 0)
     {
         if (!IsTokenElevated(GetCurrentProcessToken()))
         {
-            /*
-            while (!IsDebuggerPresent())
-        {
-            Sleep(100);
-        };
-        DebugBreak();
-        //THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pIFactory, CLSCTX_LOCAL_SERVER, REGCLS_SUSPENDED | REGCLS_MULTIPLEUSE, &dwWimSandboxRegistered));
-        wil::com_ptr<IClassFactory> pFactory = new SimpleClassFactory2();
-        DWORD isRegistered = 0;
-        THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &isRegistered));
-        */
-
             SelfElevate(wargv);
-            //return E_ACCESSDENIED;
             Sleep(600000);
             return 0;
         }
@@ -121,46 +109,10 @@ int wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
-    if (!IsTokenElevated(GetCurrentProcessToken()))
-    {
-        /*
-            while (!IsDebuggerPresent())
-        {
-            Sleep(100);
-        };
-        DebugBreak();
-        //THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pIFactory, CLSCTX_LOCAL_SERVER, REGCLS_SUSPENDED | REGCLS_MULTIPLEUSE, &dwWimSandboxRegistered));
-        wil::com_ptr<IClassFactory> pFactory = new SimpleClassFactory2();
-        DWORD isRegistered = 0;
-        THROW_IF_FAILED(::CoRegisterClassObject(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, pFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &isRegistered));
-        */
-        
-
-
-        // SelfElevate(wargv);
-        //return E_ACCESSDENIED;
-        // Sleep(600000);
-        // return 0;
-    }
-    else
-    {
-
-    }
-
-    /*
-        while (!IsDebuggerPresent())
-    {
-        Sleep(100);
-    };
-    DebugBreak();
-    */
-
-
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     QuietState::TurnOff();
 
-    // PCWSTR serverName = wargv + wcslen(serverNamePrefix);
-//    auto unique_rouninitialize_call = wil::RoInitialize();
+    auto unique_rouninitialize_call = wil::RoInitialize();
 
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
@@ -190,4 +142,4 @@ int wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 
     return 0;
 }
-CATCH_RETURN();
+CATCH_RETURN()
