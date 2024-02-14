@@ -51,53 +51,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         {
         }
 
-        try
-        {
-            var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetThingy();
-            return x != null;
-        }
-        catch
-        {
-        }
-
-        try
-        {
-            int y = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.GetInt();
-            return y == 823;
-        }
-        catch
-        {
-        }
-
         return false;
-    }
-
-    private bool IsQuietModeServerRunning22()
-    {
-        unsafe
-        {
-            Guid the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe = new Guid("33a0a1a0-b89c-44af-ba17-c828cea010c2");
-            Guid the_IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
-            const int CLSCTX_LOCAL_SERVER = 4;
-
-            const int E_ACCESSDENIED = -2147024891;
-            const int CO_E_SERVER_EXEC_FAILURE = -2146959355;
-
-            int hresult = 0;
-            object pComServer;
-            hresult = CoCreateInstance(ref the_CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, null, CLSCTX_LOCAL_SERVER, ref the_IID_IUnknown, out pComServer);
-            if (hresult == E_ACCESSDENIED)
-            {
-                return false;
-            }
-            else if (hresult == CO_E_SERVER_EXEC_FAILURE)
-            {
-                return true;
-            }
-        }
-
-        // throw new System.BadImageFormatException();
-        return true;
     }
 
     private QuietBackgroundProcessesSession GetSession()
@@ -110,14 +64,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
         return _session;
     }
-
-    [DllImport("ole32.Dll")]
-    private static extern int CoCreateInstance(
-        ref Guid clsid,
-        [MarshalAs(UnmanagedType.IUnknown)] object inner,
-        int context,
-        ref Guid uuid,
-        [MarshalAs(UnmanagedType.IDispatch)] out object rReturnedComObject);
 
     public QuietBackgroundProcessesViewModel()
     {
@@ -256,7 +202,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         var sessionEnded = false;
 
-        CpuUsageCode = "18928: " + GetSession().GetProcessCpuUsage(21068);
         _secondsLeft = new TimeSpan(0, 0, GetTimeRemaining());
 
         if (_secondsLeft.CompareTo(_zero) <= 0)

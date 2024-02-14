@@ -17,6 +17,5 @@ namespace DevHome.QuietBackgroundProcesses
         {
             get;
         };
-        UInt64 GetProcessCpuUsage(UInt32 processId);
     }
 }

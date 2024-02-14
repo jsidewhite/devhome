@@ -39,8 +39,4 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
     {
         throw hresult_not_implemented();
     }
-    uint64_t Session::GetProcessCpuUsage2(uint32_t processId)
-    {
-        throw hresult_not_implemented();
-    }
 }

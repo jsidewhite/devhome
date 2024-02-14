@@ -8,16 +8,15 @@
         <Interface Name="Microsoft.Windows.Widgets.Providers.IWidgetProvider2" InterfaceId="38C3A963-DD93-479D-9276-04BF84EE1816" />
       </ProxyStub>
     </Extension>
-
+    <!-- QuietBackgrounProcesses unelevated server which initiates & obtains a reference to a quiet session -->
     <Extension Category="windows.activatableClass.outOfProcessServer">
       <OutOfProcessServer ServerName="DevHome.QuietBackgroundProcesses.Server" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>DevHome.QuietBackgroundProcesses.Server.exe</Path>
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager" />
-        <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesThingy" />
       </OutOfProcessServer>
     </Extension>
-
+    <!-- QuietBackgrounProcesses elevated server owns the quiet session -->
     <Extension Category="windows.activatableClass.outOfProcessServer">
       <OutOfProcessServer ServerName="DevHome.QuietBackgroundProcesses.ElevatedServer" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>DevHome.QuietBackgroundProcesses.ElevatedServer.exe</Path>
@@ -25,7 +24,6 @@
         <ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession" />
       </OutOfProcessServer>
     </Extension>
-
   </Extensions>
   <Identity Name="Microsoft.Windows.DevHome.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
@@ -44,8 +42,6 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
-
-    
       <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Preview\MedTile.png" Square44x44Logo="Assets\Preview\AppList.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Preview\WideTile.png" />
         <uap:SplashScreen Image="Assets\Preview\SplashScreen.png" />
@@ -260,22 +256,7 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
-
-
-    <com4:Extension Category="windows.comServer">
-      <!-- Note: the schema restrictions on LaunchAndActivationPermission require:
-            1. ACEs to match \([A-Z0-9\-;]*\)), which in turn doesn't allow rights to be specified like 0xb,
-              only 0XB, or the more readable 11 used here
-            2. SACLs to have 1 or 2 (arbitrary) characters before the ACE (this is sacl_flags). SACL flags
-              are not relevant in COM security descriptors so we use P=protected -->
-      <com4:ComServer>
-        <com4:ExeServer Executable="DevHome.QuietBackgroundProcesses.ElevatedServer.exe" DisplayName="Dev Home QuietBackgroundProcesses ElevatedServer Running Probe" LaunchAndActivationPermission="O:BAG:BAD:(A;;0X9;;;BA)">
-          <com4:Class Id="33a0a1a0-b89c-44af-ba17-c828cea010c2" DisplayName="CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe"/>
-        </com4:ExeServer>
-      </com4:ComServer>
-    </com4:Extension>
-  </Extensions>
-
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

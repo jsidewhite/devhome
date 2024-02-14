@@ -16,7 +16,6 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         void Stop();
         bool IsActive();
         int64_t TimeLeftInSeconds();
-        uint64_t GetProcessCpuUsage(uint32_t processId);
     };
 }
 namespace winrt::DevHome::QuietBackgroundProcesses::factory_implementation

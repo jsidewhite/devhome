@@ -28,8 +28,6 @@ constexpr auto QUIET_DURATION = std::chrono::hours(2);
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
 
-extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId);
-
 QuietState::unique_quietwindowclose_call g_quietState{ false };
 
 namespace winrt::DevHome::QuietBackgroundProcesses::implementation
@@ -117,12 +115,5 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
             return 0;
         }
         return g_activeTimer->TimeLeftInSeconds();
-    }
-
-    uint64_t QuietBackgroundProcessesSession::GetProcessCpuUsage(uint32_t processId)
-    {
-        auto x = ::GetProcessCpuUsage(processId);
-        return *reinterpret_cast<uint64_t*>(&x);
-        //return 6255;
     }
 }

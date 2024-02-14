@@ -132,11 +132,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="classfactory.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietBackgroundProcessesSession.h" />
     <ClInclude Include="QuietBackgroundProcessesSessionManager.h" />
-    <ClInclude Include="QuietBackgroundProcessesThingy.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="simpleclass.h" />
     <ClInclude Include="Timer.h" />
@@ -150,7 +148,6 @@
     <ClCompile Include="pre.cpp" />
     <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
     <ClCompile Include="QuietBackgroundProcessesSessionManager.cpp" />
-    <ClCompile Include="QuietBackgroundProcessesThingy.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -164,11 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine.vcxproj">
-      <Project>{af5a7fa0-e3e8-44c8-8830-31dd08f583e8}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

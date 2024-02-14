@@ -3,14 +3,6 @@
 
 #include <pch.h>
 
-#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-    EXTERN_C const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
-
-// 33a0a1a0-b89c-44af-ba17-c828cea010c2
-#define INITGUID
-DEFINE_GUID(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, 0x33a0a1a0, 0xb89c, 0x44af, 0xba, 0x17, 0xc8, 0x28, 0xce, 0xa0, 0x10, 0xc2);
-
-
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -28,13 +20,9 @@ DEFINE_GUID(CLSID_DevHomeQuietBackgroundProcessesElevatedServerRunningProbe, 0x3
 #include <roregistrationapi.h>
 #include <shellapi.h>
 
-// #include <DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h>
 #include "QuietBackgroundProcessesSessionManager.h"
 #include "QuietBackgroundProcessesSession.h"
-#include "QuietBackgroundProcessesThingy.h"
 #include "QuietState.h"
-
-#include "classfactory.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -52,6 +40,14 @@ bool IsTokenElevated(HANDLE token)
     return levelRid == SECURITY_MANDATORY_HIGH_RID;
 }
 
+/*
+template <typename T>
+winrt::Windows::Foundation::IActivationFactory get_factory()
+{
+
+}
+*/
+
 wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
     Module<OutOfProc>::Create(objectsReleasedCallback);
@@ -61,24 +57,14 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
     THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
 
     // Creation callback
-    PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
+    PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** iFactory) -> HRESULT {
         //if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
         {
             if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager", true) == 0)
             {
                 auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSessionManager>();
-                manager.as<winrt::Windows::Foundation::IActivationFactory>();
-                *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
-                return S_OK;
-            }
-        }
-
-        {
-            if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesThingy", true) == 0)
-            {
-                auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesThingy>();
-                manager.as<winrt::Windows::Foundation::IActivationFactory>();
-                *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
+                auto factory = manager.as<winrt::Windows::Foundation::IActivationFactory>();
+                *iFactory = static_cast<IActivationFactory*>(winrt::detach_abi(factory));
                 return S_OK;
             }
         }
@@ -88,8 +74,8 @@ wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, 
             if (wil::compare_string_ordinal(WindowsGetStringRawBuffer(name, nullptr), L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession", true) == 0)
             {
                 auto manager = winrt::make<winrt::DevHome::QuietBackgroundProcesses::factory_implementation::QuietBackgroundProcessesSession>();
-                manager.as<winrt::Windows::Foundation::IActivationFactory>();
-                *factory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
+                auto factory = manager.as<winrt::Windows::Foundation::IActivationFactory>();
+                *iFactory = static_cast<IActivationFactory*>(winrt::detach_abi(manager));
                 return S_OK;
             }
         }
