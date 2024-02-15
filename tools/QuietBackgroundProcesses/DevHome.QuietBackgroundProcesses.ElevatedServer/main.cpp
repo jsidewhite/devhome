@@ -20,7 +20,7 @@
 #include <roregistrationapi.h>
 
 #include "QuietBackgroundProcessesSessionManager.h"
-//#include "QuietBackgroundProcessesSession.h"
+#include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
 #include "Utility.h"
 
@@ -33,6 +33,7 @@ bool g_lastInstanceOfTheModuleObjectIsReleased;
 /// <summary>
 
 ActivatableClass(QuietBackgroundProcessesSessionManager);
+ActivatableClass(QuietBackgroundProcessesSession);
 
 /// </summary>
 /// <typeparam name="FactoryT"></typeparam>
