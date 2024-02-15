@@ -9,6 +9,7 @@
   
   <PropertyGroup>
     <CsWinRTIncludes>DevHome.QuietBackgroundProcesses</CsWinRTIncludes>
+    <CsWinRTInputs>DevHome.QuietBackgroundProcesses.winmd</CsWinRTInputs>
     <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
   </PropertyGroup>
 

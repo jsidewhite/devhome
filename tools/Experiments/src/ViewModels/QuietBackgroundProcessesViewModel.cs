@@ -54,7 +54,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         return false;
     }
 
-    private QuietBackgroundProcessesSession GetSession()
+    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
         if (_session == null)
         {
