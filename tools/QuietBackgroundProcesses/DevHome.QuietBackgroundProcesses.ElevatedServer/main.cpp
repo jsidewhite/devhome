@@ -20,13 +20,24 @@
 #include <roregistrationapi.h>
 
 #include "QuietBackgroundProcessesSessionManager.h"
-#include "QuietBackgroundProcessesSession.h"
+//#include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
 #include "Utility.h"
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
+
+
+
+/// <summary>
+
+ActivatableClass(QuietBackgroundProcessesSessionManager);
+
+/// </summary>
+/// <typeparam name="FactoryT"></typeparam>
+/// <param name="out"></param>
+/// <returns></returns>
 
 template <typename FactoryT>
 static HRESULT make_factory(IActivationFactory** out) noexcept
@@ -51,8 +62,8 @@ static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serve
 
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
-        RETURN_IF_FAILED(hr);
+        //auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
+        //RETURN_IF_FAILED(hr);
         return S_OK;
     };
 
@@ -164,3 +175,5 @@ wil::com_ptr<IGlobalOptions> pGlobalOptions;
     return 0;
 }
 CATCH_RETURN()
+
+// ActivatableClass(CentennialLifetimeManager)

@@ -1,19 +1,31 @@
 #pragma once
-#include "QuietBackgroundProcessesSessionManager.g.h"
 
-namespace winrt::DevHome::QuietBackgroundProcesses::implementation
-{
-    struct QuietBackgroundProcessesSessionManager : QuietBackgroundProcessesSessionManagerT<QuietBackgroundProcessesSessionManager>
-    {
-        QuietBackgroundProcessesSessionManager() = default;
+//#include <pch.h>
 
-        static winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession GetSession();
-        static winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession TryGetSession();
-    };
-}
-namespace winrt::DevHome::QuietBackgroundProcesses::factory_implementation
+#include <wrl/client.h>
+#include <wrl/wrappers/corewrappers.h>
+#include <wrl/implements.h>
+#include <wrl/module.h>
+
+//#include <Holographic.SI.HotKeyDispatcher.h>
+//#include "HotKeys.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager_h.h"
+
+//namespace Windows::Internal::Shell::Holographic::Infrastructure::implementation
+//{
+
+class QuietBackgroundProcessesSessionManager :
+    public Microsoft::WRL::RuntimeClass<
+        Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
+        ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager,
+        Microsoft::WRL::FtmBase>
 {
-    struct QuietBackgroundProcessesSessionManager : QuietBackgroundProcessesSessionManagerT<QuietBackgroundProcessesSessionManager, implementation::QuietBackgroundProcessesSessionManager>
-    {
-    };
-}
+    InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, FullTrust);
+
+public:
+    HRESULT RuntimeClassInitialize() noexcept;
+
+    // IServiceHostComponent
+    IFACEMETHODIMP GetInt(int* result) noexcept override;
+};
+//}
