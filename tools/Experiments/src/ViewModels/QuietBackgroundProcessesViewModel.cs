@@ -44,8 +44,13 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
-            return x != null;
+            // var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
+            var u = new DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager();
+            var x = u.GetInt();
+
+            // var x = u.GetInt();
+            // return x != 34;
+            return true;
         }
         catch
         {
@@ -54,11 +59,10 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         return false;
     }
 
-    private QuietBackgroundProcessesSession GetSession()
+    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
         if (_session == null)
         {
-            // _session = QuietBackgroundProcessesSession.GetSingleton();
             _session = QuietBackgroundProcessesSessionManager.GetSession();
         }
 
@@ -67,6 +71,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     public QuietBackgroundProcessesViewModel()
     {
+        // TimeLeft = "" + (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get());
         _zero = new TimeSpan(0, 0, 0);
 
         var osVersion = Environment.OSVersion;

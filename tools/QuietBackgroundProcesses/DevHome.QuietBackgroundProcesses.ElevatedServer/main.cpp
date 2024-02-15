@@ -19,14 +19,29 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
-#include "QuietBackgroundProcessesSessionManager.h"
-#include "QuietBackgroundProcessesSession.h"
+//#include "QuietBackgroundProcessesSessionManager.h"
+//#include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
 #include "Utility.h"
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
+
+
+
+/// <summary>
+
+//ActivatableClass(QuietBackgroundProcessesSessionManager);
+//ActivatableClass(QuietBackgroundProcessesSession);
+
+//ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
+//ActivatableClassWithFactory(QuietBackgroundProcessesSession, QuietBackgroundProcessesSessionStatics);
+
+/// </summary>
+/// <typeparam name="FactoryT"></typeparam>
+/// <param name="out"></param>
+/// <returns></returns>
 
 template <typename FactoryT>
 static HRESULT make_factory(IActivationFactory** out) noexcept
@@ -51,8 +66,11 @@ static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serve
 
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
-        RETURN_IF_FAILED(hr);
+        //auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
+        //Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetActivationFactory();
+        //RETURN_IF_FAILED(hr);
+        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
+        RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
         return S_OK;
     };
 
@@ -75,7 +93,11 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-
+    //while (!IsDebuggerPresent())
+    {
+        //Sleep(100);
+    };
+    //DebugBreak();
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -92,7 +114,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         if (!IsTokenElevated(GetCurrentProcessToken()))
         {
             SelfElevate(wargv);
-            Sleep(600000);
+            Sleep(30000);
             return 0;
         }
         else
@@ -164,3 +186,5 @@ wil::com_ptr<IGlobalOptions> pGlobalOptions;
     return 0;
 }
 CATCH_RETURN()
+
+// ActivatableClass(CentennialLifetimeManager)
