@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include <atomic>
+
 #include <wil/winrt.h>
 
 #include "QuietBackgroundProcessesSessionManager.h"
@@ -7,36 +9,22 @@
 
 namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 {
-    bool acquired = false;
+    std::atomic<bool> acquired = false;
 
     winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession QuietBackgroundProcessesSessionManager::GetSession()
     {
-        auto fac = winrt::get_activation_factory<winrt::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionStatics>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession");
-        //auto inst = fac.ActivateInstance<winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession>();
+        auto factory = winrt::get_activation_factory<winrt::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionStatics>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession");
         acquired = true;
-        //return inst.GetSingleton();
-
-        return fac.GetSingleton();
-        /*
-        //return fac->;
-        return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
-        */
+        return factory.GetSingleton();
     }
 
     winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession QuietBackgroundProcessesSessionManager::TryGetSession()
     {
         if (acquired)
         {
-            //static auto x = winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
-            //auto x = winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
-            //acquired = true;
-            //return x;
-            auto fac = winrt::get_activation_factory<winrt::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionStatics>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession");
-
-            return fac.GetSingleton();
-            //            return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
+            auto factory = winrt::get_activation_factory<winrt::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionStatics>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession");
+            return factory.GetSingleton();
         }
         return nullptr;
-        //return winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession::GetSingleton();
     }
 }

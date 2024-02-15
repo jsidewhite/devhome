@@ -38,16 +38,6 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
 
     winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession QuietBackgroundProcessesSession::GetSingleton()
     {
-        //if (!g_inst)
-        {
-            //*g_inst = winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
-        }
-        
-        //auto e = winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession(nullptr);
-        //e = *g_inst;
-        //return e;
-        // 
-        // return *g_inst;
         //static auto s_instance = winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
         //return s_instance;
         while (!IsDebuggerPresent())
@@ -62,23 +52,9 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         {
             rdy = true;
             g_inst = winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
-            
-            //g_inst = winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession(nullptr);
         }
-        //return winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
-        ;
-
 
         return g_inst;
-        ;
-        
-
-        // 
-        // 
-        //return nullptr;
-        //return winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
-
-        // return winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
     }
 
     int64_t QuietBackgroundProcessesSession::Start()

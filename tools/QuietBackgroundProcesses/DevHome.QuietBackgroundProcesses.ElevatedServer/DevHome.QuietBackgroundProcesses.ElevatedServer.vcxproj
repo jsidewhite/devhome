@@ -145,7 +145,6 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="pre.cpp" />
     <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
     <ClCompile Include="QuietBackgroundProcessesSessionManager.cpp" />
     <ClCompile Include="QuietState.cpp" />

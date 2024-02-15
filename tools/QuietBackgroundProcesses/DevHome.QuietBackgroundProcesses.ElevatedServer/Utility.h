@@ -15,26 +15,14 @@ inline bool IsTokenElevated(HANDLE token)
 
 inline void SelfElevate(std::optional<std::wstring> const& arguments)
 {
-    wchar_t szPath[MAX_PATH];
-    if (!GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath)))
-    {
-        // MessageBox(hwnd, L"Couldn't find module file name", L"Couldn't find module file name", 0);
-        THROW_LAST_ERROR();
-    }
+    auto path = wil::GetModuleFileNameW();
 
     SHELLEXECUTEINFO sei = { sizeof(sei) };
     sei.lpVerb = L"runas";
-    sei.lpFile = szPath;
+    sei.lpFile = path.get();
     sei.lpParameters = arguments.value().c_str();
     sei.hwnd = NULL;
     sei.nShow = SW_NORMAL;
 
-    if (!ShellExecuteEx(&sei))
-    {
-        // Elevated instance launched; close this one.
-        // _exit(1);
-        //THROW_HR(E_APPLICATION_EXITING);
-
-        THROW_LAST_ERROR();
-    }
+    THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
 }
