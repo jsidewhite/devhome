@@ -9,7 +9,7 @@
 
 //#include <Holographic.SI.HotKeyDispatcher.h>
 //#include "HotKeys.h"
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager_h.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
 //namespace Windows::Internal::Shell::Holographic::Infrastructure::implementation
 //{
@@ -17,7 +17,7 @@
 class QuietBackgroundProcessesSessionManager :
     public Microsoft::WRL::RuntimeClass<
         Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
-        ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager,
+        DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager,
         Microsoft::WRL::FtmBase>
 {
     InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, FullTrust);
