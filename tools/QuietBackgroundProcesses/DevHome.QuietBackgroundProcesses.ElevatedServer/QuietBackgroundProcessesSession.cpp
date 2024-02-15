@@ -50,12 +50,23 @@ namespace winrt::DevHome::QuietBackgroundProcesses::implementation
         // return *g_inst;
         //static auto s_instance = winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
         //return s_instance;
+        while (!IsDebuggerPresent())
+        {
+            Sleep(100);
+        };
+        DebugBreak();
+
+        // CoAddRefServerProcess();
+
         if (!rdy)
         {
-
             rdy = true;
             g_inst = winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
+            
+            //g_inst = winrt::DevHome::QuietBackgroundProcesses::QuietBackgroundProcessesSession(nullptr);
         }
+        //return winrt::make<winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession>();
+        ;
 
 
         return g_inst;

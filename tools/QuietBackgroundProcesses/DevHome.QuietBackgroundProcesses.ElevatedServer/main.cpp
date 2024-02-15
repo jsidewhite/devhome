@@ -84,6 +84,7 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
+
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -103,19 +104,48 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
             Sleep(600000);
             return 0;
         }
+        else
+        {
+            while (!IsDebuggerPresent())
+            {
+                Sleep(100);
+            };
+            DebugBreak();
+        }
     }
     else
     {
         THROW_HR(E_INVALIDARG);
     }
 
+    
+    auto unique_rouninitialize_call = wil::RoInitialize();
+
+wil::com_ptr<IGlobalOptions> pGlobalOptions;
+    THROW_IF_FAILED(CoCreateInstance(CLSID_GlobalOptions, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pGlobalOptions)));
+//THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_UNMARSHALING_POLICY, COMGLB_UNMARSHALING_POLICY_STRONG)); // to opt-out pass COMGLB_UNMARSHALING_POLICY_NORMAL
+
+    // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated
+    // synchronously during the CCI from the manager process to reflect the fact that the manager has
+    // a broker interface proxy.
+    // COMGLB_ENABLE_AGILE_OOP_PROXIES – makes all COM proxies agile, avoid the need to marshal and use things like AgileRef. Simpler/faster code.
+    // COMGLB_ENABLE_SHARED_FTM. – avoids an allocation per agile object. By default FtmBase uses the free threaded marshaler and without this option a new unique one is allocated per object.
+//THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN | COMGLB_ENABLE_AGILE_OOP_PROXIES | COMGLB_ENABLE_SHARED_FTM));
+    
+    //THROW_IF_FAILED(pGlobalOptions->Set());
+    //THROW_IF_FAILED(pGlobalOptions->Set());
+    THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN));
+    THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_EXCEPTION_HANDLING, COMGLB_EXCEPTION_DONOT_HANDLE_ANY));
+
+
+
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     QuietState::TurnOff();
 
-    auto unique_rouninitialize_call = wil::RoInitialize();
 
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
+        __debugbreak();
         // The last instance object of the module is released
         {
             auto lock = std::unique_lock<std::mutex>(g_finishMutex);
