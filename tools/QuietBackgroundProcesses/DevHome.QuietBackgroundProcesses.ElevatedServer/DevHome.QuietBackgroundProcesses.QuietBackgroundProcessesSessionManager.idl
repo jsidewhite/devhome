@@ -2,13 +2,13 @@
 // Licensed under the MIT license.
 
 import "inspectable.idl";
-import "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl";
+//import "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
     [default_interface] runtimeclass QuietBackgroundProcessesSessionManager {
-        static QuietBackgroundProcessesSession GetSession();
-        static QuietBackgroundProcessesSession TryGetSession();
+        //static QuietBackgroundProcessesSession GetSession();
+        //static QuietBackgroundProcessesSession TryGetSession();
         Int32 GetInt();
     }
 }

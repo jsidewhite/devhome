@@ -17,13 +17,14 @@
 
     HRESULT QuietBackgroundProcessesSessionManager::RuntimeClassInitialize() noexcept
 {
-        return E_NOTIMPL;
+        return S_OK;
     }
 
     // IServiceHostComponent
     HRESULT QuietBackgroundProcessesSessionManager::GetInt(int* result) noexcept
     {
         * result = 93;
-        return E_NOTIMPL;
+        //return E_NOTIMPL;
+        return S_OK;
     }
     //}

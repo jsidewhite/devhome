@@ -67,6 +67,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     public QuietBackgroundProcessesViewModel()
     {
+        // TimeLeft = "" + (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get());
         _zero = new TimeSpan(0, 0, 0);
 
         var osVersion = Environment.OSVersion;
