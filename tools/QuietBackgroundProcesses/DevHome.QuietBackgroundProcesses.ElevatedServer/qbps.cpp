@@ -10,7 +10,7 @@
 //#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession_h.h"
 //#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession_h.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {

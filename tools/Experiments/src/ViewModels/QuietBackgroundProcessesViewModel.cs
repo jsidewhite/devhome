@@ -25,8 +25,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     private readonly TimeSpan _zero;
     private readonly bool _validOsVersion;
 #nullable enable
-
-    // private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
+    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
 #nullable disable
 
     // [DllImport("ole32.dll", ExactSpelling = true, EntryPoint = "CoCreateInstance", PreserveSig = true)]
@@ -62,17 +61,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
-        /*
         if (_session == null)
         {
-            // _session = QuietBackgroundProcessesSession.GetSingleton();
-            // _session = QuietBackgroundProcessesSessionManager.GetSession();
-            return null;
+            _session = QuietBackgroundProcessesSessionManager.GetSession();
         }
 
         return _session;
-        */
-        return null;
     }
 
     public QuietBackgroundProcessesViewModel()

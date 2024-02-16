@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0626 */
 /* at Mon Jan 18 19:14:07 2038
  */
-/* Compiler settings for C:\Users\jwhites\AppData\Local\Temp\DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl-a3c5b735:
+/* Compiler settings for C:\Users\jwhites\AppData\Local\Temp\DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl-263d361d:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0626 
     protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -35,8 +35,8 @@
 #include "ole2.h"
 #endif /*COM_NO_WINDOWS_H*/
 
-#ifndef __DevHome2EQuietBackgroundProcesses2EQuietBackgroundProcessesSession_h_p_h__
-#define __DevHome2EQuietBackgroundProcesses2EQuietBackgroundProcessesSession_h_p_h__
+#ifndef __DevHome2EQuietBackgroundProcesses2EQuietBackgroundProcessesSession_p_h__
+#define __DevHome2EQuietBackgroundProcesses2EQuietBackgroundProcessesSession_p_h__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once

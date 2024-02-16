@@ -38,7 +38,7 @@
 // If you get an error from the compiler indicating "warning C4005: 'CHECK_NS_PREFIX_STATE': macro redefinition", this
 // indicates that you have included two different headers with different settings for the /ns_prefix MIDL command line switch
 #if !defined(DISABLE_NS_PREFIX_CHECKS)
-#define CHECK_NS_PREFIX_STATE "never"
+#define CHECK_NS_PREFIX_STATE "always"
 #endif // !defined(DISABLE_NS_PREFIX_CHECKS)
 
 
@@ -52,38 +52,46 @@
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
+#if defined(__MIDL_USE_C_ENUM)
+#define MIDL_ENUM enum
+#else
+#define MIDL_ENUM enum class
+#endif
 /* Forward Declarations */
-#ifndef ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+#ifndef ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+namespace ABI {
+    namespace DevHome {
+        namespace QuietBackgroundProcesses {
+            interface IQuietBackgroundProcessesSessionManager;
+        } /* QuietBackgroundProcesses */
+    } /* DevHome */
+} /* ABI */
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager
 
-namespace DevHome {
-    namespace QuietBackgroundProcesses {
-        interface IQuietBackgroundProcessesSessionManager;
-    } /* QuietBackgroundProcesses */
-} /* DevHome */
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager
+#endif // ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
 
-#endif // ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+#ifndef ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
+namespace ABI {
+    namespace DevHome {
+        namespace QuietBackgroundProcesses {
+            interface IQuietBackgroundProcessesSessionManagerStatics;
+        } /* QuietBackgroundProcesses */
+    } /* DevHome */
+} /* ABI */
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics
 
-#ifndef ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
-
-namespace DevHome {
-    namespace QuietBackgroundProcesses {
-        interface IQuietBackgroundProcessesSessionManagerStatics;
-    } /* QuietBackgroundProcesses */
-} /* DevHome */
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics
-
-#endif // ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
+#endif // ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
 
 
-
-namespace DevHome {
-    namespace QuietBackgroundProcesses {
-        class QuietBackgroundProcessesSessionManager;
-    } /* QuietBackgroundProcesses */
-} /* DevHome */
+namespace ABI {
+    namespace DevHome {
+        namespace QuietBackgroundProcesses {
+            class QuietBackgroundProcessesSessionManager;
+        } /* QuietBackgroundProcesses */
+    } /* DevHome */
+} /* ABI */
 
 
 
@@ -100,30 +108,31 @@ namespace DevHome {
  *
  *
  */
-#if !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__)
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__
+#if !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__)
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_DevHome_QuietBackgroundProcesses_IQuietBackgroundProcessesSessionManager[] = L"DevHome.QuietBackgroundProcesses.IQuietBackgroundProcessesSessionManager";
+namespace ABI {
+    namespace DevHome {
+        namespace QuietBackgroundProcesses {
+            /* [uuid("812326e8-ebbc-5b6b-8a72-8840931e547a"), version, object, exclusiveto] */
+            MIDL_INTERFACE("812326e8-ebbc-5b6b-8a72-8840931e547a")
+            IQuietBackgroundProcessesSessionManager : public IInspectable
+            {
+            public:
+                virtual HRESULT STDMETHODCALLTYPE GetInt(
+                    /* [out, retval] */int * result
+                    ) = 0;
+                
+            };
 
-namespace DevHome {
-    namespace QuietBackgroundProcesses {
-        /* [uuid("812326e8-ebbc-5b6b-8a72-8840931e547a"), version, object, exclusiveto] */
-        MIDL_INTERFACE("812326e8-ebbc-5b6b-8a72-8840931e547a")
-        IQuietBackgroundProcessesSessionManager : public IInspectable
-        {
-        public:
-            virtual HRESULT STDMETHODCALLTYPE GetInt(
-                /* [out, retval] */int * result
-                ) = 0;
+            MIDL_CONST_ID IID & IID_IQuietBackgroundProcessesSessionManager=_uuidof(IQuietBackgroundProcessesSessionManager);
             
-        };
+        } /* QuietBackgroundProcesses */
+    } /* DevHome */
+} /* ABI */
 
-        MIDL_CONST_ID IID & IID_IQuietBackgroundProcessesSessionManager=_uuidof(IQuietBackgroundProcessesSessionManager);
-        
-    } /* QuietBackgroundProcesses */
-} /* DevHome */
-
-EXTERN_C const IID IID___x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager;
-#endif /* !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__) */
+EXTERN_C const IID IID___x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager;
+#endif /* !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__) */
 
 
 /*
@@ -139,33 +148,34 @@ EXTERN_C const IID IID___x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundPr
  *
  *
  */
-#if !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__)
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__
+#if !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__)
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_DevHome_QuietBackgroundProcesses_IQuietBackgroundProcessesSessionManagerStatics[] = L"DevHome.QuietBackgroundProcesses.IQuietBackgroundProcessesSessionManagerStatics";
+namespace ABI {
+    namespace DevHome {
+        namespace QuietBackgroundProcesses {
+            /* [uuid("e2335bd1-511c-572e-b204-e35b0878a9c7"), version, object, exclusiveto] */
+            MIDL_INTERFACE("e2335bd1-511c-572e-b204-e35b0878a9c7")
+            IQuietBackgroundProcessesSessionManagerStatics : public IInspectable
+            {
+            public:
+                virtual HRESULT STDMETHODCALLTYPE GetSession(
+                    /* [out, retval] */ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSession * * result
+                    ) = 0;
+                virtual HRESULT STDMETHODCALLTYPE TryGetSession(
+                    /* [out, retval] */ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSession * * result
+                    ) = 0;
+                
+            };
 
-namespace DevHome {
-    namespace QuietBackgroundProcesses {
-        /* [uuid("e2335bd1-511c-572e-b204-e35b0878a9c7"), version, object, exclusiveto] */
-        MIDL_INTERFACE("e2335bd1-511c-572e-b204-e35b0878a9c7")
-        IQuietBackgroundProcessesSessionManagerStatics : public IInspectable
-        {
-        public:
-            virtual HRESULT STDMETHODCALLTYPE GetSession(
-                /* [out, retval] */DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSession * * result
-                ) = 0;
-            virtual HRESULT STDMETHODCALLTYPE TryGetSession(
-                /* [out, retval] */DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSession * * result
-                ) = 0;
+            MIDL_CONST_ID IID & IID_IQuietBackgroundProcessesSessionManagerStatics=_uuidof(IQuietBackgroundProcessesSessionManagerStatics);
             
-        };
+        } /* QuietBackgroundProcesses */
+    } /* DevHome */
+} /* ABI */
 
-        MIDL_CONST_ID IID & IID_IQuietBackgroundProcessesSessionManagerStatics=_uuidof(IQuietBackgroundProcessesSessionManagerStatics);
-        
-    } /* QuietBackgroundProcesses */
-} /* DevHome */
-
-EXTERN_C const IID IID___x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics;
-#endif /* !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__) */
+EXTERN_C const IID IID___x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics;
+#endif /* !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__) */
 
 
 /*
@@ -193,17 +203,17 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_DevHome_
 
 #else // !defined(__cplusplus)
 /* Forward Declarations */
-#ifndef ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
-typedef interface __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager;
+#ifndef ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+typedef interface __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager;
 
-#endif // ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
+#endif // ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_FWD_DEFINED__
 
-#ifndef ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
-typedef interface __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics;
+#ifndef ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
+typedef interface __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics;
 
-#endif // ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
+#endif // ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_FWD_DEFINED__
 
 
 
@@ -220,84 +230,84 @@ typedef interface __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcess
  *
  *
  */
-#if !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__)
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__
+#if !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__)
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_DevHome_QuietBackgroundProcesses_IQuietBackgroundProcessesSessionManager[] = L"DevHome.QuietBackgroundProcesses.IQuietBackgroundProcessesSessionManager";
 /* [uuid("812326e8-ebbc-5b6b-8a72-8840931e547a"), version, object, exclusiveto] */
-typedef struct __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerVtbl
+typedef struct __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerVtbl
 {
     BEGIN_INTERFACE
     HRESULT ( STDMETHODCALLTYPE *QueryInterface)(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
     /* [in] */ __RPC__in REFIID riid,
     /* [annotation][iid_is][out] */
     _COM_Outptr_  void **ppvObject
     );
 
 ULONG ( STDMETHODCALLTYPE *AddRef )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This
     );
 
 ULONG ( STDMETHODCALLTYPE *Release )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This
     );
 
 HRESULT ( STDMETHODCALLTYPE *GetIids )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
     /* [out] */ __RPC__out ULONG *iidCount,
     /* [size_is][size_is][out] */ __RPC__deref_out_ecount_full_opt(*iidCount) IID **iids
     );
 
 HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
     /* [out] */ __RPC__deref_out_opt HSTRING *className
     );
 
 HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
     /* [OUT ] */ __RPC__out TrustLevel *trustLevel
     );
 HRESULT ( STDMETHODCALLTYPE *GetInt )(
-        __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
+        __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager * This,
         /* [out, retval] */int * result
         );
     END_INTERFACE
     
-} __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerVtbl;
+} __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerVtbl;
 
-interface __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager
+interface __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager
 {
-    CONST_VTBL struct __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerVtbl *lpVtbl;
+    CONST_VTBL struct __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerVtbl *lpVtbl;
 };
 
 #ifdef COBJMACROS
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_QueryInterface(This,riid,ppvObject) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_QueryInterface(This,riid,ppvObject) \
 ( (This)->lpVtbl->QueryInterface(This,riid,ppvObject) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_AddRef(This) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_AddRef(This) \
         ( (This)->lpVtbl->AddRef(This) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_Release(This) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_Release(This) \
         ( (This)->lpVtbl->Release(This) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetIids(This,iidCount,iids) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetIids(This,iidCount,iids) \
         ( (This)->lpVtbl->GetIids(This,iidCount,iids) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetRuntimeClassName(This,className) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetRuntimeClassName(This,className) \
         ( (This)->lpVtbl->GetRuntimeClassName(This,className) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetTrustLevel(This,trustLevel) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetTrustLevel(This,trustLevel) \
         ( (This)->lpVtbl->GetTrustLevel(This,trustLevel) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetInt(This,result) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_GetInt(This,result) \
     ( (This)->lpVtbl->GetInt(This,result) )
 
 
 #endif /* COBJMACROS */
 
 
-EXTERN_C const IID IID___x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager;
-#endif /* !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__) */
+EXTERN_C const IID IID___x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager;
+#endif /* !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManager_INTERFACE_DEFINED__) */
 
 
 /*
@@ -313,91 +323,91 @@ EXTERN_C const IID IID___x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundPr
  *
  *
  */
-#if !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__)
-#define ____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__
+#if !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__)
+#define ____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_DevHome_QuietBackgroundProcesses_IQuietBackgroundProcessesSessionManagerStatics[] = L"DevHome.QuietBackgroundProcesses.IQuietBackgroundProcessesSessionManagerStatics";
 /* [uuid("e2335bd1-511c-572e-b204-e35b0878a9c7"), version, object, exclusiveto] */
-typedef struct __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStaticsVtbl
+typedef struct __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStaticsVtbl
 {
     BEGIN_INTERFACE
     HRESULT ( STDMETHODCALLTYPE *QueryInterface)(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
     /* [in] */ __RPC__in REFIID riid,
     /* [annotation][iid_is][out] */
     _COM_Outptr_  void **ppvObject
     );
 
 ULONG ( STDMETHODCALLTYPE *AddRef )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This
     );
 
 ULONG ( STDMETHODCALLTYPE *Release )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This
     );
 
 HRESULT ( STDMETHODCALLTYPE *GetIids )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
     /* [out] */ __RPC__out ULONG *iidCount,
     /* [size_is][size_is][out] */ __RPC__deref_out_ecount_full_opt(*iidCount) IID **iids
     );
 
 HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
     /* [out] */ __RPC__deref_out_opt HSTRING *className
     );
 
 HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )(
-    __RPC__in __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
+    __RPC__in __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
     /* [OUT ] */ __RPC__out TrustLevel *trustLevel
     );
 HRESULT ( STDMETHODCALLTYPE *GetSession )(
-        __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
-        /* [out, retval] */__x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSession * * result
+        __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
+        /* [out, retval] */__x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSession * * result
         );
     HRESULT ( STDMETHODCALLTYPE *TryGetSession )(
-        __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
-        /* [out, retval] */__x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSession * * result
+        __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics * This,
+        /* [out, retval] */__x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSession * * result
         );
     END_INTERFACE
     
-} __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStaticsVtbl;
+} __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStaticsVtbl;
 
-interface __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics
+interface __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics
 {
-    CONST_VTBL struct __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStaticsVtbl *lpVtbl;
+    CONST_VTBL struct __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStaticsVtbl *lpVtbl;
 };
 
 #ifdef COBJMACROS
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_QueryInterface(This,riid,ppvObject) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_QueryInterface(This,riid,ppvObject) \
 ( (This)->lpVtbl->QueryInterface(This,riid,ppvObject) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_AddRef(This) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_AddRef(This) \
         ( (This)->lpVtbl->AddRef(This) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_Release(This) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_Release(This) \
         ( (This)->lpVtbl->Release(This) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetIids(This,iidCount,iids) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetIids(This,iidCount,iids) \
         ( (This)->lpVtbl->GetIids(This,iidCount,iids) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetRuntimeClassName(This,className) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetRuntimeClassName(This,className) \
         ( (This)->lpVtbl->GetRuntimeClassName(This,className) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetTrustLevel(This,trustLevel) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetTrustLevel(This,trustLevel) \
         ( (This)->lpVtbl->GetTrustLevel(This,trustLevel) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetSession(This,result) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_GetSession(This,result) \
     ( (This)->lpVtbl->GetSession(This,result) )
 
-#define __x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_TryGetSession(This,result) \
+#define __x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_TryGetSession(This,result) \
     ( (This)->lpVtbl->TryGetSession(This,result) )
 
 
 #endif /* COBJMACROS */
 
 
-EXTERN_C const IID IID___x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics;
-#endif /* !defined(____x_DevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__) */
+EXTERN_C const IID IID___x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics;
+#endif /* !defined(____x_ABI_CDevHome_CQuietBackgroundProcesses_CIQuietBackgroundProcessesSessionManagerStatics_INTERFACE_DEFINED__) */
 
 
 /*

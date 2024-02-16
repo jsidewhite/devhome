@@ -4,12 +4,13 @@
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
+#include <wil/winrt.h>
 
 //#include <Holographic.SI.HotKeyDispatcher.h>
 //#include "HotKeys.h"
 //#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession_h.h"
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager_h.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -53,18 +54,26 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     public:
         // IQuietBackgroundProcessesSessionManagerStatics
-        IFACEMETHODIMP GetSession(_COM_Outptr_ IQuietBackgroundProcessesSession** value) noexcept override
+        STDMETHODIMP GetSession(_COM_Outptr_ IQuietBackgroundProcessesSession** value) noexcept override
+        {
+            *value = nullptr;
+            auto x = wil::ActivateInstance<IQuietBackgroundProcessesSession>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
+            *value = x.detach();
+            return S_OK;
+        }
+        STDMETHODIMP TryGetSession(_COM_Outptr_opt_ IQuietBackgroundProcessesSession** value) noexcept override
         {
             *value = nullptr;
             return S_OK;
         }
-        IFACEMETHODIMP TryGetSession(_COM_Outptr_opt_ IQuietBackgroundProcessesSession** value) noexcept override
+
+        // IActivationFactory method
+        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable** ppvObject)
         {
-            *value = nullptr;
-            return S_OK;
+            return Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSessionManager>(ppvObject);
         }
     };
 
 
-    ActivatableClass(QuietBackgroundProcessesSessionManager);
+    ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
 }
