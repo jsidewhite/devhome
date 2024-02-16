@@ -69,7 +69,7 @@ static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serve
         //auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
         //Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetActivationFactory();
         //RETURN_IF_FAILED(hr);
-        auto& module = Microsoft::WRL::Module<Microsoft::WRL::InProc>::GetModule();
+        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
         RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
         return S_OK;
     };
