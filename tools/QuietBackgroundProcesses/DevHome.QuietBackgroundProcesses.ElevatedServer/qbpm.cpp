@@ -1,6 +1,4 @@
-#pragma once
-
-//#include <pch.h>
+#include <pch.h>
 
 #include <wrl/client.h>
 #include <wrl/wrappers/corewrappers.h>
@@ -24,14 +22,29 @@ class QuietBackgroundProcessesSessionManager :
     InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, FullTrust);
 
 public:
-    HRESULT RuntimeClassInitialize() noexcept;
+    STDMETHODIMP RuntimeClassInitialize() noexcept
+    {
+        if (IsDebuggerPresent())
+        {
+            DebugBreak();
+        }
+        return S_OK;
+    }
 
     // IQuietBackgroundProcessesSessionManager
-    IFACEMETHODIMP GetInt(int* result) noexcept override;
+    STDMETHODIMP GetInt(int* result) noexcept override
+    {
+        if (IsDebuggerPresent())
+        {
+            DebugBreak();
+        }
+        *result = 34;
+        return S_OK;
+    }
 };
 //}
 
-
+/*
 class QuietBackgroundProcessesSessionManagerStatics WrlFinal :
     public Microsoft::WRL::AgileActivationFactory<
         Microsoft::WRL::Implements<DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>>
@@ -43,3 +56,6 @@ public:
     IFACEMETHODIMP GetSession(_COM_Outptr_ DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSession** value) noexcept override;
     IFACEMETHODIMP TryGetSession(_COM_Outptr_opt_ DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSession** value) noexcept override;
 };
+*/
+
+ActivatableClass(QuietBackgroundProcessesSessionManager);
