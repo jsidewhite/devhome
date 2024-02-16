@@ -93,11 +93,11 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    while (!IsDebuggerPresent())
+    //while (!IsDebuggerPresent())
     {
-        Sleep(100);
+        //Sleep(100);
     };
-    DebugBreak();
+    //DebugBreak();
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -114,7 +114,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         if (!IsTokenElevated(GetCurrentProcessToken()))
         {
             SelfElevate(wargv);
-            Sleep(600000);
+            Sleep(30000);
             return 0;
         }
         else

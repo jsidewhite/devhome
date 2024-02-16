@@ -4,6 +4,7 @@
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
+#include <wil/winrt.h>
 
 //#include <Holographic.SI.HotKeyDispatcher.h>
 //#include "HotKeys.h"
@@ -27,7 +28,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (IsDebuggerPresent())
             {
-                DebugBreak();
+                //DebugBreak();
             }
             return S_OK;
         }
@@ -36,7 +37,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (IsDebuggerPresent())
             {
-                DebugBreak();
+                //DebugBreak();
             }
             *result = 34;
             return S_OK;
@@ -46,7 +47,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (IsDebuggerPresent())
             {
-                DebugBreak();
+                //DebugBreak();
             }
             return S_OK;
         }
@@ -55,7 +56,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (IsDebuggerPresent())
             {
-                DebugBreak();
+                //DebugBreak();
             }
             *value = true;
             return S_OK;
@@ -65,12 +66,47 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (IsDebuggerPresent())
             {
-                DebugBreak();
+                //DebugBreak();
             }
             *value = 234;
             return S_OK;
         }
     };
 
-    ActivatableClass(QuietBackgroundProcessesSession);
+    class QuietBackgroundProcessesSessionStatics WrlFinal :
+        public Microsoft::WRL::AgileActivationFactory<
+            Microsoft::WRL::Implements<IQuietBackgroundProcessesSessionStatics>>
+    {
+        InspectableClassStatic(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession, BaseTrust);
+
+    public:
+        // IQuietBackgroundProcessesSessionStatics
+        STDMETHODIMP GetSingleton(_COM_Outptr_ IQuietBackgroundProcessesSession** value) noexcept override
+        try
+        {
+            /*
+            auto y = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
+            wil::com_ptr<IQuietBackgroundProcessesSession> instance;
+            THROW_IF_FAILED(y->GetSingleton(&instance));
+            initd = true;
+            *value = instance.detach();
+            return S_OK;
+            */
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSession>(value));
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        // IActivationFactory method
+        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable** ppvObject) noexcept
+        {
+            //return Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSessionManager>(ppvObject);
+            return E_NOTIMPL;
+        }
+
+    private:
+        bool initd{};
+    };
+
+    ActivatableClassWithFactory(QuietBackgroundProcessesSession, QuietBackgroundProcessesSessionStatics);
 }
