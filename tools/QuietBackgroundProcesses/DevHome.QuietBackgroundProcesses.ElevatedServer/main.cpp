@@ -32,8 +32,11 @@ bool g_lastInstanceOfTheModuleObjectIsReleased;
 
 /// <summary>
 
-ActivatableClass(QuietBackgroundProcessesSessionManager);
+//ActivatableClass(QuietBackgroundProcessesSessionManager);
 ActivatableClass(QuietBackgroundProcessesSession);
+
+ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
+//ActivatableClassWithFactory(QuietBackgroundProcessesSession, QuietBackgroundProcessesSessionStatics);
 
 /// </summary>
 /// <typeparam name="FactoryT"></typeparam>
