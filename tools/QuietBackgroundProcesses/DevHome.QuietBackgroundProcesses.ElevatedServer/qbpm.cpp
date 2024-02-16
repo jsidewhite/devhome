@@ -19,7 +19,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager,
             Microsoft::WRL::FtmBase>
     {
-        InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, FullTrust);
+        InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, BaseTrust);
 
     public:
         STDMETHODIMP RuntimeClassInitialize() noexcept

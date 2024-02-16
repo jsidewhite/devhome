@@ -3,8 +3,42 @@
 
 #include <iostream>
 
+#include <windows.h>
+
+#include <wrl/client.h>
+#include <wrl/wrappers/corewrappers.h>
+#include <wrl/implements.h>
+#include <wrl/module.h>
+#include <wil/com.h>
+#include <wil/result_macros.h>
+#include <wil/token_helpers.h>
+#include <wil/win32_helpers.h>
+#include <wil/winrt.h>
+
+#include "..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer\DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager_h.h"
+
+
+
 int main()
 {
+    
+    using namespace Microsoft;
+    using namespace Microsoft::WRL::Wrappers;
+
+    auto unique_rouninitialize_call = wil::RoInitialize();
+
+    //ComPtr<IUriRuntimeClassFactory> uriFactory;
+    //HRESULT hr = WRL::GetActivationFactory(HStringReference(RuntimeClass_Windows_Foundation_Uri).Get(), &uriFactory);
+    //auto ifac = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
+    //auto ifac = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManager>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager");
+    //auto ifac = wil::GetActivationFactory<IUnknown>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager");
+
+    //void* f;
+    //THROW_IF_FAILED(RoGetActivationFactory(HStringReference(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager").Get(), ));
+    wil::ActivateInstance<IInspectable>(L"DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager");
+
+    
+
     std::cout << "Hello World!\n";
 }
 
