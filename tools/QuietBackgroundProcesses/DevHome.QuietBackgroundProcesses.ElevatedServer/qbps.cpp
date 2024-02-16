@@ -1,10 +1,32 @@
 #include <pch.h>
 
+
+
+
+
+#include <atomic>
+#include <chrono>
+#include <functional>
+#include <future>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <vector>
+
 #include <wrl/client.h>
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
+
+#include <wil/resource.h>
+#include <wil/result_macros.h>
+#include <wil/win32_helpers.h>
 #include <wil/winrt.h>
+
+#include "Timer.h"
+#include "QuietState.h"
+
+
 
 //#include <Holographic.SI.HotKeyDispatcher.h>
 //#include "HotKeys.h"
@@ -12,6 +34,15 @@
 //#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
+
+constexpr auto QUIET_DURATION = std::chrono::hours(2);
+
+std::mutex g_mutex;
+std::unique_ptr<Timer> g_activeTimer;
+
+QuietState::unique_quietwindowclose_call g_quietState{ false };
+
+
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -35,40 +66,53 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
         STDMETHODIMP Start(__int64* result) noexcept override
         {
-            if (IsDebuggerPresent())
-            {
-                //DebugBreak();
-            }
-            *result = 34;
+            auto lock = std::scoped_lock(g_mutex);
+
+            // Discard the active timer
+            Timer::Discard(std::move(g_activeTimer));
+
+            // Start timer
+            g_activeTimer.reset(new Timer(QUIET_DURATION, []() {
+                auto lock = std::scoped_lock(g_mutex);
+                g_quietState.reset();
+            }));
+
+            // Turn on quiet mode
+            g_quietState = QuietState::TurnOn();
+
+            // Return duration for showing countdown
+            *result = g_activeTimer->TimeLeftInSeconds();
             return S_OK;
         }
 
         STDMETHODIMP Stop(void) noexcept override
         {
-            if (IsDebuggerPresent())
-            {
-                //DebugBreak();
-            }
+            auto lock = std::scoped_lock(g_mutex);
+
+            // Turn off quiet mode
+            g_quietState.reset();
+
+            // Detach and destruct the current time window
+            Timer::Discard(std::move(g_activeTimer));
             return S_OK;
         }
 
         STDMETHODIMP get_IsActive(::boolean* value) noexcept override
         {
-            if (IsDebuggerPresent())
-            {
-                //DebugBreak();
-            }
-            *value = true;
+            auto lock = std::scoped_lock(g_mutex);
+            *value = (bool)g_quietState;
             return S_OK;
         }
 
         STDMETHODIMP get_TimeLeftInSeconds(__int64* value) noexcept override
         {
-            if (IsDebuggerPresent())
+            auto lock = std::scoped_lock(g_mutex);
+            if (!g_quietState || !g_activeTimer)
             {
-                //DebugBreak();
+                return 0;
             }
-            *value = 234;
+
+            *value = g_activeTimer->TimeLeftInSeconds();
             return S_OK;
         }
     };
