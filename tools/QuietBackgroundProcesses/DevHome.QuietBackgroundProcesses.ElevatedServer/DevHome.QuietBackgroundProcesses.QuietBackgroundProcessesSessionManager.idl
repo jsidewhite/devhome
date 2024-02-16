@@ -6,10 +6,22 @@ import "inspectable.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
-    [default_interface] runtimeclass QuietBackgroundProcessesSessionManager {
+    /*
+    [uuid(5a3545a0-0357-4a73-ac29-5d2918755cc2), version(1.0)]
+        interface IQuietBackgroundProcessesSessionManager : IInspectable
+    {
+        //static QuietBackgroundProcessesSession GetSingleton();
+
+        Int32 GetInt();
+    }
+    */
+
+    [default_interface]
+    runtimeclass QuietBackgroundProcessesSessionManager{
         QuietBackgroundProcessesSessionManager();
         //static QuietBackgroundProcessesSession GetSession();
         //static QuietBackgroundProcessesSession TryGetSession();
         Int32 GetInt();
+        //[default] interface IQuietBackgroundProcessesSessionManager;
     }
 }
