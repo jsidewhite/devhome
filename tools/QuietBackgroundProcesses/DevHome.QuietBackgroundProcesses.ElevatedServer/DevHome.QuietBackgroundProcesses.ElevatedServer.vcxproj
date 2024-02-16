@@ -133,7 +133,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="QuietBackgroundProcessesSession.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utility.h" />
@@ -144,7 +143,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="qbpm.cpp" />
-    <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
+    <ClCompile Include="qbps.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

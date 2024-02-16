@@ -20,7 +20,7 @@
 #include <roregistrationapi.h>
 
 //#include "QuietBackgroundProcessesSessionManager.h"
-#include "QuietBackgroundProcessesSession.h"
+//#include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
 #include "Utility.h"
 
