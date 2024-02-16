@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0626 */
 /* at Mon Jan 18 19:14:07 2038
  */
-/* Compiler settings for C:\Users\jwhites\AppData\Local\Temp\DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl-96874e0b:
+/* Compiler settings for C:\Users\jwhites\AppData\Local\Temp\DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl-838f6f87:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0626 
     protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
