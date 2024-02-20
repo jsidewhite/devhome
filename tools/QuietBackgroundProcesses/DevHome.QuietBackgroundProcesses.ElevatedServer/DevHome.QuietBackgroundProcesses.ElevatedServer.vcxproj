@@ -228,6 +228,42 @@
   <ItemGroup>
     <None Include="PropertySheet.props" />
   </ItemGroup>
+
+  <!-- Define platform WinMD references for modern IDL compilation -->
+  <Target Name="sdf3" AfterTargets="AfterBuild">
+
+
+    <ItemGroup>
+      <_MdMergeInputs Include="@(Midl)" Condition="'%(Midl.ExcludedFromBuild)' != 'true'">
+        <WinMDPath>%(Midl.MetadataFileName)</WinMDPath>
+        <MdMergeOutputFile>$(CppWinRTProjectWinMD)</MdMergeOutputFile>
+      </_MdMergeInputs>
+      <_MdMergeReferences Include="$(CppWinRTSDKReferences)" />
+      <CppWinRTMdMergeMetadataDirectories Include="$(WindowsSDK_MetadataFoundationPath)" />
+      <CppWinRTMdMergeInputs Remove="@(CppWinRTMdMergeInputs)" />
+      <CppWinRTMdMergeInputs Include="@(_MdMergeInputs-&gt;'%(WinMDPath)'-&gt;Distinct())" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <CppWinRTMergedDir>$(IntDir)Merged\</CppWinRTMergedDir>
+
+      <!-- mdmerge.exe wants the folders to not have a trailing \ -->
+      <_MdMergeDepth>-n:2</_MdMergeDepth>
+      <_MdMergeParameters Condition="'$(CppWinRTMergeNoValidate)'!='true'">-v</_MdMergeParameters>
+      <_MdMergeParameters>$(_MdMergeParameters) -metadata_dir "$(WindowsSDK_MetadataFoundationPath)"</_MdMergeParameters>
+      <_MdMergeParameters>$(_MdMergeParameters) @(CppWinRTMdMergeInputs->'-i "%(Identity)"', '
+')</_MdMergeParameters>
+      <_MdMergeParameters>$(_MdMergeParameters) -o "$(CppWinRTMergedDir.TrimEnd('\'))" -partial $(_MdMergeDepth)</_MdMergeParameters>
+    </PropertyGroup>
+    <PropertyGroup>
+      <MdmergeResponseFile Condition="'$(MdmergeResponseFile)'==''">$(IntDir)$(MSBuildProjectFile).mdmerge.rsp</MdmergeResponseFile>
+      <MdMergeCommand>$(MdMergePath)mdmerge %40"$(MdmergeResponseFile)"</MdMergeCommand>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(MdmergeResponseFile)" Lines="$(_MdMergeParameters)" Overwrite="true" />
+    <MakeDir Directories="$(CppWinRTMergedDir)" />
+    <Exec Command="$(MdmergeCommand)" />
+  </Target>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
