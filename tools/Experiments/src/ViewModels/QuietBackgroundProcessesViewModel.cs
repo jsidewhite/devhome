@@ -46,7 +46,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         {
             // var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
             var u = new DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager();
-            var x = u.GetInt();
+            //var x = u.GetInt();
 
             // var x = u.GetInt();
             // return x != 34;
