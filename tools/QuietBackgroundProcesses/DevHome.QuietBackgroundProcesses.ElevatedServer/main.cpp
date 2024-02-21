@@ -102,7 +102,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, SERVER_STARTED_EVENT_NAME);
         SelfElevate(wargv);
         elevatedServerRunningEvent.wait();
-        Sleep(30000);
+        //Sleep(30000);
         return 0;
     }
 
@@ -120,6 +120,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         QuietState::TurnOff();
     }
 
+    CoAddRefServerProcess();
+
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
         // The last instance object of the module is released
@@ -133,7 +135,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // Tell the unelevated server that we've registered with COM and it may shutdown
     if (isElevatedServer)
     {
-        debugsleep();
+        //debugsleep();
         wil::unique_event elevatedServerRunningEvent;
         elevatedServerRunningEvent.open(L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started");
         elevatedServerRunningEvent.SetEvent();
@@ -145,7 +147,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 
         // Wait for both events to complete
         g_finishCondition.wait(lock, [&isElevatedServer] {
-            return g_lastInstanceOfTheModuleObjectIsReleased && (!isElevatedServer || !IsTimerActive());
+            if (isElevatedServer)
+            {
+                return g_lastInstanceOfTheModuleObjectIsReleased && !IsTimerActive();
+            }
+            return g_lastInstanceOfTheModuleObjectIsReleased;
+            // return false;
         });
     }
 
@@ -154,6 +161,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     {
         QuietState::TurnOff();
     }
+
+    CoReleaseServerProcess();
 
     return 0;
 }
