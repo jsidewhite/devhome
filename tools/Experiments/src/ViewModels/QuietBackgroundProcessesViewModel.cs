@@ -44,16 +44,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            // var x = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
-            var u = new DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager();
-            //var x = u.GetInt();
-
-            // var x = u.GetInt();
-            // return x != 34;
-            return true;
+            _session = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
+            return _session != null;
         }
-        catch
+        catch (Exception ex)
         {
+            Log.Logger()?.ReportError("QuietBackgroundProcessesSessionManager::TryGetSession failed", ex);
         }
 
         return false;
