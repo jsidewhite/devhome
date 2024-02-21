@@ -19,29 +19,12 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
-//#include "QuietBackgroundProcessesSessionManager.h"
-//#include "QuietBackgroundProcessesSession.h"
 #include "QuietState.h"
 #include "Utility.h"
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
-
-
-
-/// <summary>
-
-//ActivatableClass(QuietBackgroundProcessesSessionManager);
-//ActivatableClass(QuietBackgroundProcessesSession);
-
-//ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
-//ActivatableClassWithFactory(QuietBackgroundProcessesSession, QuietBackgroundProcessesSessionStatics);
-
-/// </summary>
-/// <typeparam name="FactoryT"></typeparam>
-/// <param name="out"></param>
-/// <returns></returns>
 
 template <typename FactoryT>
 static HRESULT make_factory(IActivationFactory** out) noexcept

@@ -54,22 +54,22 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     public:
         // IQuietBackgroundProcessesSessionManagerStatics
-        STDMETHODIMP GetSession(_COM_Outptr_ IQuietBackgroundProcessesSession** value) noexcept override try
+        STDMETHODIMP GetSession(_COM_Outptr_ IQuietBackgroundProcessesSession** session) noexcept override try
         {
             auto y = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
             wil::com_ptr<IQuietBackgroundProcessesSession> instance;
             THROW_IF_FAILED(y->GetSingleton(&instance));
             initd = true;
-            *value = instance.detach();
+            *session = instance.detach();
             return S_OK;
         }
         CATCH_RETURN()
 
-        STDMETHODIMP TryGetSession(_COM_Outptr_opt_ IQuietBackgroundProcessesSession** value) noexcept override
+        STDMETHODIMP TryGetSession(_COM_Outptr_opt_ IQuietBackgroundProcessesSession** session) noexcept override
         {
             if (!initd)
             {
-                *value = nullptr;
+                *session = nullptr;
                 return S_OK;
             }
             //auto x = wil::ActivateInstance<IQuietBackgroundProcessesSession>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
@@ -78,7 +78,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             wil::com_ptr<IQuietBackgroundProcessesSession> instance;
             THROW_IF_FAILED(y->GetSingleton(&instance));
             initd = true;
-            *value = instance.detach();
+            *session = instance.detach();
             return S_OK;
         }
 

@@ -125,7 +125,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     public:
         // IQuietBackgroundProcessesSessionStatics
-        STDMETHODIMP GetSingleton(_COM_Outptr_ IQuietBackgroundProcessesSession** value) noexcept override
+        STDMETHODIMP GetSingleton(_COM_Outptr_ IQuietBackgroundProcessesSession** session) noexcept override
         try
         {
             /*
@@ -136,15 +136,15 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             *value = instance.detach();
             return S_OK;
             */
-            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSession>(value));
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSession>(session));
             return S_OK;
         }
         CATCH_RETURN()
 
         // IActivationFactory method
-        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable** ppvObject) noexcept
+        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
         {
-            //return Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSessionManager>(ppvObject);
+            // Disallow activation - must use GetSingleton()
             return E_NOTIMPL;
         }
 
