@@ -5,41 +5,13 @@ import "inspectable.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
-    /*
-    //[uuid(83e69cf4-cadb-4742-9bc6-591579660a29), version(1.0)]
-    interface IQuietBackgroundProcessesSession : IInspectable {
-        //static QuietBackgroundProcessesSession GetSingleton();
-
-        Int64 Start();
-        void Stop();
-        Boolean IsActive
-        {
-            get;
-        };
-        Int64 TimeLeftInSeconds
-        {
-            get;
-        };
-    }
-    */
-
-    ///[uuid(83e69cf4-cadb-4742-9bc6-591579660a29), version(1.0)]
-        //[version(1.0)]
-        [default_interface]
+    [default_interface]
     runtimeclass QuietBackgroundProcessesSession
     {
-        //[default] interface IQuietBackgroundProcessesSession;
-
         static QuietBackgroundProcessesSession GetSingleton();
         Int64 Start();
         void Stop();
-        Boolean IsActive
-        {
-            get;
-        };
-        Int64 TimeLeftInSeconds
-        {
-            get;
-        };
+        Boolean IsActive { get; };
+        Int64 TimeLeftInSeconds { get; };
     }
 }

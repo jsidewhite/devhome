@@ -6,9 +6,6 @@
 #include <wrl/module.h>
 #include <wil/winrt.h>
 
-//#include <Holographic.SI.HotKeyDispatcher.h>
-//#include "HotKeys.h"
-//#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
@@ -25,27 +22,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
     public:
         STDMETHODIMP RuntimeClassInitialize() noexcept
         {
-            if (IsDebuggerPresent())
-            {
-                //DebugBreak();
-            }
-            return S_OK;
-        }
-
-        // IQuietBackgroundProcessesSessionManager
-        STDMETHODIMP GetInt(int* result) noexcept override
-        {
-            if (IsDebuggerPresent())
-            {
-                //DebugBreak();
-            }
-            *result = 34;
             return S_OK;
         }
     };
-    //}
 
-    
     class QuietBackgroundProcessesSessionManagerStatics WrlFinal :
         public Microsoft::WRL::AgileActivationFactory<
             Microsoft::WRL::Implements<IQuietBackgroundProcessesSessionManagerStatics>>
@@ -94,7 +74,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
     private:
         bool initd{};
     };
-
 
     ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
 }

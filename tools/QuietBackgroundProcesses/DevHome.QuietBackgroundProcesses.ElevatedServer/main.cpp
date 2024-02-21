@@ -49,9 +49,6 @@ static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serve
 
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        //auto hr = static_cast<HRESULT>(WINRT_GetActivationFactory(name, reinterpret_cast<void**>(factory)));
-        //Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetActivationFactory();
-        //RETURN_IF_FAILED(hr);
         auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
         RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
         return S_OK;
@@ -76,11 +73,6 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    //while (!IsDebuggerPresent())
-    {
-        //Sleep(100);
-    };
-    //DebugBreak();
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -141,7 +133,6 @@ wil::com_ptr<IGlobalOptions> pGlobalOptions;
 
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
-        __debugbreak();
         // The last instance object of the module is released
         {
             auto lock = std::unique_lock<std::mutex>(g_finishMutex);
@@ -169,5 +160,3 @@ wil::com_ptr<IGlobalOptions> pGlobalOptions;
     return 0;
 }
 CATCH_RETURN()
-
-// ActivatableClass(CentennialLifetimeManager)
