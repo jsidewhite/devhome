@@ -229,6 +229,7 @@
     <None Include="PropertySheet.props" />
   </ItemGroup>
   
+  <!-- Run mdmerge.exe on our generated winmd files -->
   <Target Name="Mdmerge" AfterTargets="AfterBuild">
     <ItemGroup>
       <_MdmergeInputs Include="@(Midl)" Condition="'%(Midl.ExcludedFromBuild)' != 'true'">
@@ -253,6 +254,14 @@
     <WriteLinesToFile File="$(MdmergeResponseFile)" Lines="$(MdmergeParameters)" Overwrite="true" />
     <MakeDir Directories="$(MdmergeMergedDir)" />
     <Exec Command="$(MdmergeCommand)" />
+  </Target>
+
+  <!-- Copy the merged .winmd to the out folder -->
+  <Target Name="CopyWinmdMerged" AfterTargets="AfterBuild;Mdmerge">
+    <PropertyGroup>
+      <MergedWinmdCopyCommand>copy /Y "$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" "$(OutDir)."</MergedWinmdCopyCommand>
+    </PropertyGroup>
+    <Exec Command="$(MergedWinmdCopyCommand)" />
   </Target>
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

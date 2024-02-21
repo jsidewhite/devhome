@@ -136,6 +136,9 @@
             <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
               <PackagePath>.\</PackagePath>
             </AdditionalPackageFile>
+            <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.winmd">
+              <PackagePath>.\</PackagePath>
+            </AdditionalPackageFile>
         </ItemGroup>
 
         <ItemGroup>
