@@ -108,7 +108,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <ModuleDefinitionFile>QuietBackgroundProcesses_ElevatedServer.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
@@ -212,8 +213,8 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="qbpm.cpp" />
-    <ClCompile Include="qbps.cpp" />
+    <ClCompile Include="QuietBackgroundProcessesSessionManager.cpp" />
+    <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
     <ClCompile Include="QuietState.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -223,12 +224,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="QuietBackgroundProcesses_ElevatedServer.def" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
   </ItemGroup>
-  
   <!-- Run mdmerge.exe on our generated winmd files -->
   <Target Name="Mdmerge" AfterTargets="AfterBuild">
     <ItemGroup>
@@ -255,7 +254,6 @@
     <MakeDir Directories="$(MdmergeMergedDir)" />
     <Exec Command="$(MdmergeCommand)" />
   </Target>
-
   <!-- Copy the merged .winmd to the out folder -->
   <Target Name="CopyWinmdMerged" AfterTargets="AfterBuild;Mdmerge">
     <PropertyGroup>
@@ -263,7 +261,6 @@
     </PropertyGroup>
     <Exec Command="$(MergedWinmdCopyCommand)" />
   </Target>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
