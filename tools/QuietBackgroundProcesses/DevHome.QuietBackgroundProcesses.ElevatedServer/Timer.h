@@ -51,6 +51,7 @@ public:
         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime);
 
         auto left = m_duration.count() - elapsed.count();
+        secondsLeft = left;
         return std::max(left, 0ll);
     }
 
@@ -69,7 +70,7 @@ private:
             }
 
             // Sleep for a short duration to avoid busy waiting
-            std::this_thread::sleep_for(std::chrono::seconds(30));
+            std::this_thread::sleep_for(std::chrono::seconds(10));
         }
 
         // Do the callback
@@ -86,4 +87,5 @@ private:
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
     CallbackFunction m_callback;
+    int secondsLeft = -1;
 };

@@ -19,6 +19,7 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
+#include "ActiveTimer.h"
 #include "QuietState.h"
 #include "Utility.h"
 
@@ -94,13 +95,14 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
-    // Watif for the elevated server to register with COM
+    // Wait for the elevated server to register with COM
     if (isElevatedServer && !IsTokenElevated(GetCurrentProcessToken()))
     {
         wil::unique_event elevatedServerRunningEvent;
         elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, SERVER_STARTED_EVENT_NAME);
-        elevatedServerRunningEvent.wait();
         SelfElevate(wargv);
+        elevatedServerRunningEvent.wait();
+        Sleep(30000);
         return 0;
     }
 
@@ -131,6 +133,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // Tell the unelevated server that we've registered with COM and it may shutdown
     if (isElevatedServer)
     {
+        debugsleep();
         wil::unique_event elevatedServerRunningEvent;
         elevatedServerRunningEvent.open(L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started");
         elevatedServerRunningEvent.SetEvent();
@@ -141,10 +144,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         auto lock = std::unique_lock<std::mutex>(g_finishMutex);
 
         // Wait for both events to complete
-        g_finishCondition.wait(lock, [] {
-            // return g_lastInstanceOfTheModuleObjectIsReleased && winrt::DevHome::QuietBackgroundProcesses::implementation::QuietBackgroundProcessesSession::IsActive();
-            // todo:jw
-            return g_lastInstanceOfTheModuleObjectIsReleased;
+        g_finishCondition.wait(lock, [&isElevatedServer] {
+            return g_lastInstanceOfTheModuleObjectIsReleased && (!isElevatedServer || !IsTimerActive());
         });
     }
 

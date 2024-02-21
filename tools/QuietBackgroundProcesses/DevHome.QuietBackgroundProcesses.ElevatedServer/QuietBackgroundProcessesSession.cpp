@@ -24,6 +24,7 @@
 #include <wil/winrt.h>
 
 #include "Timer.h"
+#include "ActiveTimer.h"
 #include "QuietState.h"
 
 
@@ -39,6 +40,12 @@ constexpr auto QUIET_DURATION = std::chrono::hours(2);
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
+
+bool IsTimerActive()
+{
+    auto lock = std::scoped_lock(g_mutex);
+    return (bool)g_activeTimer;
+}
 
 QuietState::unique_quietwindowclose_call g_quietState{ false };
 

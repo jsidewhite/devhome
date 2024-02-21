@@ -203,6 +203,7 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActiveTimer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
