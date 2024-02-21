@@ -26,17 +26,6 @@ std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
 
-template <typename FactoryT>
-static HRESULT make_factory(IActivationFactory** out) noexcept
-try
-{
-    auto factoryObject = winrt::make<FactoryT>();
-    auto factoryInterface = factoryObject.as<winrt::Windows::Foundation::IActivationFactory>();
-    *out = static_cast<IActivationFactory*>(winrt::detach_abi(factoryInterface));
-    return S_OK;
-}
-CATCH_RETURN()
-
 static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
     using namespace Microsoft::WRL::Wrappers;
@@ -71,6 +60,15 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
     return { wargv.data() + wcslen(serverNamePrefix) };
 }
 
+void debugsleep()
+{
+    while (!IsDebuggerPresent())
+    {
+        Sleep(100);
+    };
+    DebugBreak();
+}
+
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     if (wargc < 1)
@@ -78,13 +76,24 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
+
     // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
     auto serverName = ParseServerNameArgument(wargv);
 
+    bool isElevatedServer{};
     if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.Server", true) == 0)
     {
     }
     else if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) == 0)
+    {
+        isElevatedServer = true;
+    }
+    else
+    {
+        THROW_HR(E_INVALIDARG);
+    }
+
+    if (isElevatedServer)
     {
         if (!IsTokenElevated(GetCurrentProcessToken()))
         {
@@ -94,42 +103,22 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         }
         else
         {
-            while (!IsDebuggerPresent())
-            {
-                Sleep(100);
-            };
-            DebugBreak();
         }
     }
-    else
-    {
-        THROW_HR(E_INVALIDARG);
-    }
 
-    
     auto unique_rouninitialize_call = wil::RoInitialize();
 
-wil::com_ptr<IGlobalOptions> pGlobalOptions;
+    // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated synchronously.
+    wil::com_ptr<IGlobalOptions> pGlobalOptions;
     THROW_IF_FAILED(CoCreateInstance(CLSID_GlobalOptions, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pGlobalOptions)));
-//THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_UNMARSHALING_POLICY, COMGLB_UNMARSHALING_POLICY_STRONG)); // to opt-out pass COMGLB_UNMARSHALING_POLICY_NORMAL
-
-    // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated
-    // synchronously during the CCI from the manager process to reflect the fact that the manager has
-    // a broker interface proxy.
-    // COMGLB_ENABLE_AGILE_OOP_PROXIES – makes all COM proxies agile, avoid the need to marshal and use things like AgileRef. Simpler/faster code.
-    // COMGLB_ENABLE_SHARED_FTM. – avoids an allocation per agile object. By default FtmBase uses the free threaded marshaler and without this option a new unique one is allocated per object.
-//THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN | COMGLB_ENABLE_AGILE_OOP_PROXIES | COMGLB_ENABLE_SHARED_FTM));
-    
-    //THROW_IF_FAILED(pGlobalOptions->Set());
-    //THROW_IF_FAILED(pGlobalOptions->Set());
     THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN));
     THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_EXCEPTION_HANDLING, COMGLB_EXCEPTION_DONOT_HANDLE_ANY));
 
-
-
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
-    QuietState::TurnOff();
-
+    if (isElevatedServer)
+    {
+        QuietState::TurnOff();
+    }
 
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
@@ -155,7 +144,10 @@ wil::com_ptr<IGlobalOptions> pGlobalOptions;
     }
 
     // To be safe, force quiet mode off
-    QuietState::TurnOff();
+    if (isElevatedServer)
+    {
+        QuietState::TurnOff();
+    }
 
     return 0;
 }
