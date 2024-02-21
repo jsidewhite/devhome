@@ -5,6 +5,7 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <MdmergeMergedDir>..\DevHome.QuietBackgroundProcesses.ElevatedServer\AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
   </PropertyGroup>
   
 
@@ -22,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <CsWinRTInputs Include="W:\repo\devhome\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer\x64\Release\Merged\*.winmd" />
+    <CsWinRTInputs Include="$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" />
   </ItemGroup>
 
   <ItemGroup>

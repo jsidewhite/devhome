@@ -238,7 +238,7 @@
       <MdmergeInputs Include="@(_MdmergeInputs-&gt;'%(WinMDPath)'-&gt;Distinct())" />
     </ItemGroup>
     <PropertyGroup>
-      <MdmergeMergedDir>$(IntDir)Merged\</MdmergeMergedDir>
+      <MdmergeMergedDir>AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
       <MdmergeMergeDepth>-n:2</MdmergeMergeDepth>
       <MdmergeParameters>-v</MdmergeParameters>
       <MdmergeParameters>$(MdmergeParameters) -metadata_dir "$(WindowsSDK_MetadataFoundationPath)"</MdmergeParameters>
