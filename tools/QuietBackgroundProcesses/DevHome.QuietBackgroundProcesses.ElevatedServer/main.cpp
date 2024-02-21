@@ -71,11 +71,12 @@ void debugsleep()
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
+    constexpr auto SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";
+
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
     }
-
 
     // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
     auto serverName = ParseServerNameArgument(wargv);
@@ -93,17 +94,14 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
-    if (isElevatedServer)
+    // Watif for the elevated server to register with COM
+    if (isElevatedServer && !IsTokenElevated(GetCurrentProcessToken()))
     {
-        if (!IsTokenElevated(GetCurrentProcessToken()))
-        {
-            SelfElevate(wargv);
-            Sleep(30000);
-            return 0;
-        }
-        else
-        {
-        }
+        wil::unique_event elevatedServerRunningEvent;
+        elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, SERVER_STARTED_EVENT_NAME);
+        elevatedServerRunningEvent.wait();
+        SelfElevate(wargv);
+        return 0;
     }
 
     auto unique_rouninitialize_call = wil::RoInitialize();
@@ -130,6 +128,13 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         g_finishCondition.notify_one();
     });
 
+    // Tell the unelevated server that we've registered with COM and it may shutdown
+    if (isElevatedServer)
+    {
+        wil::unique_event elevatedServerRunningEvent;
+        elevatedServerRunningEvent.open(L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started");
+        elevatedServerRunningEvent.SetEvent();
+    }
 
     // Wait for the module objects to be released and the timer threads to finish
     {
