@@ -228,39 +228,30 @@
   <ItemGroup>
     <None Include="PropertySheet.props" />
   </ItemGroup>
-
-  <!-- Define platform WinMD references for modern IDL compilation -->
-  <Target Name="sdf3" AfterTargets="AfterBuild">
-
-
+  
+  <Target Name="Mdmerge" AfterTargets="AfterBuild">
     <ItemGroup>
-      <_MdMergeInputs Include="@(Midl)" Condition="'%(Midl.ExcludedFromBuild)' != 'true'">
+      <_MdmergeInputs Include="@(Midl)" Condition="'%(Midl.ExcludedFromBuild)' != 'true'">
         <WinMDPath>%(Midl.MetadataFileName)</WinMDPath>
         <MdMergeOutputFile>$(CppWinRTProjectWinMD)</MdMergeOutputFile>
-      </_MdMergeInputs>
-      <_MdMergeReferences Include="$(CppWinRTSDKReferences)" />
-      <CppWinRTMdMergeMetadataDirectories Include="$(WindowsSDK_MetadataFoundationPath)" />
-      <CppWinRTMdMergeInputs Remove="@(CppWinRTMdMergeInputs)" />
-      <CppWinRTMdMergeInputs Include="@(_MdMergeInputs-&gt;'%(WinMDPath)'-&gt;Distinct())" />
+      </_MdmergeInputs>
+      <MdmergeInputs Include="@(_MdmergeInputs-&gt;'%(WinMDPath)'-&gt;Distinct())" />
     </ItemGroup>
-
     <PropertyGroup>
-      <CppWinRTMergedDir>$(IntDir)Merged\</CppWinRTMergedDir>
-
-      <!-- mdmerge.exe wants the folders to not have a trailing \ -->
-      <_MdMergeDepth>-n:2</_MdMergeDepth>
-      <_MdMergeParameters Condition="'$(CppWinRTMergeNoValidate)'!='true'">-v</_MdMergeParameters>
-      <_MdMergeParameters>$(_MdMergeParameters) -metadata_dir "$(WindowsSDK_MetadataFoundationPath)"</_MdMergeParameters>
-      <_MdMergeParameters>$(_MdMergeParameters) @(CppWinRTMdMergeInputs->'-i "%(Identity)"', '
-')</_MdMergeParameters>
-      <_MdMergeParameters>$(_MdMergeParameters) -o "$(CppWinRTMergedDir.TrimEnd('\'))" -partial $(_MdMergeDepth)</_MdMergeParameters>
+      <MdmergeMergedDir>$(IntDir)Merged\</MdmergeMergedDir>
+      <MdmergeMergeDepth>-n:2</MdmergeMergeDepth>
+      <MdmergeParameters>-v</MdmergeParameters>
+      <MdmergeParameters>$(MdmergeParameters) -metadata_dir "$(WindowsSDK_MetadataFoundationPath)"</MdmergeParameters>
+      <MdmergeParameters>$(MdmergeParameters) @(MdmergeInputs->'-i "%(Identity)"', '
+')</MdmergeParameters>
+      <MdmergeParameters>$(MdmergeParameters) -o "$(MdmergeMergedDir.TrimEnd('\'))" -partial $(MdmergeMergeDepth)</MdmergeParameters>
     </PropertyGroup>
     <PropertyGroup>
       <MdmergeResponseFile Condition="'$(MdmergeResponseFile)'==''">$(IntDir)$(MSBuildProjectFile).mdmerge.rsp</MdmergeResponseFile>
-      <MdMergeCommand>$(MdMergePath)mdmerge %40"$(MdmergeResponseFile)"</MdMergeCommand>
+      <MdmergeCommand>$(MdMergePath)mdmerge %40"$(MdmergeResponseFile)"</MdmergeCommand>
     </PropertyGroup>
-    <WriteLinesToFile File="$(MdmergeResponseFile)" Lines="$(_MdMergeParameters)" Overwrite="true" />
-    <MakeDir Directories="$(CppWinRTMergedDir)" />
+    <WriteLinesToFile File="$(MdmergeResponseFile)" Lines="$(MdmergeParameters)" Overwrite="true" />
+    <MakeDir Directories="$(MdmergeMergedDir)" />
     <Exec Command="$(MdmergeCommand)" />
   </Target>
 
