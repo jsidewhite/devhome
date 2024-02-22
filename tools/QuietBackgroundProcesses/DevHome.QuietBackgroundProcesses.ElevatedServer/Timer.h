@@ -11,7 +11,12 @@
 #include <mutex>
 #include <optional>
 
+#include <wrl/module.h>
+#include <wil/resource.h>
+
 using CallbackFunction = void (*)();
+
+using unique_com_server_process_ref = wil::unique_call<decltype(&::CoReleaseServerProcess), ::CoReleaseServerProcess>;
 
 class Timer
 {
@@ -22,10 +27,24 @@ public:
 
     Timer(std::chrono::seconds seconds, CallbackFunction callback)
     {
+        // CoAddRefServerProcess();
+        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
+        auto count = module.IncrementObjectCount();
+
+        auto msg = std::wstring(L"Timer: Timer::Timer CoAddRefServerProcess = ") + std::to_wstring(count) + std::wstring(L"\n");
+        OutputDebugStringW(msg.c_str());
+
+
         m_startTime = std::chrono::steady_clock::now();
         m_duration = seconds;
         m_callback = std::move(callback);
         m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
+    }
+
+    ~Timer()
+    {
+        auto msg = std::wstring(L"Timer: Timer::~Timer\n");
+        OutputDebugStringW(msg.c_str());
     }
 
     Timer(Timer&& other) noexcept = default;
@@ -38,6 +57,9 @@ public:
     {
         auto lock = std::scoped_lock(m_mutex);
         m_cancelled = true;
+
+        auto msg = std::wstring(L"Timer: Cancelled\n");
+        OutputDebugStringW(msg.c_str());
     }
 
     int64_t TimeLeftInSeconds()
@@ -51,7 +73,9 @@ public:
         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime);
 
         auto left = m_duration.count() - elapsed.count();
+#if _DEBUG
         secondsLeft = left;
+#endif
         return std::max(left, 0ll);
     }
 
@@ -70,7 +94,7 @@ private:
             }
 
             // Sleep for a short duration to avoid busy waiting
-            std::this_thread::sleep_for(std::chrono::seconds(10));
+            std::this_thread::sleep_for(std::chrono::seconds(3));
         }
 
         // Do the callback
@@ -79,6 +103,12 @@ private:
         {
             this->m_callback();
         }
+
+        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
+        auto count = module.DecrementObjectCount();
+        auto msg = std::wstring(L"Timer: CoReleaseServerProcess = ") + std::to_wstring(count) + std::wstring(L"\n");
+        OutputDebugStringW(msg.c_str());
+        //m_serverReference.reset();
     }
 
     std::chrono::steady_clock::time_point m_startTime{};
@@ -87,5 +117,9 @@ private:
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
     CallbackFunction m_callback;
-    int secondsLeft = -1;
+    unique_com_server_process_ref m_serverReference;
+
+#if _DEBUG
+    int64_t m_secondsLeft = -1;
+#endif
 };

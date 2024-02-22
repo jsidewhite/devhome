@@ -49,8 +49,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (!initd)
             {
-                *session = nullptr;
-                return S_OK;
+                //*session = nullptr;
+                //return S_OK;
             }
             //auto x = wil::ActivateInstance<IQuietBackgroundProcessesSession>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
             //*value = x.detach();
