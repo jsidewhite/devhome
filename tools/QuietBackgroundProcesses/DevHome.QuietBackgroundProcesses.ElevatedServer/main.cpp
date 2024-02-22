@@ -15,6 +15,7 @@
 #include <wil/result_macros.h>
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
+#include <wil/winrt.h>
 
 #include <objbase.h>
 #include <roregistrationapi.h>
@@ -23,6 +24,8 @@
 #include "Timer.h"
 #include "QuietState.h"
 #include "Utility.h"
+
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
@@ -133,6 +136,15 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         QuietState::TurnOff();
     }
 
+
+    
+    wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics> factory;
+    if (isElevatedServer)
+    {
+        factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
+        //factory.reset(x);
+    }
+
     // Register WinRT activatable classes
     auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
         auto msg = std::wstring(L"Main: All WRL module references released callback\n");
@@ -187,6 +199,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
             return g_lastInstanceOfTheModuleObjectIsReleased;
         });
     }
+
+    factory.reset();
 
     // To be safe, force quiet mode off
     if (isElevatedServer)

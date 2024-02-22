@@ -57,7 +57,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
             if (m_weakSessionReference)
             {
-                if (auto strongRef = m_weakSessionReference.query<IQuietBackgroundProcessesSession>())
+                if (auto strongRef = m_weakSessionReference.try_query<IQuietBackgroundProcessesSession>())
                 {
                     *session = strongRef.detach();
                     return S_OK;
