@@ -16,6 +16,10 @@
 
 using CallbackFunction = void (*)();
 
+#if _DEBUG || NDEBUG
+#define TRACK_SECONDS_LEFT
+#endif
+
 using unique_com_server_process_ref = wil::unique_call<decltype(&::CoReleaseServerProcess), ::CoReleaseServerProcess>;
 
 class Timer
@@ -72,11 +76,11 @@ public:
         auto now = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime);
 
-        auto left = m_duration.count() - elapsed.count();
-#if _DEBUG
-        secondsLeft = left;
+        auto secondsLeft = m_duration.count() - elapsed.count();
+#ifdef TRACK_SECONDS_LEFT
+        m_secondsLeft = secondsLeft;
 #endif
-        return std::max(left, 0ll);
+        return std::max(secondsLeft, 0ll);
     }
 
 private:
@@ -85,6 +89,9 @@ private:
         // Pause until timer expired or cancelled
         while (true)
         {
+#ifdef TRACK_SECONDS_LEFT
+            m_secondsLeft = m_duration.count() - std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - m_startTime).count();
+#endif
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - this->m_startTime);
 
@@ -119,7 +126,7 @@ private:
     CallbackFunction m_callback;
     unique_com_server_process_ref m_serverReference;
 
-#if _DEBUG
+#ifdef TRACK_SECONDS_LEFT
     int64_t m_secondsLeft = -1;
 #endif
 };

@@ -37,7 +37,7 @@
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 
 //constexpr auto QUIET_DURATION = std::chrono::hours(2);
-constexpr auto QUIET_DURATION = std::chrono::seconds(30);
+constexpr auto QUIET_DURATION = std::chrono::seconds(25);
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
