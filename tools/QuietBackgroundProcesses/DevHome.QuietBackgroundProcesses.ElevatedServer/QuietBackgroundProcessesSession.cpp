@@ -71,7 +71,18 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             }
             return S_OK;
         }
+        /*
+        // IWeakReference
+        STDMETHODIMP Resolve(_Out_ IInspectable** objectReference) noexcept override
+        {
+            //static_assert(__is_base_of(IInspectable, T), "Only Windows Runtime interfaces can be resolved by weak reference");
+            //return Resolve(__uuidof(T), (IInspectable**)objectReference);
+            *objectReference = nullptr;
+            return S_OK;
+        }
+        */
 
+        // IQuietBackgroundProcessesSession
         STDMETHODIMP Start(__int64* result) noexcept override
         {
             auto lock = std::scoped_lock(g_mutex);

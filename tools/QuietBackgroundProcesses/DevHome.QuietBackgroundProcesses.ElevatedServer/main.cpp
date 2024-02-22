@@ -103,6 +103,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     //wil::unique_event elevatedServerFinishedEvent;
     if (!isElevatedServer)
     {
+        debugsleep();
         //elevatedServerFinishedEvent.create(wil::EventOptions::ManualReset, SERVER_FINISHED_EVENT_NAME);
     }
 
@@ -128,7 +129,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     if (isElevatedServer)
     {
-        debugsleep();
+        //debugsleep();
         QuietState::TurnOff();
     }
 
