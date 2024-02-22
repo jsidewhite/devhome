@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+#pragma once
+
 #include "pch.h"
 
 #include <algorithm>
@@ -11,16 +13,11 @@
 #include <mutex>
 #include <optional>
 
-#include <wrl/module.h>
-#include <wil/resource.h>
-
-using CallbackFunction = void (*)();
+#include "Utility.h"
 
 #if _DEBUG || NDEBUG
 #define TRACK_SECONDS_LEFT
 #endif
-
-using unique_com_server_process_ref = wil::unique_call<decltype(&::CoReleaseServerProcess), ::CoReleaseServerProcess>;
 
 class Timer
 {
@@ -29,26 +26,12 @@ public:
     static void Discard(std::unique_ptr<Timer> timer);
     static void WaitForAllDiscardedTimersToDestruct();
 
-    Timer(std::chrono::seconds seconds, CallbackFunction callback)
+    Timer(std::chrono::seconds seconds, std::function<void()> callback)
     {
-        // CoAddRefServerProcess();
-        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
-        auto count = module.IncrementObjectCount();
-
-        auto msg = std::wstring(L"Timer: Timer::Timer CoAddRefServerProcess = ") + std::to_wstring(count) + std::wstring(L"\n");
-        OutputDebugStringW(msg.c_str());
-
-
         m_startTime = std::chrono::steady_clock::now();
         m_duration = seconds;
         m_callback = std::move(callback);
         m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
-    }
-
-    ~Timer()
-    {
-        auto msg = std::wstring(L"Timer: Timer::~Timer\n");
-        OutputDebugStringW(msg.c_str());
     }
 
     Timer(Timer&& other) noexcept = default;
@@ -111,11 +94,7 @@ private:
             this->m_callback();
         }
 
-        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
-        auto count = module.DecrementObjectCount();
-        auto msg = std::wstring(L"Timer: CoReleaseServerProcess = ") + std::to_wstring(count) + std::wstring(L"\n");
-        OutputDebugStringW(msg.c_str());
-        //m_serverReference.reset();
+        m_serverReference.reset();
     }
 
     std::chrono::steady_clock::time_point m_startTime{};
@@ -123,8 +102,8 @@ private:
     std::future<void> m_timerThreadFuture;
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
-    CallbackFunction m_callback;
-    unique_com_server_process_ref m_serverReference;
+    std::function<void()> m_callback;
+    wrl_server_process_ref m_serverReference;
 
 #ifdef TRACK_SECONDS_LEFT
     int64_t m_secondsLeft = -1;
