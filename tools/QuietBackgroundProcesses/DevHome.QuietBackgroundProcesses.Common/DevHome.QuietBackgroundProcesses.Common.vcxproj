@@ -3,7 +3,6 @@
   <PropertyGroup Label="Globals">
     <Language>C++</Language>
   </PropertyGroup>
-  <Import Project="..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240131-x1351\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props" Condition="Exists('..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240131-x1351\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props')" />
   <Import Project="$(SolutionDir)ToolingVersions.props" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
@@ -21,8 +20,6 @@
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.22000.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17134.0</WindowsTargetPlatformMinVersion>
     <WindowsAppContainer>false</WindowsAppContainer>
-    <!-- Avoid WRL alignment warnings -->
-    <NoWarn>$(NoWarn);C4324</NoWarn>
     <!-- Generate OutDir -->
     <OutDir>$(SolutionDir)src\bin\$(Platform)\$(Configuration)\$(TargetFramework)\</OutDir>
   </PropertyGroup>
@@ -97,9 +94,11 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
       <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -148,21 +147,14 @@
     <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
     <ClInclude Include="Utility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ClCompile Include="empty.cpp" />
+  </ItemGroup>
   <!-- Run mdmerge.exe on our generated winmd files -->
   <Target Name="Mdmerge" AfterTargets="AfterBuild">
     <ItemGroup>
@@ -189,7 +181,6 @@
     <MakeDir Directories="$(MdmergeMergedDir)" />
     <Exec Command="$(MdmergeCommand)" />
   </Target>
-
   <!-- Copy the merged .winmd to the out folder -->
   <Target Name="CopyWinmdMerged" AfterTargets="AfterBuild;Mdmerge">
     <PropertyGroup>
@@ -197,16 +188,6 @@
     </PropertyGroup>
     <Exec Command="$(MergedWinmdCopyCommand)" />
   </Target>
-  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240131-x1351\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240131-x1351\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
