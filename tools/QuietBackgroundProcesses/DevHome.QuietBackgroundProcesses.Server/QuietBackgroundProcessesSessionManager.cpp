@@ -81,14 +81,13 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             auto lock = std::scoped_lock(m_mutex);
 
-            auto factory = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
-            wil::com_ptr<IQuietBackgroundProcessesSession> instance;
-            THROW_IF_FAILED(factory->GetSingleton(&instance));
+            if (!m_sessionReference)
+            {
+                auto factory = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
+                THROW_IF_FAILED(factory->GetSingleton(&m_sessionReference));
+            }
 
-            // Store a 'weak ref' to the session
-            m_sessionMakeshiftWeakReference = instance;
-
-            *session = instance.detach();
+            m_sessionReference.copy_to(session);
             return S_OK;
         }
         CATCH_RETURN()
@@ -96,23 +95,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP TryGetSession(_COM_Outptr_opt_ IQuietBackgroundProcessesSession** session) noexcept override try
         {
             auto lock = std::scoped_lock(m_mutex);
-
-            if (m_sessionMakeshiftWeakReference)
-            {
-                m_sessionMakeshiftWeakReference.copy_to(session);
-                /*
-                auto factory = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
-                wil::com_ptr<IQuietBackgroundProcessesSession> instance;
-                THROW_IF_FAILED(factory->GetSingleton(&instance));
-
-                // Store a 'weak ref' to the session
-                m_sessionMakeshiftWeakReference = instance;
-                *session = instance.detach();
-                */
-                return S_OK;
-            }
-
-            *session = nullptr;
+            m_sessionReference.try_copy_to(session);
             return S_OK;
         }
         CATCH_RETURN()
@@ -129,13 +112,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         bool i{};
         bool initd{};
         std::mutex m_mutex;
-
-        // The weak reference will provides a way to interrogate our elevated server process for aliveness.
-        //
-        // (Ultimately this allows existing clients to reconnect to a running elevated server without the risk of
-        // launching a new instance [thereby showing a UAC prompt] in case existing elevated server expired.)
-        wil::com_weak_ref m_weakSessionReference;
-        wil::com_ptr<IQuietBackgroundProcessesSession> m_sessionMakeshiftWeakReference;
+        wil::com_ptr<IQuietBackgroundProcessesSession> m_sessionReference;
     };
 
     ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);
