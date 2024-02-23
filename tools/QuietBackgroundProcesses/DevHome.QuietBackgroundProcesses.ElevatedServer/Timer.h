@@ -12,6 +12,7 @@
 #include <future>
 #include <mutex>
 #include <optional>
+#include <thread>
 
 #include "Utility.h"
 
@@ -26,7 +27,7 @@ class Timer
 public:
     // Cleanup functions
     static void Discard(std::unique_ptr<Timer> timer);
-    static void WaitForAllDiscardedTimersToDestruct();
+    static std::thread GetDiscardThread();
 
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics> m_factory;
 

@@ -7,13 +7,10 @@
 std::mutex g_discardMutex;
 std::thread g_discardThread;
 
-void Timer::WaitForAllDiscardedTimersToDestruct()
+std::thread Timer::GetDiscardThread()
 {
     auto lock = std::scoped_lock(g_discardMutex);
-    if (g_discardThread.joinable())
-    {
-        g_discardThread.join();
-    }
+    return std::move(g_discardThread);
 }
 
 void Timer::Discard(std::unique_ptr<Timer> timer)

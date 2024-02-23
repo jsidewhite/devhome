@@ -101,8 +101,15 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         return g_lastInstanceOfTheModuleObjectIsReleased;
     });
     
+    // Wait for all discarded timers to destruct
+    auto discardThread = Timer::GetDiscardThread();
+    if (discardThread.joinable())
+    {
+        discardThread.join();
+    }
+
+    // Safety
     QuietState::TurnOff();
-    Timer::WaitForAllDiscardedTimersToDestruct();
 
     return 0;
 }
