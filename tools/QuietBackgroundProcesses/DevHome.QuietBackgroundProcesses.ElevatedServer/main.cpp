@@ -20,16 +20,38 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
-#include "ActiveTimer.h"
 #include "Timer.h"
 #include "QuietState.h"
 #include "Utility.h"
 
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
+constexpr bool g_debugbuild =
+#if _DEBUG
+    true;
+#else
+    false;
+#endif
 
 std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
+
+void waitfordebugger()
+{
+    if (!g_debugbuild)
+    {
+        return;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (IsDebuggerPresent())
+        {
+            break;
+        }
+        Sleep(1000);
+    };
+    DebugBreak();
+}
 
 static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
 {
@@ -64,16 +86,6 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
     }
     return { wargv.data() + wcslen(serverNamePrefix) };
 }
-
-void debugsleep()
-{
-    while (!IsDebuggerPresent())
-    {
-        Sleep(100);
-    };
-    DebugBreak();
-}
-
 
 void Invalidate();
 

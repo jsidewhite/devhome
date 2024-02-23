@@ -137,7 +137,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <!-- jw todo remove -->
+      <!-- todo:jw todo remove -->
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -146,7 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ActiveTimer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
