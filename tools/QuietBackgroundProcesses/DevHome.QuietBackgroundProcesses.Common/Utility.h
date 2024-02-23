@@ -44,22 +44,30 @@ inline void WaitForDebuggerIfPresent()
     DebugBreak();
 }
 
-using unique_hstring_array_ptr = wil::unique_any_array_ptr<HSTRING, wil::cotaskmem_deleter, wil::function_deleter<decltype(::WindowsDeleteString), ::WindowsDeleteString>>;
-
 template <typename T>
 struct wrl_module_object_ref
 {
+    struct details
+    {
+        static void wrl_decrement_object_count()
+        {
+            auto& module = T::GetModule();
+            auto count = module.DecrementObjectCount();
+            auto msg = std::wstring(L"WRL: DecrementObjectCount = ") + std::to_wstring(count) + std::wstring(L"\n");
+            OutputDebugStringW(msg.c_str());
+        }
+    };
+
+    using wrl_module_object_ref_releaser = wil::unique_call<decltype(&details::wrl_decrement_object_count), details::wrl_decrement_object_count>;
+
     wrl_module_object_ref()
     {
         auto& module = T::GetModule();
         auto count = module.IncrementObjectCount();
         auto msg = std::wstring(L"WRL: IncrementObjectCount = ") + std::to_wstring(count) + std::wstring(L"\n");
         OutputDebugStringW(msg.c_str());
-    }
 
-    ~wrl_module_object_ref()
-    {
-        reset();
+        m_moduleReference.activate();
     }
 
     wrl_module_object_ref(wrl_module_object_ref&& other) noexcept = default;
@@ -70,11 +78,12 @@ struct wrl_module_object_ref
 
     void reset()
     {
-        auto& module = T::GetModule();
-        auto count = module.DecrementObjectCount();
-        auto msg = std::wstring(L"WRL: DecrementObjectCount = ") + std::to_wstring(count) + std::wstring(L"\n");
-        OutputDebugStringW(msg.c_str());
+        m_moduleReference.reset();
     }
+
+private:
+
+    wrl_module_object_ref_releaser m_moduleReference{ false };
 };
 
 using wrl_server_process_ref = wrl_module_object_ref<Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>>;
