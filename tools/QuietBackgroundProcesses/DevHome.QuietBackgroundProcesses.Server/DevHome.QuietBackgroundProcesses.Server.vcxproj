@@ -164,39 +164,7 @@
       <Project>{4b370e2f-fb1d-4887-90bf-3b72517485ce}</Project>
     </ProjectReference>
   </ItemGroup>
-  <!-- Run mdmerge.exe on our generated winmd files -->
-  <Target Name="Mdmerge" AfterTargets="AfterBuild">
-    <ItemGroup>
-      <_MdmergeInputs Include="@(Midl)" Condition="'%(Midl.ExcludedFromBuild)' != 'true'">
-        <WinMDPath>%(Midl.MetadataFileName)</WinMDPath>
-        <MdMergeOutputFile>$(CppWinRTProjectWinMD)</MdMergeOutputFile>
-      </_MdmergeInputs>
-      <MdmergeInputs Include="@(_MdmergeInputs-&gt;'%(WinMDPath)'-&gt;Distinct())" />
-    </ItemGroup>
-    <PropertyGroup>
-      <MdmergeMergedDir>AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
-      <MdmergeMergeDepth>-n:2</MdmergeMergeDepth>
-      <MdmergeParameters>-v</MdmergeParameters>
-      <MdmergeParameters>$(MdmergeParameters) -metadata_dir "$(WindowsSDK_MetadataFoundationPath)"</MdmergeParameters>
-      <MdmergeParameters>$(MdmergeParameters) @(MdmergeInputs->'-i "%(Identity)"', '
-')</MdmergeParameters>
-      <MdmergeParameters>$(MdmergeParameters) -o "$(MdmergeMergedDir.TrimEnd('\'))" -partial $(MdmergeMergeDepth)</MdmergeParameters>
-    </PropertyGroup>
-    <PropertyGroup>
-      <MdmergeResponseFile Condition="'$(MdmergeResponseFile)'==''">$(IntDir)$(MSBuildProjectFile).mdmerge.rsp</MdmergeResponseFile>
-      <MdmergeCommand>$(MdMergePath)mdmerge %40"$(MdmergeResponseFile)"</MdmergeCommand>
-    </PropertyGroup>
-    <WriteLinesToFile File="$(MdmergeResponseFile)" Lines="$(MdmergeParameters)" Overwrite="true" />
-    <MakeDir Directories="$(MdmergeMergedDir)" />
-    <Exec Command="$(MdmergeCommand)" />
-  </Target>
-  <!-- Copy the merged .winmd to the out folder -->
-  <Target Name="CopyWinmdMerged" AfterTargets="AfterBuild;Mdmerge">
-    <PropertyGroup>
-      <MergedWinmdCopyCommand>copy /Y "$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" "$(OutDir)."</MergedWinmdCopyCommand>
-    </PropertyGroup>
-    <Exec Command="$(MergedWinmdCopyCommand)" />
-  </Target>
+  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />

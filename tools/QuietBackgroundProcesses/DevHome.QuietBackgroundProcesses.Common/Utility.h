@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <wrl/client.h>
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
@@ -97,4 +99,23 @@ inline void SelfElevate(std::optional<std::wstring> const& arguments)
     sei.nShow = SW_NORMAL;
 
     THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
+}
+
+inline std::wstring ParseServerNameArgument(std::wstring_view wargv)
+{
+    constexpr wchar_t serverNamePrefix[] = L"-ServerName:";
+    if (_wcsnicmp(wargv.data(), serverNamePrefix, wcslen(serverNamePrefix)) != 0)
+    {
+        THROW_HR(E_UNEXPECTED);
+    }
+    return { wargv.data() + wcslen(serverNamePrefix) };
+}
+
+inline void SetComFastRundownAndNoEhHandle()
+{
+    // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated synchronously.
+    wil::com_ptr<IGlobalOptions> pGlobalOptions;
+    THROW_IF_FAILED(CoCreateInstance(CLSID_GlobalOptions, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pGlobalOptions)));
+    THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN));
+    THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_EXCEPTION_HANDLING, COMGLB_EXCEPTION_DONOT_HANDLE_ANY));
 }
