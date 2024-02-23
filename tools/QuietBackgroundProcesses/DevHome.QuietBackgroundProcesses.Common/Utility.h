@@ -17,6 +17,31 @@
 #include <windows.h>
 #include <shellapi.h>
 
+constexpr bool DEBUG_BUILD =
+#if _DEBUG
+    true;
+#else
+    false;
+#endif
+
+void waitfordebugger()
+{
+    if (!DEBUG_BUILD)
+    {
+        return;
+    }
+
+    for (int i = 0; i < 6; i++)
+    {
+        if (IsDebuggerPresent())
+        {
+            break;
+        }
+        Sleep(1000);
+    };
+    DebugBreak();
+}
+
 using unique_hstring_array_ptr = wil::unique_any_array_ptr<HSTRING, wil::cotaskmem_deleter, wil::function_deleter<decltype(::WindowsDeleteString), ::WindowsDeleteString>>;
 
 template <typename T>

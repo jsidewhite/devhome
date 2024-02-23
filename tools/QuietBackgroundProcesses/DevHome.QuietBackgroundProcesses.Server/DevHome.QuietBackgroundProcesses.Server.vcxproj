@@ -115,8 +115,8 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-        <Language>C++</Language>
-        <AdditionalIncludeDirectories>$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\$(GeneratedFilesDir)midl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Language>C++</Language>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\;$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\$(GeneratedFilesDir)midl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>onecore.lib</AdditionalDependencies>
@@ -145,7 +145,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

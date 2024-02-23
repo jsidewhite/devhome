@@ -20,68 +20,7 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
-#include "Timer.h"
-#include "QuietState.h"
 #include "Utility.h"
-
-constexpr bool g_debugbuild =
-#if _DEBUG
-    true;
-#else
-    false;
-#endif
-
-std::mutex g_finishMutex;
-std::condition_variable g_finishCondition;
-bool g_lastInstanceOfTheModuleObjectIsReleased;
-
-void waitfordebugger()
-{
-    if (!g_debugbuild)
-    {
-        return;
-    }
-
-    for (int i = 0; i < 6; i++)
-    {
-        if (IsDebuggerPresent())
-        {
-            break;
-        }
-        Sleep(1000);
-    };
-    DebugBreak();
-}
-
-static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
-{
-    using namespace Microsoft::WRL::Wrappers;
-
-    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create(objectsReleasedCallback);
-
-    // Get module classes
-    //unique_hstring_array_ptr classes;
-    //THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
-    module.RegisterObjects();
-    
-    /*
-    // Creation callback
-    PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
-        RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
-        return S_OK;
-    };
-    */
-
-    // Register
-    //wil::unique_ro_registration_cookie registrationCookie;
-    //PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
-    //THROW_IF_FAILED(RoRegisterActivationFactories(classes.get(), callbacks, static_cast<UINT32>(classes.size()), &registrationCookie));
-    //return registrationCookie;
-    return {};
-}
-
-
 
 static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 {
