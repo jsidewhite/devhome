@@ -53,36 +53,6 @@ void waitfordebugger()
     DebugBreak();
 }
 
-static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serverName, std::function<void()> objectsReleasedCallback)
-{
-    using namespace Microsoft::WRL::Wrappers;
-
-    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create(objectsReleasedCallback);
-
-    // Get module classes
-    //unique_hstring_array_ptr classes;
-    //THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
-    module.RegisterObjects();
-    
-    /*
-    // Creation callback
-    PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
-        auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
-        RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
-        return S_OK;
-    };
-    */
-
-    // Register
-    //wil::unique_ro_registration_cookie registrationCookie;
-    //PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
-    //THROW_IF_FAILED(RoRegisterActivationFactories(classes.get(), callbacks, static_cast<UINT32>(classes.size()), &registrationCookie));
-    //return registrationCookie;
-    return {};
-}
-
-
-
 static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 {
     constexpr wchar_t serverNamePrefix[] = L"-ServerName:";
