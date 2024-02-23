@@ -42,7 +42,7 @@ void waitfordebugger()
         return;
     }
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 6; i++)
     {
         if (IsDebuggerPresent())
         {
@@ -57,25 +57,31 @@ static wil::unique_ro_registration_cookie RegisterWinrtClasses(_In_ PCWSTR serve
 {
     using namespace Microsoft::WRL::Wrappers;
 
-    Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create(objectsReleasedCallback);
+    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create(objectsReleasedCallback);
 
     // Get module classes
-    unique_hstring_array_ptr classes;
-    THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
-
+    //unique_hstring_array_ptr classes;
+    //THROW_IF_FAILED(RoGetServerActivatableClasses(HStringReference(serverName).Get(), &classes, reinterpret_cast<DWORD*>(classes.size_address())));
+    module.RegisterObjects();
+    
+    /*
     // Creation callback
     PFNGETACTIVATIONFACTORY callback = [](HSTRING name, IActivationFactory** factory) -> HRESULT {
         auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::GetModule();
         RETURN_IF_FAILED(module.GetActivationFactory(name, factory));
         return S_OK;
     };
+    */
 
     // Register
-    wil::unique_ro_registration_cookie registrationCookie;
-    PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
-    THROW_IF_FAILED(RoRegisterActivationFactories(classes.get(), callbacks, static_cast<UINT32>(classes.size()), &registrationCookie));
-    return registrationCookie;
+    //wil::unique_ro_registration_cookie registrationCookie;
+    //PFNGETACTIVATIONFACTORY callbacks[1] = { callback };
+    //THROW_IF_FAILED(RoRegisterActivationFactories(classes.get(), callbacks, static_cast<UINT32>(classes.size()), &registrationCookie));
+    //return registrationCookie;
+    return {};
 }
+
+
 
 static std::wstring ParseServerNameArgument(std::wstring_view wargv)
 {
@@ -86,8 +92,6 @@ static std::wstring ParseServerNameArgument(std::wstring_view wargv)
     }
     return { wargv.data() + wcslen(serverNamePrefix) };
 }
-
-void Invalidate();
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
@@ -158,8 +162,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         //factory.reset(x);
     }
 
-    // Register WinRT activatable classes
-    auto registrationCookie = RegisterWinrtClasses(serverName.c_str(), [] {
+    // Register WRL callback when all objects are destroyed
+    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([] {
         auto msg = std::wstring(L"Main: All WRL module references released callback\n");
         OutputDebugStringW(msg.c_str());
 
@@ -169,6 +173,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
             g_lastInstanceOfTheModuleObjectIsReleased = true;
         }
         g_finishCondition.notify_one();
+    });
+
+    // Register WinRT activatable classes
+    module.RegisterObjects();
+    auto unique_wrl_registration_cookie = wil::scope_exit([&module]() {
+        module.UnregisterObjects();
     });
 
     // Tell the unelevated server that we've registered with COM and it may shutdown
