@@ -27,8 +27,6 @@ bool g_lastInstanceOfTheModuleObjectIsReleased;
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    constexpr auto SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";
-
     waitfordebugger();
 
     if (wargc < 1)
@@ -68,13 +66,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         module.UnregisterObjects();
     });
 
-    // Wait for all server references release
+    // Wait for all server references to release
     auto lock = std::unique_lock<std::mutex>(g_finishMutex);
 
     g_finishCondition.wait(lock, [] {
         auto msg = std::wstring(L"Main: Wait check returns ") + std::to_wstring(g_lastInstanceOfTheModuleObjectIsReleased) + std::wstring(L"\n");
         OutputDebugStringW(msg.c_str());
-
         return g_lastInstanceOfTheModuleObjectIsReleased;
     });
 

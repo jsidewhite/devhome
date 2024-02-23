@@ -26,7 +26,7 @@ constexpr bool DEBUG_BUILD =
     false;
 #endif
 
-void waitfordebugger()
+inline void waitfordebugger()
 {
     if (!DEBUG_BUILD)
     {
