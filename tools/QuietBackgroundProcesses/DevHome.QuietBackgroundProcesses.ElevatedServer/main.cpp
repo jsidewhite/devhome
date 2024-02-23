@@ -31,7 +31,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     constexpr auto ELEVATED_SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";
     
-    waitfordebugger();
+    WaitForDebuggerIfPresent();
 
     if (wargc < 1)
     {

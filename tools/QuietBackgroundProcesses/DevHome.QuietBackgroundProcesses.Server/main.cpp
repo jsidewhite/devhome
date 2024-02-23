@@ -27,7 +27,7 @@ bool g_lastInstanceOfTheModuleObjectIsReleased;
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    waitfordebugger();
+    WaitForDebuggerIfPresent();
 
     if (wargc < 1)
     {

@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #include "pch.h"
 #include "Timer.h"
@@ -24,16 +24,12 @@ void Timer::Discard(std::unique_ptr<Timer> timer)
     }
     timer->Cancel();
 
-    std::thread previousThread;
-    {
-        auto lock = std::scoped_lock(g_discardMutex);
-        previousThread = std::move(g_discardThread);
-    }
+    auto lock = std::scoped_lock(g_discardMutex);
 
     // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
-    // 
+    //
     // (Make a new discard thread and chain the existing one to it)
-    g_discardThread = std::thread([timer = std::move(timer), previousThread = std::move(previousThread)]() mutable {
+    g_discardThread = std::thread([timer = std::move(timer), previousThread = std::move(g_discardThread)]() mutable {
         // Delete the timer (blocking)
         timer.reset();
 
