@@ -107,7 +107,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     //wil::unique_event elevatedServerFinishedEvent;
     if (!isElevatedServer)
     {
-        debugsleep();
+        ////debugsleep();
         //elevatedServerFinishedEvent.create(wil::EventOptions::ManualReset, SERVER_FINISHED_EVENT_NAME);
     }
 
@@ -142,7 +142,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics> factory;
     if (isElevatedServer)
     {
-        factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
+        //factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
         //factory.reset(x);
     }
 
@@ -201,7 +201,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         });
     }
     
-    LOG_IF_FAILED(factory->InvalidateSessionReference());
+    //LOG_IF_FAILED(factory->InvalidateSessionReference());
     factory.reset();
 
     // To be safe, force quiet mode off

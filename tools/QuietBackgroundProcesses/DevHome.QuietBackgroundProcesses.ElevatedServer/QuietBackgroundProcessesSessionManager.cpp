@@ -71,7 +71,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             auto lock = std::scoped_lock(m_mutex);
 
-            m_sessionMakeshiftWeakReference.reset();
+            //m_sessionMakeshiftWeakReference.reset();
             return S_OK;
         }
         CATCH_RETURN()
@@ -100,6 +100,15 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (m_sessionMakeshiftWeakReference)
             {
                 m_sessionMakeshiftWeakReference.copy_to(session);
+                /*
+                auto factory = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
+                wil::com_ptr<IQuietBackgroundProcessesSession> instance;
+                THROW_IF_FAILED(factory->GetSingleton(&instance));
+
+                // Store a 'weak ref' to the session
+                m_sessionMakeshiftWeakReference = instance;
+                *session = instance.detach();
+                */
                 return S_OK;
             }
 
