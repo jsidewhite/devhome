@@ -52,8 +52,7 @@ public:
         auto lock = std::scoped_lock(m_mutex);
         m_cancelled = true;
 
-        auto msg = std::wstring(L"Timer: Cancelled\n");
-        OutputDebugStringW(msg.c_str());
+        OutputDebugStringW(L"Timer: Cancelled\n");
     }
 
     int64_t TimeLeftInSeconds()
