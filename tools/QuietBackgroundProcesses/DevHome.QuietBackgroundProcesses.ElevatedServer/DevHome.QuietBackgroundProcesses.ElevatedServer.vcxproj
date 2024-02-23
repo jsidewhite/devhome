@@ -120,9 +120,6 @@
     <Link>
       <AdditionalDependencies>onecore.lib</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>copy /Y "$(TargetDir)$(ProjectName).exe" "$(OutDir)DevHome.QuietBackgroundProcesses.Server.exe"</Command>
-    </PostBuildEvent>
     <Midl>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <OutputDirectory>$(ProjectDir)$(GeneratedFilesDir)midl</OutputDirectory>
@@ -170,6 +167,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.Common\DevHome.QuietBackgroundProcesses.Common.vcxproj">
+      <Project>{4b370e2f-fb1d-4887-90bf-3b72517485ce}</Project>
+    </ProjectReference>
   </ItemGroup>
   <!-- Run mdmerge.exe on our generated winmd files -->
   <Target Name="Mdmerge" AfterTargets="AfterBuild">
