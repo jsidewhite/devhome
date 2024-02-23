@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #pragma once
 
@@ -38,12 +38,7 @@ public:
         m_callback = std::move(callback);
         m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
 
-        
-        //if (isElevatedServer)
-        {
-            m_factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
-            //factory.reset(x);
-        }
+        m_factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
     }
 
     Timer(Timer&& other) noexcept = default;
@@ -68,10 +63,8 @@ public:
         {
             return 0;
         }
-        auto now = std::chrono::steady_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime);
 
-        auto secondsLeft = m_duration.count() - elapsed.count();
+        auto secondsLeft = CalculateSecondsLeft();
 #ifdef TRACK_SECONDS_LEFT
         m_secondsLeft = secondsLeft;
 #endif
@@ -79,18 +72,24 @@ public:
     }
 
 private:
+    int64_t CalculateSecondsLeft()
+    {
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime);
+        auto secondsLeft = m_duration.count() - elapsed.count();
+#ifdef TRACK_SECONDS_LEFT
+        m_secondsLeft = secondsLeft;
+#endif
+        return secondsLeft;
+    }
+
     void TimerThread()
     {
         // Pause until timer expired or cancelled
         while (true)
         {
-#ifdef TRACK_SECONDS_LEFT
-            m_secondsLeft = m_duration.count() - std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - m_startTime).count();
-#endif
-            auto now = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - this->m_startTime);
-
-            if (this->m_cancelled || elapsed >= m_duration)
+            auto secondsLeft = CalculateSecondsLeft();
+            if (secondsLeft <= 0 || this->m_cancelled)
             {
                 break;
             }

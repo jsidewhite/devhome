@@ -11,38 +11,6 @@
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
-/*
-template <typename InterfaceT>
-struct weakreference
-{
-    wil::com_ptr<InterfaceT> m_strongReference;
-
-    wil::com_ptr<InterfaceT> resolve()
-    {
-        // lock
-        if (m_strongReference)
-        {
-            return m_strongReference;
-        }
-    }
-};
-*/
-
-template<typename InterfaceT>
-struct weakreference
-{
-    wil::com_ptr<InterfaceT> m_strongReference;
-
-    wil::com_ptr<InterfaceT> resolve()
-    {
-        // lock
-        if (m_strongReference)
-        {
-            return m_strongReference;
-        }
-    }
-};
-
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
     class QuietBackgroundProcessesSessionManager :
@@ -67,11 +35,11 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         InspectableClassStatic(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, BaseTrust);
 
     public:
-        STDMETHODIMP InvalidateSessionReference() noexcept override try
+        // IActivationFactory method
+        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable** ppvObject) noexcept
+        try
         {
-            auto lock = std::scoped_lock(m_mutex);
-
-            //m_sessionMakeshiftWeakReference.reset();
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSessionManager>(ppvObject));
             return S_OK;
         }
         CATCH_RETURN()
@@ -100,17 +68,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         }
         CATCH_RETURN()
 
-        // IActivationFactory method
-        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable** ppvObject) noexcept try
-        {
-            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSessionManager>(ppvObject));
-            return S_OK;
-        }
-        CATCH_RETURN()
-
     private:
-        bool i{};
-        bool initd{};
         std::mutex m_mutex;
         wil::com_ptr<IQuietBackgroundProcessesSession> m_sessionReference;
     };
