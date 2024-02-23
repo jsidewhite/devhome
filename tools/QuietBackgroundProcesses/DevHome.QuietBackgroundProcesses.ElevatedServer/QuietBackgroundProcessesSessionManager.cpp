@@ -11,6 +11,38 @@
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
+/*
+template <typename InterfaceT>
+struct weakreference
+{
+    wil::com_ptr<InterfaceT> m_strongReference;
+
+    wil::com_ptr<InterfaceT> resolve()
+    {
+        // lock
+        if (m_strongReference)
+        {
+            return m_strongReference;
+        }
+    }
+};
+*/
+
+template<typename InterfaceT>
+struct weakreference
+{
+    wil::com_ptr<InterfaceT> m_strongReference;
+
+    wil::com_ptr<InterfaceT> resolve()
+    {
+        // lock
+        if (m_strongReference)
+        {
+            return m_strongReference;
+        }
+    }
+};
+
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
     class QuietBackgroundProcessesSessionManager :
@@ -35,6 +67,15 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         InspectableClassStatic(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager, BaseTrust);
 
     public:
+        STDMETHODIMP InvalidateSessionReference() noexcept override try
+        {
+            auto lock = std::scoped_lock(m_mutex);
+
+            m_sessionMakeshiftWeakReference.reset();
+            return S_OK;
+        }
+        CATCH_RETURN()
+
         // IQuietBackgroundProcessesSessionManagerStatics
         STDMETHODIMP GetSession(_COM_Outptr_ IQuietBackgroundProcessesSession** session) noexcept override try
         {
@@ -44,7 +85,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             wil::com_ptr<IQuietBackgroundProcessesSession> instance;
             THROW_IF_FAILED(factory->GetSingleton(&instance));
 
-            m_weakSessionReference = wil::com_weak_query(instance);
+            // Store a 'weak ref' to the session
+            m_sessionMakeshiftWeakReference = instance;
 
             *session = instance.detach();
             return S_OK;
@@ -55,13 +97,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             auto lock = std::scoped_lock(m_mutex);
 
-            if (m_weakSessionReference)
+            if (m_sessionMakeshiftWeakReference)
             {
-                if (auto strongRef = m_weakSessionReference.try_query<IQuietBackgroundProcessesSession>())
-                {
-                    *session = strongRef.detach();
-                    return S_OK;
-                }
+                m_sessionMakeshiftWeakReference.copy_to(session);
+                return S_OK;
             }
 
             *session = nullptr;
@@ -78,6 +117,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         CATCH_RETURN()
 
     private:
+        bool i{};
         bool initd{};
         std::mutex m_mutex;
 
@@ -86,6 +126,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         // (Ultimately this allows existing clients to reconnect to a running elevated server without the risk of
         // launching a new instance [thereby showing a UAC prompt] in case existing elevated server expired.)
         wil::com_weak_ref m_weakSessionReference;
+        wil::com_ptr<IQuietBackgroundProcessesSession> m_sessionMakeshiftWeakReference;
     };
 
     ActivatableClassWithFactory(QuietBackgroundProcessesSessionManager, QuietBackgroundProcessesSessionManagerStatics);

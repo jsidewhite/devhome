@@ -50,8 +50,6 @@ bool IsTimerActive()
 
 QuietState::unique_quietwindowclose_call g_quietState{ false };
 
-
-
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
     class QuietBackgroundProcessesSession :

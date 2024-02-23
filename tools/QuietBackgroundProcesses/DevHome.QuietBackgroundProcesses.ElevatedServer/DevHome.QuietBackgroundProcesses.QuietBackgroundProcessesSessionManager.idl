@@ -12,5 +12,6 @@ namespace DevHome.QuietBackgroundProcesses
         QuietBackgroundProcessesSessionManager();
         static QuietBackgroundProcessesSession GetSession();
         static QuietBackgroundProcessesSession TryGetSession();
+        static void InvalidateSessionReference();
     }
 }

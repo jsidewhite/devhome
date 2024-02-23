@@ -75,6 +75,7 @@ void debugsleep()
 }
 
 
+void Invalidate();
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
@@ -199,7 +200,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
             return g_lastInstanceOfTheModuleObjectIsReleased;
         });
     }
-
+    
+    LOG_IF_FAILED(factory->InvalidateSessionReference());
     factory.reset();
 
     // To be safe, force quiet mode off
