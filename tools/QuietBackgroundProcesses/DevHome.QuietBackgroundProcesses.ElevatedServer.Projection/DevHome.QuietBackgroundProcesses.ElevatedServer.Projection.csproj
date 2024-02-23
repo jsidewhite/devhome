@@ -5,7 +5,7 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <MdmergeMergedDir>..\DevHome.QuietBackgroundProcesses.ElevatedServer\AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
+    <MdmergeMergedDir>..\DevHome.QuietBackgroundProcesses.Common\AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
   </PropertyGroup>
   
 
