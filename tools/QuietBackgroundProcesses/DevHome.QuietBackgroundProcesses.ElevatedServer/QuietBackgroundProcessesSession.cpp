@@ -11,6 +11,7 @@
 #include <wrl/implements.h>
 #include <wrl/module.h>
 
+#include <wil/registry.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 #include <wil/win32_helpers.h>
@@ -21,8 +22,7 @@
 
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 
-//constexpr auto QUIET_DURATION = std::chrono::hours(2);
-constexpr auto QUIET_DURATION = std::chrono::seconds(25);
+constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 
 std::mutex g_mutex;
 std::unique_ptr<Timer> g_activeTimer;
@@ -53,8 +53,20 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             // Discard the active timer
             Timer::Discard(std::move(g_activeTimer));
 
+            std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
+
+            //wil::reg::try_get_value_dword(HKEY_CURRENT_USER, L);
+            wil::unique_hkey hkey;
+            if (SUCCEEDED(wil::reg::open_unique_key_nothrow(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", hkey)))
+            {
+                if (auto durationOverride = wil::reg::try_get_value_dword(hkey.get(), L"Duration"))
+                {
+                    duration = std::chrono::seconds(durationOverride.value());
+                }
+            }
+
             // Start timer
-            g_activeTimer.reset(new Timer(QUIET_DURATION, []() {
+            g_activeTimer.reset(new Timer(duration, []() {
                 auto lock = std::scoped_lock(g_mutex);
                 g_quietState.reset();
             }));
