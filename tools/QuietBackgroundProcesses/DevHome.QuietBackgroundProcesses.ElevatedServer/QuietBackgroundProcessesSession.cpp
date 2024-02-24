@@ -11,7 +11,6 @@
 #include <wrl/implements.h>
 #include <wrl/module.h>
 
-#include <wil/registry.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 #include <wil/win32_helpers.h>
@@ -54,15 +53,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             Timer::Discard(std::move(g_activeTimer));
 
             std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
-
-            //wil::reg::try_get_value_dword(HKEY_CURRENT_USER, L);
-            wil::unique_hkey hkey;
-            if (SUCCEEDED(wil::reg::open_unique_key_nothrow(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", hkey)))
+            if (auto durationOverride = try_get_registry_value_dword(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
             {
-                if (auto durationOverride = wil::reg::try_get_value_dword(hkey.get(), L"Duration"))
-                {
-                    duration = std::chrono::seconds(durationOverride.value());
-                }
+                duration = std::chrono::seconds(durationOverride.value());
             }
 
             // Start timer

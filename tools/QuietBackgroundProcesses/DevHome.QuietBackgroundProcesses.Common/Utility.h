@@ -9,7 +9,9 @@
 #include <wrl/wrappers/corewrappers.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
+
 #include <wil/com.h>
+#include <wil/registry.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 #include <wil/token_helpers.h>
@@ -25,24 +27,6 @@ constexpr bool DEBUG_BUILD =
 #else
     false;
 #endif
-
-inline void WaitForDebuggerIfPresent()
-{
-    if (!DEBUG_BUILD)
-    {
-        return;
-    }
-
-    for (int i = 0; i < 6; i++)
-    {
-        if (IsDebuggerPresent())
-        {
-            break;
-        }
-        Sleep(1000);
-    };
-    DebugBreak();
-}
 
 template <typename T>
 struct wrl_module_object_ref
@@ -88,6 +72,32 @@ private:
 
 using wrl_server_process_ref = wrl_module_object_ref<Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>>;
 
+inline std::optional<uint32_t> try_get_registry_value_dword(HKEY key, _In_opt_ PCWSTR subKey, _In_opt_ PCWSTR value_name, ::wil::reg::key_access access = ::wil::reg::key_access::read)
+{
+    wil::unique_hkey hkey;
+    if (SUCCEEDED(wil::reg::open_unique_key_nothrow(key, subKey, hkey, access)))
+    {
+        if (auto keyvalue = wil::reg::try_get_value_dword(hkey.get(), value_name))
+        {
+            return keyvalue.value();
+        }
+    }
+    return std::nullopt;
+}
+
+inline void WaitForDebuggerIfPresent()
+{
+    auto waitForDebugger = try_get_registry_value_dword(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"WaitForDebugger");
+
+    if (waitForDebugger.value_or(0))
+    {
+        while (!IsDebuggerPresent())
+        {
+            Sleep(1000);
+        };
+        DebugBreak();
+    }
+}
 
 inline bool IsTokenElevated(HANDLE token)
 {
