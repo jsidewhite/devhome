@@ -23,15 +23,12 @@
 #include "Timer.h"
 #include "QuietState.h"
 
-std::mutex g_finishMutex;
 std::condition_variable g_finishCondition;
 bool g_lastInstanceOfTheModuleObjectIsReleased;
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     constexpr auto ELEVATED_SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";
-    
-    WaitForDebuggerIfPresent();
 
     if (wargc < 1)
     {
@@ -60,6 +57,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         return 0;
     }
 
+    WaitForDebuggerIfPresent();
+
     auto unique_rouninitialize_call = wil::RoInitialize();
 
     // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated synchronously.
@@ -68,16 +67,20 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
     QuietState::TurnOff();
 
+    std::mutex mutex;
+    bool comFinished{};
+    std::condition_variable finishCondition;
+
     // Register WRL callback when all objects are destroyed
-    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([] {
+    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([&] {
         OutputDebugStringW(L"Main: All WRL module references released callback\n");
 
         // The last instance object of the module is released
         {
-            auto lock = std::unique_lock<std::mutex>(g_finishMutex);
-            g_lastInstanceOfTheModuleObjectIsReleased = true;
+            auto lock = std::unique_lock<std::mutex>(mutex);
+            comFinished = true;
         }
-        g_finishCondition.notify_one();
+        finishCondition.notify_one();
     });
 
     // Register WinRT activatable classes
@@ -92,12 +95,10 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     elevatedServerRunningEvent.SetEvent();
 
     // Wait for all server references to release (implicitly also waiting for timers to finish via CoAddRefServerProcess)
-    auto lock = std::unique_lock<std::mutex>(g_finishMutex);
+    auto lock = std::unique_lock<std::mutex>(mutex);
 
-    g_finishCondition.wait(lock, [] {
-        auto msg = std::wstring(L"Main: Wait check returns ") + std::to_wstring(g_lastInstanceOfTheModuleObjectIsReleased) + std::wstring(L"\n");
-        OutputDebugStringW(msg.c_str());
-        return g_lastInstanceOfTheModuleObjectIsReleased;
+    finishCondition.wait(lock, [&] {
+        return comFinished;
     });
     
     // Wait for all discarded timers to destruct

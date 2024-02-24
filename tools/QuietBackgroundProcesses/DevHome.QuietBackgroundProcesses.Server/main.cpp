@@ -21,10 +21,6 @@
 
 #include "Utility.h"
 
-std::mutex g_finishMutex;
-std::condition_variable g_finishCondition;
-bool g_lastInstanceOfTheModuleObjectIsReleased;
-
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     WaitForDebuggerIfPresent();
@@ -47,14 +43,18 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated synchronously.
     SetComFastRundownAndNoEhHandle();
 
+    std::mutex mutex;
+    bool comFinished{};
+    std::condition_variable finishCondition;
+
     // Register WRL callback when all objects are destroyed
-    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([] {
+    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([&] {
         // The last instance object of the module is released
         {
-            auto lock = std::unique_lock<std::mutex>(g_finishMutex);
-            g_lastInstanceOfTheModuleObjectIsReleased = true;
+            auto lock = std::unique_lock<std::mutex>(mutex);
+            comFinished = true;
         }
-        g_finishCondition.notify_one();
+        finishCondition.notify_one();
     });
 
     // Register WinRT activatable classes
@@ -64,10 +64,10 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     });
 
     // Wait for all server references to release
-    auto lock = std::unique_lock<std::mutex>(g_finishMutex);
+    auto lock = std::unique_lock<std::mutex>(mutex);
 
-    g_finishCondition.wait(lock, [] {
-        return g_lastInstanceOfTheModuleObjectIsReleased;
+    finishCondition.wait(lock, [&] {
+        return comFinished;
     });
 
     return 0;
