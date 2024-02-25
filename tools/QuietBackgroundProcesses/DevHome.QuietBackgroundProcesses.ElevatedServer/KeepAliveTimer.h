@@ -53,7 +53,7 @@ struct KeepAlive
 
 //using keep_alive_timer = Timer<decltype(make_keep_alive_timer())> m_;
 
-auto make_keep_alive_timer()
+auto make_keep_alive_timer_lambda()
 {
     return []() {
         //todo:jw auto lock = std::scoped_lock(g_mutex);
@@ -66,11 +66,11 @@ auto make_keep_alive_timer()
 struct KeepAliveTimer
 {
     // Cleanup functions
-    static void Discard(std::unique_ptr<KeepAliveTimer> timer);
     static std::thread GetDiscardThread();
+    static void Discard(std::unique_ptr<KeepAliveTimer> timer);
 
     KeepAliveTimer(std::chrono::seconds seconds) :
-        m_timer(seconds, make_keep_alive_timer())
+        m_timer(seconds, make_keep_alive_timer_lambda())
     {
         // Turn on quiet mode
         m_quietState = QuietState::TurnOn();
@@ -84,17 +84,6 @@ struct KeepAliveTimer
 
     int64_t TimeLeftInSeconds()
     {
-        /*
-                    auto lock = std::scoped_lock(g_mutex);
-            if (!g_activeTimer->m_quietState || !g_activeTimer)
-            {
-                return 0;
-            }
-
-            *value = g_activeTimer->TimeLeftInSeconds();
-            return S_OK;
-            
-            */
         return m_timer.TimeLeftInSeconds();
     }
 
@@ -115,13 +104,25 @@ struct KeepAliveTimer
         // reset m_referenceElevated
     }
 
+    void disconnect()
+    {
+        // Turn off quiet mode
+        m_quietState.reset();
+
+        //todo:jw
+        m_timer.Cancel();
+        //reset m_referenceUnelevated
+        // reset m_referenceElevated
+    }
+
 private:
     UnelevatedServerReference m_referenceUnelevated;
     ElevatedServerReference m_referenceElevated;
 
     QuietState::unique_quietwindowclose_call m_quietState{ false };
 
-    Timer<decltype(make_keep_alive_timer())> m_timer;
+    //Timer<decltype(make_keep_alive_timer_lambda())> m_timer;
+    <decltype(make_keep_alive_timer_lambda())> m_timer;
 };
 
 
