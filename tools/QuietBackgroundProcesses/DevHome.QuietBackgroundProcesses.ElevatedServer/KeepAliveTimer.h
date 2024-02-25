@@ -23,45 +23,27 @@
 
 struct UnelevatedServerReference
 {
-    wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics> m_factory;
+    wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics> m_reference;
     UnelevatedServerReference() :
-        m_factory(wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager))
+        m_reference(wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager))
     {
+    }
+
+    void reset()
+    {
+        m_reference.reset();
     }
 };
 
 struct ElevatedServerReference
 {
     wrl_server_process_ref m_reference;
+
+    void reset()
+    {
+        m_reference.reset();
+    }
 };
-
-/*
-struct KeepAlive
-{
-    KeepAlive() = default;
-
-    KeepAlive(KeepAlive&& other) noexcept = default;
-    KeepAlive& operator=(KeepAlive&& other) noexcept = default;
-
-    KeepAlive(const KeepAlive&) = delete;
-    KeepAlive& operator=(const KeepAlive&) = delete;
-
-    UnelevatedServerReference m_referenceUnelevated;
-    ElevatedServerReference m_referenceElevated;
-};
-*/
-
-//using keep_alive_timer = Timer<decltype(make_keep_alive_timer())> m_;
-
-auto make_keep_alive_timer_lambda()
-{
-    return []() {
-        //todo:jw auto lock = std::scoped_lock(g_mutex);
-        //m_factory->Release();
-        // todo:jw m_quietState.reset();
-        // keepServersAlive.~KeepAlive();
-    };
-}
 
 struct KeepAliveTimer
 {
@@ -70,7 +52,9 @@ struct KeepAliveTimer
     static void Discard(std::unique_ptr<KeepAliveTimer> timer);
 
     KeepAliveTimer(std::chrono::seconds seconds) :
-        m_timer(seconds, make_keep_alive_timer_lambda())
+        m_timer(seconds, [this]() {
+            disconnect();
+        })
     {
         // Turn on quiet mode
         m_quietState = QuietState::TurnOn();
@@ -95,13 +79,11 @@ struct KeepAliveTimer
 
     void Cancel()
     {
-        // Turn off quiet mode
-        m_quietState.reset();
+        disconnect();
 
         //todo:jw
         m_timer.Cancel();
-        //reset m_referenceUnelevated
-        // reset m_referenceElevated
+        // discard?
     }
 
     void disconnect()
@@ -109,10 +91,9 @@ struct KeepAliveTimer
         // Turn off quiet mode
         m_quietState.reset();
 
-        //todo:jw
-        m_timer.Cancel();
-        //reset m_referenceUnelevated
-        // reset m_referenceElevated
+        // Release handles to this server and client server
+        m_referenceUnelevated.reset();
+        m_referenceElevated.reset();
     }
 
 private:
@@ -120,9 +101,7 @@ private:
     ElevatedServerReference m_referenceElevated;
 
     QuietState::unique_quietwindowclose_call m_quietState{ false };
-
-    //Timer<decltype(make_keep_alive_timer_lambda())> m_timer;
-    <decltype(make_keep_alive_timer_lambda())> m_timer;
+    Timer m_timer;
 };
 
 

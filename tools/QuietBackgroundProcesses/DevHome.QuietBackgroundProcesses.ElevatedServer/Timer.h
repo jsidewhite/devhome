@@ -20,12 +20,11 @@
 #define TRACK_SECONDS_LEFT
 #endif
 
-template <typename CallbackT>
 class Timer
 {
 public:
-    Timer(std::chrono::seconds seconds, CallbackT&& callback) :
-        m_callback(std::forward<CallbackT>(callback))
+    Timer(std::chrono::seconds seconds, std::function<void()> callback) :
+        m_callback(std::forward<std::function<void()>>(callback))
     {
         m_startTime = std::chrono::steady_clock::now();
         m_duration = seconds;
@@ -101,7 +100,7 @@ private:
     std::future<void> m_timerThreadFuture;
     std::mutex m_mutex;
     std::atomic<bool> m_cancelled{};
-    CallbackT m_callback;
+    std::function<void()> m_callback;
 
 #ifdef TRACK_SECONDS_LEFT
     int64_t m_secondsLeft = -1;
