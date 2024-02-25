@@ -53,7 +53,7 @@ struct KeepAliveTimer
 
     KeepAliveTimer(std::chrono::seconds seconds) :
         m_timer(seconds, [this]() {
-            disconnect();
+            Disconnect();
         })
     {
         // Turn on quiet mode
@@ -73,21 +73,24 @@ struct KeepAliveTimer
 
     bool IsActive()
     {
+        auto lock = std::scoped_lock(m_mutex);
         //todo:jw lock?
         return (bool)m_quietState;
     }
 
     void Cancel()
     {
-        disconnect();
+        Disconnect();
 
         //todo:jw
         m_timer.Cancel();
         // discard?
     }
 
-    void disconnect()
+private:
+    void Disconnect()
     {
+        auto lock = std::scoped_lock(m_mutex);
         // Turn off quiet mode
         m_quietState.reset();
 
@@ -96,12 +99,12 @@ struct KeepAliveTimer
         m_referenceElevated.reset();
     }
 
-private:
     UnelevatedServerReference m_referenceUnelevated;
     ElevatedServerReference m_referenceElevated;
 
     QuietState::unique_quietwindowclose_call m_quietState{ false };
     Timer m_timer;
+    std::mutex m_mutex;
 };
 
 

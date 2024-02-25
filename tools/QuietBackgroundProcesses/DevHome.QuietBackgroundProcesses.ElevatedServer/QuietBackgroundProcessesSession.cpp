@@ -24,7 +24,6 @@
 
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 
-//std::shared_ptr<KeepAlive> g_keepAlive;
 std::mutex g_mutex;
 std::unique_ptr<KeepAliveTimer> g_activeTimer;
 
