@@ -72,7 +72,8 @@ struct KeepAliveTimer
     KeepAliveTimer(std::chrono::seconds seconds) :
         m_timer(seconds, make_keep_alive_timer())
     {
-
+        // Turn on quiet mode
+        m_quietState = QuietState::TurnOn();
     }
 
     KeepAliveTimer(KeepAliveTimer&& other) noexcept = default;
@@ -81,6 +82,40 @@ struct KeepAliveTimer
     KeepAliveTimer(const KeepAliveTimer&) = delete;
     KeepAliveTimer& operator=(const KeepAliveTimer&) = delete;
 
+    int64_t TimeLeftInSeconds()
+    {
+        /*
+                    auto lock = std::scoped_lock(g_mutex);
+            if (!g_activeTimer->m_quietState || !g_activeTimer)
+            {
+                return 0;
+            }
+
+            *value = g_activeTimer->TimeLeftInSeconds();
+            return S_OK;
+            
+            */
+        return m_timer.TimeLeftInSeconds();
+    }
+
+    bool IsActive()
+    {
+        //todo:jw lock?
+        return (bool)m_quietState;
+    }
+
+    void Cancel()
+    {
+        // Turn off quiet mode
+        m_quietState.reset();
+
+        //todo:jw
+        m_timer.Cancel();
+        //reset m_referenceUnelevated
+        // reset m_referenceElevated
+    }
+
+private:
     UnelevatedServerReference m_referenceUnelevated;
     ElevatedServerReference m_referenceElevated;
 

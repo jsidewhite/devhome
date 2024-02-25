@@ -108,10 +108,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
             // Turn on quiet mode
             //todo:jw move to KAT
-            g_activeTimer->m_quietState = QuietState::TurnOn();
+            //g_activeTimer->m_quietState = QuietState::TurnOn();
 
             // Return duration for showing countdown
-            *result = g_activeTimer->m_timer.TimeLeftInSeconds();
+            *result = g_activeTimer->TimeLeftInSeconds();
             return S_OK;
         }
         CATCH_RETURN()
@@ -120,8 +120,12 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             auto lock = std::scoped_lock(g_mutex);
 
+            if (g_activeTimer)
+            {
+                g_activeTimer->Cancel();
+            }
             // Turn off quiet mode
-            g_activeTimer->m_quietState.reset();
+            //g_activeTimer->m_quietState.reset();
 
             // Detach and destruct the current time window
             KeepAliveTimer::Discard(std::move(g_activeTimer));
@@ -132,7 +136,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_IsActive(::boolean* value) noexcept override try
         {
             auto lock = std::scoped_lock(g_mutex);
-            *value = (bool)g_activeTimer->m_quietState;
+            *value = g_activeTimer->IsActive();
             return S_OK;
         }
         CATCH_RETURN()
@@ -140,12 +144,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_TimeLeftInSeconds(__int64* value) noexcept override try
         {
             auto lock = std::scoped_lock(g_mutex);
-            if (!g_activeTimer->m_quietState || !g_activeTimer)
-            {
-                return 0;
-            }
-
-            *value = g_activeTimer->m_timer.TimeLeftInSeconds();
+            *value = g_activeTimer->TimeLeftInSeconds();
             return S_OK;
         }
         CATCH_RETURN()
