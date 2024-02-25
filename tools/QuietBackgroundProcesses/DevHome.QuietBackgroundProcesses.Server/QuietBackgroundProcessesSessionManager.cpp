@@ -39,7 +39,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     public:
         // IActivationFactory method
-        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable** ppvObject) noexcept
+        STDMETHODIMP ActivateInstance(_Outptr_result_nullonfailure_ IInspectable** ppvObject) noexcept
         try
         {
             THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSessionManager>(ppvObject));
@@ -48,22 +48,23 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         CATCH_RETURN()
 
         // IQuietBackgroundProcessesSessionManagerStatics
-        STDMETHODIMP GetSession(_COM_Outptr_ IQuietBackgroundProcessesSession** session) noexcept override try
+        STDMETHODIMP GetSession(_Outptr_result_nullonfailure_ IQuietBackgroundProcessesSession** session) noexcept override
+        try
         {
             auto lock = std::scoped_lock(m_mutex);
+            *session = nullptr;
 
             if (!m_sessionReference)
             {
                 auto factory = wil::GetActivationFactory<IQuietBackgroundProcessesSessionStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession);
                 THROW_IF_FAILED(factory->GetSingleton(&m_sessionReference));
             }
-
             m_sessionReference.copy_to(session);
             return S_OK;
         }
         CATCH_RETURN()
 
-        STDMETHODIMP TryGetSession(_COM_Outptr_opt_ IQuietBackgroundProcessesSession** session) noexcept override try
+        STDMETHODIMP TryGetSession(_COM_Outptr_result_maybenull_ IQuietBackgroundProcessesSession** session) noexcept override try
         {
             auto lock = std::scoped_lock(m_mutex);
             m_sessionReference.try_copy_to(session);

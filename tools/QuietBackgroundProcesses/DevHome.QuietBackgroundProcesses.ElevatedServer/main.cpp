@@ -20,7 +20,7 @@
 #include <roregistrationapi.h>
 
 #include "Utility.h"
-#include "Timer.h"
+#include "KeepAliveTimer.h"
 #include "QuietState.h"
 
 std::condition_variable g_finishCondition;
@@ -102,7 +102,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     });
     
     // Wait for all discarded timers to destruct
-    auto discardThread = Timer::GetDiscardThread();
+    auto discardThread = KeepAliveTimer::GetDiscardThread();
     if (discardThread.joinable())
     {
         discardThread.join();

@@ -16,17 +16,17 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
-#include "Timer.h"
+#include "KeepAliveTimer.h"
 #include "QuietState.h"
 
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
+#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
 
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 
+//std::shared_ptr<KeepAlive> g_keepAlive;
 std::mutex g_mutex;
-std::unique_ptr<Timer> g_activeTimer;
-
-QuietState::unique_quietwindowclose_call g_quietState{ false };
+std::unique_ptr<KeepAliveTimer> g_activeTimer;
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -50,7 +50,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             auto lock = std::scoped_lock(g_mutex);
 
             // Discard the active timer
-            Timer::Discard(std::move(g_activeTimer));
+            KeepAliveTimer::Discard(std::move(g_activeTimer));
 
             std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
             if (auto durationOverride = try_get_registry_value_dword(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
@@ -59,16 +59,59 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             }
 
             // Start timer
-            g_activeTimer.reset(new Timer(duration, []() {
+            //m_factory.detach();
+            //m_factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSessionManager);
+            /*
+            if (!g_keepAlive)
+            {
+                //g_keepAlive.reset(new KeepAlive());
+                g_keepAlive = std::make_shared<KeepAlive>();
+            }
+            else
+            {
+                auto duplicate = g_keepAlive;
+                duplicate.
+            }
+            */
+
+            /*
+            KeepAlive keepServersAlive;
+
+                KeepAlive z;
+            std::unique_ptr<int> y;
+            auto x = [z = std::move(z)]() {
+            };
+
+            x();
+
+            */
+
+            //std::unique_ptr<Timer> sdf;
+            //new Timer(duration, []() mutable {
+            //});
+
+            //Timer::Make(duration)
+
+              // todo:jw think about lock here  auto lock = std::scoped_lock(g_mutex);
+            //
+            g_activeTimer.reset(new KeepAliveTimer(duration));
+
+            /*
+            //std::unique_ptr<Timer> sdf;
+            g_activeTimer.reset(new Timer(duration, []() mutable {
                 auto lock = std::scoped_lock(g_mutex);
+                //m_factory->Release();
                 g_quietState.reset();
+                // keepServersAlive.~KeepAlive();
             }));
+            */
 
             // Turn on quiet mode
-            g_quietState = QuietState::TurnOn();
+            //todo:jw move to KAT
+            g_activeTimer->m_quietState = QuietState::TurnOn();
 
             // Return duration for showing countdown
-            *result = g_activeTimer->TimeLeftInSeconds();
+            *result = g_activeTimer->m_timer.TimeLeftInSeconds();
             return S_OK;
         }
         CATCH_RETURN()
@@ -78,10 +121,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             auto lock = std::scoped_lock(g_mutex);
 
             // Turn off quiet mode
-            g_quietState.reset();
+            g_activeTimer->m_quietState.reset();
 
             // Detach and destruct the current time window
-            Timer::Discard(std::move(g_activeTimer));
+            KeepAliveTimer::Discard(std::move(g_activeTimer));
             return S_OK;
         }
         CATCH_RETURN()
@@ -89,7 +132,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_IsActive(::boolean* value) noexcept override try
         {
             auto lock = std::scoped_lock(g_mutex);
-            *value = (bool)g_quietState;
+            *value = (bool)g_activeTimer->m_quietState;
             return S_OK;
         }
         CATCH_RETURN()
@@ -97,12 +140,12 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_TimeLeftInSeconds(__int64* value) noexcept override try
         {
             auto lock = std::scoped_lock(g_mutex);
-            if (!g_quietState || !g_activeTimer)
+            if (!g_activeTimer->m_quietState || !g_activeTimer)
             {
                 return 0;
             }
 
-            *value = g_activeTimer->TimeLeftInSeconds();
+            *value = g_activeTimer->m_timer.TimeLeftInSeconds();
             return S_OK;
         }
         CATCH_RETURN()
