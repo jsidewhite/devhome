@@ -20,7 +20,7 @@
 #include <roregistrationapi.h>
 
 #include "Utility.h"
-#include "KeepAliveTimer.h"
+#include "TimedQuietSession.h"
 #include "QuietState.h"
 
 std::condition_variable g_finishCondition;

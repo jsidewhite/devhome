@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include "pch.h"
-#include "KeepAliveTimer.h"
+#include "TimedQuietSession.h"
 
 std::mutex g_discardMutex;
 std::thread g_discardThread;

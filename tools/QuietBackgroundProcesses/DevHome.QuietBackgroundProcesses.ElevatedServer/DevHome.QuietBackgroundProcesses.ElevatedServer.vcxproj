@@ -136,7 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="KeepAliveTimer.h" />
+    <ClInclude Include="TimedQuietSession.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
