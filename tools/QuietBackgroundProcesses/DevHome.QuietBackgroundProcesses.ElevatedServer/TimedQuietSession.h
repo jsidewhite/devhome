@@ -54,14 +54,14 @@ struct UnelevatedServerReference
 //          DevHome (client) -> UnelevatedServer (manager) -> ElevatedServer (session)
 // 
 //      Manager (unelevated server):
-//          Role of manager is simply to check if session (elevated server) is alive without
-//          risking launching a UAC prompt.  It caches a com proxy interface to session.
+//          Role of manager is simply allow client to check if session (elevated server) is alive
+//          without risking launching a UAC prompt.  It caches a com proxy interface to session.
 // 
 //      Session (elevated server):
 //          Role of session is to enable/disable quiet mode and keep a timer.
 // 
 //      Lifetime:
-//          - The manager and session keep each other alive
+//          - The manager and session keep each other alive.
 // 
 //          - The session (TimedQuietSession) runs in ElevatedServer and keeps this elevated server
 //              alive until timer expiration.

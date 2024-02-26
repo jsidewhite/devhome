@@ -54,11 +54,8 @@ public:
         // Disable the callback from being called...
         m_cancelled = true;
 
-        // ... wake up the timer thread...
+        // ... wake up the timer thread.
         m_cancelCondition.notify_one();
-
-        // ...and detach the timer thread (destruction can happen whenever and won't do anything exciting)
-        //m_timerThread.detach();
     }
 
     int64_t TimeLeftInSeconds()
