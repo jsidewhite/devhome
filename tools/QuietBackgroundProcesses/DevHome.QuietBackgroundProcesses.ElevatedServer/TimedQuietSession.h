@@ -47,11 +47,18 @@ struct ElevatedServerReference
 
 struct TimedQuietSession
 {
-    TimedQuietSession(std::chrono::seconds seconds) :
-        m_timer(seconds, [this]() {
-            Disconnect();
-        })
+    struct State
     {
+
+    };
+
+    TimedQuietSession(std::chrono::seconds seconds)
+    {
+        m_timer = std::make_unique<Timer>(seconds, [this]() {
+            auto lock = std::scoped_lock(m_mutex);
+            Deactivate();
+        });
+
         // Turn on quiet mode
         m_quietState = QuietState::TurnOn();
     }
@@ -64,7 +71,7 @@ struct TimedQuietSession
 
     int64_t TimeLeftInSeconds()
     {
-        return m_timer.TimeLeftInSeconds();
+        return m_timer->TimeLeftInSeconds();
     }
 
     bool IsActive()
@@ -75,15 +82,22 @@ struct TimedQuietSession
 
     void Cancel()
     {
-        Disconnect();
-        m_timer.Cancel();
+        auto lock = std::scoped_lock(m_mutex);
+
+        Deactivate();
+        m_timer->Cancel();
+
+        // Destruct timer on another thread because it's destructor is blocking
+        auto destructionThread = std::thread([timer = std::move(m_timer)]() {
+            // destruct timer here
+        });
+
+        destructionThread.detach();
     }
 
 private:
-    void Disconnect()
+    void Deactivate()
     {
-        auto lock = std::scoped_lock(m_mutex);
-
         // Turn off quiet mode
         m_quietState.reset();
 
@@ -96,7 +110,7 @@ private:
     ElevatedServerReference m_referenceElevated;
 
     QuietState::unique_quietwindowclose_call m_quietState{ false };
-    Timer m_timer;
+    std::unique_ptr<Timer> m_timer;
     std::mutex m_mutex;
 };
 

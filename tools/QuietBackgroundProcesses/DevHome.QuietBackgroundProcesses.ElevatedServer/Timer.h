@@ -37,8 +37,18 @@ public:
     Timer(const Timer&) = delete;
     Timer& operator=(const Timer&) = delete;
 
+    ~Timer()
+    {
+        if (m_timerThread.joinable())
+        {
+            m_timerThread.join();
+        }
+    }
+
     void Cancel()
     {
+        OutputDebugStringW(L"Timer: Cancelling\n");
+
         auto lock = std::scoped_lock(m_mutex);
 
         // Disable the callback from being called...
@@ -48,9 +58,7 @@ public:
         m_cancelCondition.notify_one();
 
         // ...and detach the timer thread (destruction can happen whenever and won't do anything exciting)
-        m_timerThread.detach();
-
-        OutputDebugStringW(L"Timer: Cancelled\n");
+        //m_timerThread.detach();
     }
 
     int64_t TimeLeftInSeconds()
@@ -91,6 +99,8 @@ private:
         {
             this->m_callback();
         }
+
+        OutputDebugStringW(L"Timer: Finished\n");
     }
 
     std::chrono::steady_clock::time_point m_startTime{};

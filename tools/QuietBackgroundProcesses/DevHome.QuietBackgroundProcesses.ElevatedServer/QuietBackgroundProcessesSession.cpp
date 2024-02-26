@@ -47,7 +47,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             auto lock = std::scoped_lock(g_mutex);
 
-            // Discard the previous timer
+            // Stop and discard the previous timer
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
@@ -76,6 +76,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
+                g_activeTimer.reset();
             }
 
             return S_OK;
