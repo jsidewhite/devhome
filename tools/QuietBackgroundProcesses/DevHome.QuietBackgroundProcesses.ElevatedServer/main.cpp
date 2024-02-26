@@ -68,10 +68,11 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     bool comFinished{};
     std::condition_variable finishCondition;
 
+#pragma warning(push)
+#pragma warning(disable : 4324) // Avoid WRL alignment warning
+
     // Register WRL callback when all objects are destroyed
     auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([&] {
-        OutputDebugStringW(L"Main: All WRL module references released callback\n");
-
         // The last instance object of the module is released
         {
             auto lock = std::unique_lock<std::mutex>(mutex);
@@ -79,6 +80,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         }
         finishCondition.notify_one();
     });
+
+#pragma warning(pop)
 
     // Register WinRT activatable classes
     module.RegisterObjects();
