@@ -43,11 +43,6 @@ public:
         m_cancelled = true;
 
         OutputDebugStringW(L"Timer: Cancelled\n");
-
-        //{
-            //auto lock = std::unique_lock<std::mutex>(mutex);
-            //comFinished = true;
-        //}
         m_cancelCondition.notify_one();
     }
 
