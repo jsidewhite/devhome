@@ -74,15 +74,12 @@ struct TimedQuietSession
     bool IsActive()
     {
         auto lock = std::scoped_lock(m_mutex);
-        //todo:jw lock?
         return (bool)m_quietState;
     }
 
     void Cancel()
     {
         Disconnect();
-
-        //todo:jw
         m_timer.Cancel();
     }
 
@@ -90,10 +87,11 @@ private:
     void Disconnect()
     {
         auto lock = std::scoped_lock(m_mutex);
+
         // Turn off quiet mode
         m_quietState.reset();
 
-        // Release handles to this server and client server
+        // Release lifetime handles to this elevated server and unelevated client server
         m_referenceUnelevated.reset();
         m_referenceElevated.reset();
     }

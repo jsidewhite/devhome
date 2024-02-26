@@ -23,9 +23,6 @@
 #include "TimedQuietSession.h"
 #include "QuietState.h"
 
-std::condition_variable g_finishCondition;
-bool g_lastInstanceOfTheModuleObjectIsReleased;
-
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     constexpr auto ELEVATED_SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";

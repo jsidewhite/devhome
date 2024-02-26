@@ -13,22 +13,22 @@ std::thread TimedQuietSession::GetDiscardThread()
     return std::move(g_discardThread);
 }
 
-void TimedQuietSession::Discard(std::unique_ptr<TimedQuietSession> keepAliveTimer)
+void TimedQuietSession::Discard(std::unique_ptr<TimedQuietSession> quietSession)
 {
-    if (!keepAliveTimer)
+    if (!quietSession)
     {
         return;
     }
-    keepAliveTimer->m_timer.Cancel();
+    quietSession->m_timer.Cancel();
 
     auto lock = std::scoped_lock(g_discardMutex);
 
-    // Destruct time window on sepearate thread because its destructor may take time to end (the std::future member is blocking)
+    // Destruct time window on separate thread because its destructor may take time to end (the std::future member is blocking)
     //
     // (Make a new discard thread and chain the existing one to it)
-    g_discardThread = std::thread([keepAliveTimer = std::move(keepAliveTimer), previousThread = std::move(g_discardThread)]() mutable {
+    g_discardThread = std::thread([quietSession = std::move(quietSession), previousThread = std::move(g_discardThread)]() mutable {
         // Delete the timer (blocking)
-        keepAliveTimer.reset();
+        quietSession.reset();
 
         // Finish previous discard thread if there was one
         if (previousThread.joinable())
