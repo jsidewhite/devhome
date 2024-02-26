@@ -43,6 +43,12 @@ public:
         m_cancelled = true;
 
         OutputDebugStringW(L"Timer: Cancelled\n");
+
+        //{
+            //auto lock = std::unique_lock<std::mutex>(mutex);
+            //comFinished = true;
+        //}
+        m_cancelCondition.notify_one();
     }
 
     int64_t TimeLeftInSeconds()
@@ -54,9 +60,6 @@ public:
         }
 
         auto secondsLeft = CalculateSecondsLeft();
-#ifdef TRACK_SECONDS_LEFT
-        m_secondsLeft = secondsLeft;
-#endif
         return std::max(secondsLeft, 0ll);
     }
 
@@ -75,31 +78,22 @@ private:
     void TimerThread()
     {
         // Pause until timer expired or cancelled
-        while (true)
-        {
-            auto secondsLeft = CalculateSecondsLeft();
-            if (secondsLeft <= 0 || this->m_cancelled)
-            {
-                break;
-            }
+        auto lock = std::unique_lock<std::mutex>(m_mutex);
 
-            // Sleep for a short duration to avoid busy waiting
-            std::this_thread::sleep_for(std::chrono::seconds(3));
-        }
+        m_cancelCondition.wait_for(lock, m_duration, [this] {
+            return this->m_cancelled;
+        });
 
         // Do the callback
-        auto lock = std::scoped_lock(m_mutex);
-        if (!this->m_cancelled)
-        {
-            this->m_callback();
-        }
+        this->m_callback();
     }
 
     std::chrono::steady_clock::time_point m_startTime{};
     std::chrono::seconds m_duration{};
     std::future<void> m_timerThreadFuture;
     std::mutex m_mutex;
-    std::atomic<bool> m_cancelled{};
+    bool m_cancelled{};
+    std::condition_variable m_cancelCondition;
     std::function<void()> m_callback;
 
 #ifdef TRACK_SECONDS_LEFT
