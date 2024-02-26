@@ -140,5 +140,3 @@ private:
     std::unique_ptr<Timer> m_timer;
     std::mutex m_mutex;
 };
-
-
