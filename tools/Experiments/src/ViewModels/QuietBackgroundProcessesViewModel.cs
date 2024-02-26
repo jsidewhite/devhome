@@ -20,6 +20,7 @@ using Windows.UI.Xaml;
 using Windows.Win32;
 
 namespace DevHome.Experiments.ViewModels;
+
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
     private readonly TimeSpan _zero;
