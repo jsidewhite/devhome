@@ -21,6 +21,8 @@
 #include "Timer.h"
 #include "QuietState.h"
 
+using ElevatedServerReference = wrl_server_process_ref;
+
 struct UnelevatedServerReference
 {
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IQuietBackgroundProcessesSessionManagerStatics> m_reference;
@@ -35,23 +37,8 @@ struct UnelevatedServerReference
     }
 };
 
-struct ElevatedServerReference
-{
-    wrl_server_process_ref m_reference;
-
-    void reset()
-    {
-        m_reference.reset();
-    }
-};
-
 struct TimedQuietSession
 {
-    struct State
-    {
-
-    };
-
     TimedQuietSession(std::chrono::seconds seconds)
     {
         m_timer = std::make_unique<Timer>(seconds, [this]() {
@@ -71,6 +58,7 @@ struct TimedQuietSession
 
     int64_t TimeLeftInSeconds()
     {
+        auto lock = std::scoped_lock(m_mutex);
         return m_timer->TimeLeftInSeconds();
     }
 
