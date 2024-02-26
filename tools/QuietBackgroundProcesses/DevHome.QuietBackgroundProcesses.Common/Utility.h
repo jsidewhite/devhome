@@ -87,7 +87,7 @@ inline std::optional<uint32_t> try_get_registry_value_dword(HKEY key, _In_opt_ P
 
 inline void WaitForDebuggerIfPresent()
 {
-    auto waitForDebugger = try_get_registry_value_dword(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"WaitForDebugger");
+    auto waitForDebugger = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"WaitForDebugger");
 
     if (waitForDebugger.value_or(0))
     {

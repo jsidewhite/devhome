@@ -54,7 +54,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             }
 
             std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
-            if (auto durationOverride = try_get_registry_value_dword(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
+            if (auto durationOverride = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
             {
                 duration = std::chrono::seconds(durationOverride.value());
             }
