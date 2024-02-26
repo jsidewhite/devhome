@@ -45,13 +45,13 @@ struct ElevatedServerReference
     }
 };
 
-struct KeepAliveTimer
+struct TimedQuietSession
 {
     // Cleanup functions
     static std::thread GetDiscardThread();
-    static void Discard(std::unique_ptr<KeepAliveTimer> timer);
+    static void Discard(std::unique_ptr<TimedQuietSession> timer);
 
-    KeepAliveTimer(std::chrono::seconds seconds) :
+    TimedQuietSession(std::chrono::seconds seconds) :
         m_timer(seconds, [this]() {
             Disconnect();
         })
@@ -60,11 +60,11 @@ struct KeepAliveTimer
         m_quietState = QuietState::TurnOn();
     }
 
-    KeepAliveTimer(KeepAliveTimer&& other) noexcept = default;
-    KeepAliveTimer& operator=(KeepAliveTimer&& other) noexcept = default;
+    TimedQuietSession(TimedQuietSession&& other) noexcept = default;
+    TimedQuietSession& operator=(TimedQuietSession&& other) noexcept = default;
 
-    KeepAliveTimer(const KeepAliveTimer&) = delete;
-    KeepAliveTimer& operator=(const KeepAliveTimer&) = delete;
+    TimedQuietSession(const TimedQuietSession&) = delete;
+    TimedQuietSession& operator=(const TimedQuietSession&) = delete;
 
     int64_t TimeLeftInSeconds()
     {

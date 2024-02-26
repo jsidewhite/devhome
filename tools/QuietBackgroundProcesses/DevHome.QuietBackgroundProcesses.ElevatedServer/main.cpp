@@ -102,7 +102,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     });
     
     // Wait for all discarded timers to destruct
-    auto discardThread = KeepAliveTimer::GetDiscardThread();
+    auto discardThread = TimedQuietSession::GetDiscardThread();
     if (discardThread.joinable())
     {
         discardThread.join();

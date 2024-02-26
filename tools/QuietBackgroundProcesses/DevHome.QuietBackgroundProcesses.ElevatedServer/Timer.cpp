@@ -7,13 +7,13 @@
 std::mutex g_discardMutex;
 std::thread g_discardThread;
 
-std::thread KeepAliveTimer::GetDiscardThread()
+std::thread TimedQuietSession::GetDiscardThread()
 {
     auto lock = std::scoped_lock(g_discardMutex);
     return std::move(g_discardThread);
 }
 
-void KeepAliveTimer::Discard(std::unique_ptr<KeepAliveTimer> keepAliveTimer)
+void TimedQuietSession::Discard(std::unique_ptr<TimedQuietSession> keepAliveTimer)
 {
     if (!keepAliveTimer)
     {

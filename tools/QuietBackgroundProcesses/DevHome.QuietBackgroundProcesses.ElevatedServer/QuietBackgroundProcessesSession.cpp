@@ -25,7 +25,7 @@
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 
 std::mutex g_mutex;
-std::unique_ptr<KeepAliveTimer> g_activeTimer;
+std::unique_ptr<TimedQuietSession> g_activeTimer;
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -52,7 +52,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
-                KeepAliveTimer::Discard(std::move(g_activeTimer));
+                TimedQuietSession::Discard(std::move(g_activeTimer));
             }
 
             std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
@@ -62,7 +62,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             }
 
             // Start timer
-            g_activeTimer.reset(new KeepAliveTimer(duration));
+            g_activeTimer.reset(new TimedQuietSession(duration));
 
             // Return duration for showing countdown
             *result = g_activeTimer->TimeLeftInSeconds();
@@ -78,7 +78,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
-                KeepAliveTimer::Discard(std::move(g_activeTimer));
+                TimedQuietSession::Discard(std::move(g_activeTimer));
             }
 
             return S_OK;
