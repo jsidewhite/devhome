@@ -84,7 +84,6 @@ struct KeepAliveTimer
 
         //todo:jw
         m_timer.Cancel();
-        // discard?
     }
 
 private:

@@ -48,13 +48,12 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             auto lock = std::scoped_lock(g_mutex);
 
-            if (g_activeTimer->IsActive())
-            {
-                return ERROR_SERVICE_ALREADY_RUNNING;
-            }
-
             // Discard the previous timer
-            KeepAliveTimer::Discard(std::move(g_activeTimer));
+            if (g_activeTimer)
+            {
+                g_activeTimer->Cancel();
+                KeepAliveTimer::Discard(std::move(g_activeTimer));
+            }
 
             std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
             if (auto durationOverride = try_get_registry_value_dword(HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
@@ -79,10 +78,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
+                KeepAliveTimer::Discard(std::move(g_activeTimer));
             }
 
-            // Detach and destruct the current timer window
-            KeepAliveTimer::Discard(std::move(g_activeTimer));
             return S_OK;
         }
         CATCH_RETURN()
