@@ -26,26 +26,35 @@
             "icon": "ea86"
           },
           {
-            "identity": "DevHome.TestExperiment",
-            "assembly": "DevHome.Experiments",
-            "viewFullName": "DevHome.Experiments.Views.TestExperimentPage",
-            "viewModelFullName": "DevHome.Experiments.ViewModels.TestExperimentViewModel",
-            "icon": "f0f7",
-            "experimentId": "ExperimentalFeature_1"
-          },
-          {
             "identity": "DevHome.QuietBackgroundProcessesTestExperiment",
             "assembly": "DevHome.Experiments",
             "viewFullName": "DevHome.Experiments.Views.QuietBackgroundProcessesPage",
             "viewModelFullName": "DevHome.Experiments.ViewModels.QuietBackgroundProcessesViewModel",
             "icon": "f5b0",
-            "experimentId": "QuietBackgroundProcessesExperiment"
+            "experimentalFeatureIdentity": "QuietBackgroundProcessesExperiment",
+            "enabledByDefault": false,
+            "buildTypeOverrides": [
+              {
+                "buildType": "dev",
+                "enabledByDefault": true,
+                "visible": true
+              },
+              {
+                "buildType": "canary",
+                "enabledByDefault": false,
+                "visible": true
+              },
+              {
+                "buildType": "release",
+                "enabledByDefault": false,
+                "visible": false
+              }
+            ]
+        
           }
         ]
       }
     ]
   },
-  "experimentalFeatures": [
-    "QuietBackgroundProcessesExperiment"
-  ]
+  "experimentalFeatures": []
 }
