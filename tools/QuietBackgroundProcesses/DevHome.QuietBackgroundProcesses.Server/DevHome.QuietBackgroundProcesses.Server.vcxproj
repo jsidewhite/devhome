@@ -116,7 +116,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\;$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\$(GeneratedFilesDir)midl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>onecore.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <HeaderFileName>%(Filename).h</HeaderFileName>

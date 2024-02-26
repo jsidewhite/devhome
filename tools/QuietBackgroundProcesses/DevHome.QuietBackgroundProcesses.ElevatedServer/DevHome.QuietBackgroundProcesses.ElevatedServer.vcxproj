@@ -115,7 +115,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\;$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\$(GeneratedFilesDir)midl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>onecore.lib</AdditionalDependencies>
+      <AdditionalDependencies>onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">

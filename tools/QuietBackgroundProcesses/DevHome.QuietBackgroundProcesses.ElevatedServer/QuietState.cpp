@@ -17,7 +17,7 @@ namespace QuietState
         auto lock = std::scoped_lock(g_mutex);
         try
         {
-            //DisableQuietBackgroundProcesses();
+            LOG_IF_FAILED(DisableQuietBackgroundProcesses());
         }
         catch (...)
         {
@@ -29,8 +29,7 @@ namespace QuietState
         auto lock = std::scoped_lock(g_mutex);
         try
         {
-
-            //THROW_IF_FAILED(EnableQuietBackgroundProcesses());
+            THROW_IF_FAILED(EnableQuietBackgroundProcesses());
         }
         catch (...)
         {
