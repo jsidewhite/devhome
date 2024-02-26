@@ -47,10 +47,6 @@ struct ElevatedServerReference
 
 struct TimedQuietSession
 {
-    // Cleanup functions
-    static std::thread GetDiscardThread();
-    static void Discard(std::unique_ptr<TimedQuietSession> timer);
-
     TimedQuietSession(std::chrono::seconds seconds) :
         m_timer(seconds, [this]() {
             Disconnect();

@@ -97,13 +97,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     finishCondition.wait(lock, [&] {
         return comFinished;
     });
-    
-    // Wait for all discarded timers to destruct
-    auto discardThread = TimedQuietSession::GetDiscardThread();
-    if (discardThread.joinable())
-    {
-        discardThread.join();
-    }
 
     // Safety
     QuietState::TurnOff();

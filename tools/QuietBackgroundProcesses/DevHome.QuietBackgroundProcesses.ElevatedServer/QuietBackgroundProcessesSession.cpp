@@ -16,8 +16,7 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
-#include "KeepAliveTimer.h"
-#include "QuietState.h"
+#include "TimedQuietSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
@@ -52,7 +51,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
-                TimedQuietSession::Discard(std::move(g_activeTimer));
             }
 
             std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
@@ -78,7 +76,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (g_activeTimer)
             {
                 g_activeTimer->Cancel();
-                TimedQuietSession::Discard(std::move(g_activeTimer));
             }
 
             return S_OK;

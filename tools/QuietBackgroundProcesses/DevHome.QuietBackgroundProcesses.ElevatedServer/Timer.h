@@ -24,11 +24,11 @@ class Timer
 {
 public:
     Timer(std::chrono::seconds seconds, std::function<void()> callback) :
-        m_callback(std::forward<std::function<void()>>(callback))
+        m_callback(std::forward<std::function<void()>>(callback)),
+        m_startTime(std::chrono::steady_clock::now()),
+        m_duration(seconds),
+        m_timerThread(std::thread(&Timer::TimerThread, this))
     {
-        m_startTime = std::chrono::steady_clock::now();
-        m_duration = seconds;
-        m_timerThreadFuture = std::async(std::launch::async, &Timer::TimerThread, this);
     }
 
     Timer(Timer&& other) noexcept = default;
@@ -40,10 +40,17 @@ public:
     void Cancel()
     {
         auto lock = std::scoped_lock(m_mutex);
+
+        // Disable the callback from being called...
         m_cancelled = true;
 
-        OutputDebugStringW(L"Timer: Cancelled\n");
+        // ... wake up the timer thread...
         m_cancelCondition.notify_one();
+
+        // ...and detach the timer thread (destruction can happen whenever and won't do anything exciting)
+        m_timerThread.detach();
+
+        OutputDebugStringW(L"Timer: Cancelled\n");
     }
 
     int64_t TimeLeftInSeconds()
@@ -80,12 +87,15 @@ private:
         });
 
         // Do the callback
-        this->m_callback();
+        if (!this->m_cancelled)
+        {
+            this->m_callback();
+        }
     }
 
     std::chrono::steady_clock::time_point m_startTime{};
     std::chrono::seconds m_duration{};
-    std::future<void> m_timerThreadFuture;
+    std::thread m_timerThread;
     std::mutex m_mutex;
     bool m_cancelled{};
     std::condition_variable m_cancelCondition;

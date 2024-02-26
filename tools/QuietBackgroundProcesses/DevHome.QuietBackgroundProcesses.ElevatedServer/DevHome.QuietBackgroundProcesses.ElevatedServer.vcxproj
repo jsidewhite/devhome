@@ -148,7 +148,6 @@
     </ClCompile>
     <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
     <ClCompile Include="QuietState.cpp" />
-    <ClCompile Include="TimedQuietSession.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
