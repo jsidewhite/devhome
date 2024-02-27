@@ -83,7 +83,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.QuietBackgroundProc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.QuietBackgroundProcesses.Common", "tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.Common\DevHome.QuietBackgroundProcesses.Common.vcxproj", "{4B370E2F-FB1D-4887-90BF-3B72517485CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.QuietBackgroundProcessesUI", "tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcessesUI\DevHome.QuietBackgroundProcessesUI.csproj", "{1477F3EA-A9F6-4B4F-82F4-C2427F57EBEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.QuietBackgroundProcesses.UI", "tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.UI\DevHome.QuietBackgroundProcesses.UI.csproj", "{1477F3EA-A9F6-4B4F-82F4-C2427F57EBEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

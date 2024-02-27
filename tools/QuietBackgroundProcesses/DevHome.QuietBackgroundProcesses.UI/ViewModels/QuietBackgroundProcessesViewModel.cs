@@ -19,7 +19,7 @@ using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
 using Windows.Win32;
 
-namespace DevHome.QuietBackgroundProcessesUI.ViewModels;
+namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {

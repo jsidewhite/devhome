@@ -12,7 +12,7 @@ using DevHome.Common;
 using DevHome.Common.Extensions;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
-using DevHome.QuietBackgroundProcessesUI.ViewModels;
+using DevHome.QuietBackgroundProcesses.UI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -24,7 +24,7 @@ using Microsoft.UI.Xaml.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
-namespace DevHome.QuietBackgroundProcessesUI.Views;
+namespace DevHome.QuietBackgroundProcesses.UI.Views;
 
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.

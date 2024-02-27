@@ -72,7 +72,7 @@
     <ProjectReference Include="..\tools\Experiments\src\DevHome.Experiments.csproj" />
     <ProjectReference Include="..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
     <ProjectReference Include="..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer\DevHome.QuietBackgroundProcesses.ElevatedServer.vcxproj" />
-    <ProjectReference Include="..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcessesUI\DevHome.QuietBackgroundProcessesUI.csproj" />
+    <ProjectReference Include="..\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.UI\DevHome.QuietBackgroundProcesses.UI.csproj" />
     <ProjectReference Include="..\tools\SetupFlow\DevHome.SetupFlow\DevHome.SetupFlow.csproj" />
     <ProjectReference Include="..\tools\ExtensionLibrary\DevHome.ExtensionLibrary\DevHome.ExtensionLibrary.csproj" />
   </ItemGroup>

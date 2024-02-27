@@ -26,10 +26,10 @@
             "icon": "ea86"
           },
           {
-            "identity": "DevHome.QuietBackgroundProcessesUI",
-            "assembly": "DevHome.QuietBackgroundProcessesUI",
-            "viewFullName": "DevHome.QuietBackgroundProcessesUI.Views.QuietBackgroundProcessesPage",
-            "viewModelFullName": "DevHome.QuietBackgroundProcessesUI.ViewModels.QuietBackgroundProcessesViewModel",
+            "identity": "DevHome.QuietBackgroundProcesses.UI",
+            "assembly": "DevHome.QuietBackgroundProcesses.UI",
+            "viewFullName": "DevHome.QuietBackgroundProcesses.UI.Views.QuietBackgroundProcessesPage",
+            "viewModelFullName": "DevHome.QuietBackgroundProcesses.UI.ViewModels.QuietBackgroundProcessesViewModel",
             "icon": "f5b0",
             "experimentalFeatureIdentity": "QuietBackgroundProcessesExperiment"
           }
