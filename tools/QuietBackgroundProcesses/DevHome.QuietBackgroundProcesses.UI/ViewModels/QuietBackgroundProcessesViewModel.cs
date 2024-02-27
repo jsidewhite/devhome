@@ -71,6 +71,15 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         // TimeLeft = "" + (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get());
         _zero = new TimeSpan(0, 0, 0);
 
+        if (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeatureSupported())
+        {
+            TimeLeft = "SUPPORTED";
+        }
+        else
+        {
+            TimeLeft = "NOT SUPPORTED";
+        }
+
         var osVersion = Environment.OSVersion;
         _validOsVersion = osVersion.Version.Build >= 26024;
         _validOsVersion = true;

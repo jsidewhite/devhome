@@ -10,6 +10,7 @@ namespace DevHome.QuietBackgroundProcesses
     runtimeclass QuietBackgroundProcessesSessionManager
     {
         QuietBackgroundProcessesSessionManager();
+        static Boolean IsFeatureSupported();
         static QuietBackgroundProcessesSession GetSession();
         static QuietBackgroundProcessesSession TryGetSession();
     }

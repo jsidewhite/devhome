@@ -11,8 +11,27 @@
 #include <wrl/module.h>
 #include <wil/winrt.h>
 
+#include <ntstatus.h>
+
+#include <QuietBackgroundProcesses.h>
+
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
+
+static bool isFeatureSupported() noexcept
+{
+    HRESULT hr = DisableQuietBackgroundProcesses();
+    if (hr == HRESULT_FROM_NT(STATUS_OBJECT_NAME_NOT_FOUND))
+    {
+        return false;
+    }
+    else if (hr == HRESULT_FROM_NT(STATUS_ACCESS_DENIED))
+    {
+        return true;
+    }
+    LOG_HR(hr);
+    return false;
+}
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -48,6 +67,12 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         CATCH_RETURN()
 
         // IQuietBackgroundProcessesSessionManagerStatics
+        STDMETHODIMP IsFeatureSupported(_Out_ boolean* isSupported) noexcept override
+        {
+            *isSupported = isFeatureSupported();
+            return S_OK;
+        }
+
         STDMETHODIMP GetSession(_Outptr_result_nullonfailure_ IQuietBackgroundProcessesSession** session) noexcept override
         try
         {
