@@ -11,12 +11,13 @@
 #include <wrl/module.h>
 #include <wil/winrt.h>
 
-#include <ntstatus.h>
-
 #include <QuietBackgroundProcesses.h>
 
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.h"
 #include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
+
+#define STATUS_ACCESS_DENIED ((NTSTATUS)0xC0000022L)
+#define STATUS_OBJECT_NAME_NOT_FOUND ((NTSTATUS)0xC0000034L)
 
 static bool isFeatureSupported() noexcept
 {
