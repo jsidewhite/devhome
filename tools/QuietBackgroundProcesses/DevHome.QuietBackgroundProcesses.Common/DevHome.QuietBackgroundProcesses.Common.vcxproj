@@ -22,6 +22,7 @@
     <WindowsAppContainer>false</WindowsAppContainer>
     <!-- Generate OutDir -->
     <OutDir>$(SolutionDir)src\bin\$(Platform)\$(Configuration)\$(TargetFramework)\</OutDir>
+    <MdmergeMergedDir>AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -91,7 +92,6 @@
     <Import Project="PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -129,13 +129,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <!-- todo:jw todo remove -->
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -156,7 +155,7 @@
     <ClCompile Include="empty.cpp" />
   </ItemGroup>
   <!-- Run mdmerge.exe on our generated winmd files -->
-  <Target Name="Mdmerge" AfterTargets="AfterBuild">
+  <Target Name="Mdmerge" BeforeTargets="Build" Outputs="AnyCPU\$(Configuration)\Merged\DevHome.QuietBackgroundProcesses.winmd">
     <ItemGroup>
       <_MdmergeInputs Include="@(Midl)" Condition="'%(Midl.ExcludedFromBuild)' != 'true'">
         <WinMDPath>%(Midl.MetadataFileName)</WinMDPath>
@@ -182,7 +181,7 @@
     <Exec Command="$(MdmergeCommand)" />
   </Target>
   <!-- Copy the merged .winmd to the out folder -->
-  <Target Name="CopyWinmdMerged" AfterTargets="AfterBuild;Mdmerge">
+  <Target Name="CopyWinmdMerged" AfterTargets="Mdmerge" Inputs="AnyCPU\$(Configuration)\Merged\DevHome.QuietBackgroundProcesses.winmd" Outputs="$(OutDir)DevHome.QuietBackgroundProcesses.winmd">
     <PropertyGroup>
       <MergedWinmdCopyCommand>copy /Y "$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" "$(OutDir)."</MergedWinmdCopyCommand>
     </PropertyGroup>

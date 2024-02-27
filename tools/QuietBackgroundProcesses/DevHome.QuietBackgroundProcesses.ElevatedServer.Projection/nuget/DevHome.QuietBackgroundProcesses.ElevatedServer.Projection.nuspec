@@ -13,9 +13,5 @@
     <!-- Projection -->
     <file src="..\..\..\..\_build\AnyCPU\Release\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\bin\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.dll" target="lib\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.Server.Projection.dll" />
     <file src="..\..\..\..\_build\AnyCPU\Release\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\bin\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.dll" target="lib\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.dll" />
-    
-    <!-- Runtime -->
-    <file src="..\..\..\..\src\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.Server.exe" target="runtimes\win-x64\native\DevHome.QuietBackgroundProcesses.Server.exe" />
-    <file src="..\..\..\..\src\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" target="runtimes\win-x64\native\DevHome.QuietBackgroundProcesses.ElevatedServer.exe" />
   </files>
 </package>
