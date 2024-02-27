@@ -145,7 +145,7 @@
 
   <!-- Status Messages -->
   <data name="QuietBackgroundProcesses_Status_FeatureNotSupported" xml:space="preserve">
-    <value>Feature not supported on this OS</value>
+    <value>Feature not supported on this version of Windows</value>
   </data>
   <data name="QuietBackgroundProcesses_Status_SessionError" xml:space="preserve">
     <value>Session Error</value>
