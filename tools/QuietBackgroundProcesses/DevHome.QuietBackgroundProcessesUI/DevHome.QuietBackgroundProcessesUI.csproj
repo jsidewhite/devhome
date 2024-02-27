@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Views\QuietBackgroundProcessesPage.xaml" />
-    <None Remove="Views\TestExperimentPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.4" />
@@ -23,9 +22,6 @@
   <ItemGroup>
     <Page Update="Views\QuietBackgroundProcessesPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Views\TestExperimentPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
 </Project>
