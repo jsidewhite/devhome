@@ -147,7 +147,13 @@
   <data name="QuietBackgroundProcesses_Status_FeatureNotSupported" xml:space="preserve">
     <value>Feature not supported on this OS</value>
   </data>
-  <data name="QuietBackgroundProcesses_Status_FeatureNotSupportedf" xml:space="preserve">
-    <value>werwer</value>
+  <data name="QuietBackgroundProcesses_Status_SessionError" xml:space="preserve">
+    <value>Session Error</value>
+  </data>
+  <data name="QuietBackgroundProcesses_Status_SessionEnded" xml:space="preserve">
+    <value>Session ended</value>
+  </data>
+  <data name="QuietBackgroundProcesses_Status_UnableToCancelSession" xml:space="preserve">
+    <value>Unable to cancel session</value>
   </data>
 </root>

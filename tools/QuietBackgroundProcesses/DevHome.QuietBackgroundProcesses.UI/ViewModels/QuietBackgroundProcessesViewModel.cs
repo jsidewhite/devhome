@@ -59,16 +59,19 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         return stringResource.GetLocalized(id);
     }
 
+    private string GetStatusString(string id)
+    {
+        return GetString("QuietBackgroundProcesses_Status_" + id);
+    }
+
     public QuietBackgroundProcessesViewModel()
     {
         _zero = new TimeSpan(0, 0, 0);
 
-        TimeLeft = GetString("QuietBackgroundProcesses_Status_FeatureNotSupported");
-
         _isFeatureSupported = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeatureSupported();
         if (!_isFeatureSupported)
         {
-            // TimeLeft = "Feature not supported on this OS";
+            SessionStateText = GetStatusString("FeatureNotSupported");
             return;
         }
 
@@ -77,24 +80,19 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             // Make sure not to launch the elevated server (which shows UAC) until the user hits the Start button
             return;
         }
-
-        // Resume countdown if there's an existing quiet window
-        if (GetIsActive())
+        else
         {
-            _isToggleOn = true;
-            var timeLeftInSeconds = GetTimeRemaining();
-            StartCountdownTimer(timeLeftInSeconds);
+            // Resume countdown if there's an existing quiet window
+            if (GetIsActive())
+            {
+                _isToggleOn = true;
+                var timeLeftInSeconds = GetTimeRemaining();
+                StartCountdownTimer(timeLeftInSeconds);
+            }
         }
     }
 
-    public bool IsToggleEnabled
-    {
-        get
-        {
-            CpuUsageCode = "IsToggleEnabled: ";
-            return _isFeatureSupported;
-        }
-    }
+    public bool IsToggleEnabled => _isFeatureSupported;
 
     private bool _isToggleOn;
 
@@ -122,9 +120,10 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                     var timeLeftInSeconds = GetSession().Start();
                     StartCountdownTimer(timeLeftInSeconds);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    TimeLeft = "Service error";
+                    SessionStateText = GetStatusString("SessionError");
+                    Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Start failed", ex);
                 }
             }
             else
@@ -132,11 +131,12 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
                 try
                 {
                     GetSession().Stop();
-                    TimeLeft = "Session ended";
+                    SessionStateText = GetStatusString("SessionEnded");
                 }
-                catch
+                catch (Exception ex)
                 {
-                    TimeLeft = "Unable to cancel session";
+                    SessionStateText = GetStatusString("UnableToCancelSession");
+                    Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Stop failed", ex);
                 }
             }
 
@@ -152,8 +152,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            TimeLeft = "Session error";
-            Log.Logger()?.ReportInfo("QuietBackgroundProcesses", $"IsActive = {ex.ToString()}");
+            SessionStateText = GetStatusString("SessionError");
+            Log.Logger()?.ReportError("QuietBackgroundProcessesSession::IsActive failed", ex);
             return false;
         }
     }
@@ -166,8 +166,8 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            TimeLeft = "Session error";
-            Log.Logger()?.ReportInfo("QuietBackgroundProcesses", $"TimeLeftInSeconds = {ex.ToString()}");
+            SessionStateText = GetStatusString("SessionError");
+            Log.Logger()?.ReportError("QuietBackgroundProcessesSession::TimeLeftInSeconds failed", ex);
             return 0;
         }
     }
@@ -188,7 +188,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         _secondsLeft = new TimeSpan(0, 0, (int)timeLeftInSeconds);
         _dispatcherTimer.Start();
 
-        TimeLeft = _secondsLeft.ToString();
+        SessionStateText = _secondsLeft.ToString();
     }
 
     private void DispatcherTimer_Tick(object sender, object e)
@@ -216,24 +216,24 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 
         if (sessionEnded)
         {
-            TimeLeft = "Session ended";
+            SessionStateText = GetStatusString("SessionEnded");
         }
         else
         {
-            TimeLeft = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
+            SessionStateText = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
         }
     }
 
     private string _timeLeft = string.Empty;
 
-    public string TimeLeft
+    public string SessionStateText
     {
         get => _timeLeft;
 
         set
         {
             _timeLeft = value;
-            OnPropertyChanged(nameof(TimeLeft));
+            OnPropertyChanged(nameof(SessionStateText));
         }
     }
 
@@ -246,19 +246,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         if (handler != null)
         {
             handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    private string _cpuUsageCode = "werw";
-
-    public string CpuUsageCode
-    {
-        get => _cpuUsageCode;
-
-        set
-        {
-            _cpuUsageCode = value;
-            OnPropertyChanged(nameof(CpuUsageCode));
         }
     }
 }
