@@ -28,21 +28,6 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
 #nullable disable
 
-    private bool IsQuietModeServerRunning()
-    {
-        try
-        {
-            _session = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
-            return _session != null;
-        }
-        catch (Exception ex)
-        {
-            Log.Logger()?.ReportError("QuietBackgroundProcessesSessionManager::TryGetSession failed", ex);
-        }
-
-        return false;
-    }
-
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
         if (_session == null)
@@ -75,20 +60,14 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
             return;
         }
 
-        if (!IsQuietModeServerRunning())
+        // Resume countdown if there's an existing quiet window
+        //
+        // Note: GetIsActive() won't ever launch a UAC prompt, but GetTimeRemaining() will if no session is running - so be careful with call order
+        if (GetIsActive())
         {
-            // Make sure not to launch the elevated server (which shows UAC) until the user hits the Start button
-            return;
-        }
-        else
-        {
-            // Resume countdown if there's an existing quiet window
-            if (GetIsActive())
-            {
-                _isToggleOn = true;
-                var timeLeftInSeconds = GetTimeRemaining();
-                StartCountdownTimer(timeLeftInSeconds);
-            }
+            _isToggleOn = true;
+            var timeLeftInSeconds = GetTimeRemaining();
+            StartCountdownTimer(timeLeftInSeconds);
         }
     }
 
@@ -148,14 +127,19 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
     {
         try
         {
-            return GetSession().IsActive;
+            _session = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
+            if (_session != null)
+            {
+                return _session.IsActive;
+            }
         }
         catch (Exception ex)
         {
             SessionStateText = GetStatusString("SessionError");
             Log.Logger()?.ReportError("QuietBackgroundProcessesSession::IsActive failed", ex);
-            return false;
         }
+
+        return false;
     }
 
     private int GetTimeRemaining()
