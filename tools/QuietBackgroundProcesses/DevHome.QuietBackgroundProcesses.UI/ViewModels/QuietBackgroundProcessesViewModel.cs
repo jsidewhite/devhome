@@ -6,16 +6,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using DevHome.Common;
 using DevHome.Common.Helpers;
+using DevHome.Common.Services;
 using DevHome.QuietBackgroundProcesses;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
 using Windows.Win32;
 
@@ -23,23 +22,11 @@ namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
 public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
 {
+    private readonly bool _isFeatureSupported;
     private readonly TimeSpan _zero;
-    private readonly bool _validOsVersion;
 #nullable enable
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
 #nullable disable
-
-    // [DllImport("ole32.dll", ExactSpelling = true, EntryPoint = "CoCreateInstance", PreserveSig = true)]
-    // private static extern Result CoCreateInstance([In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid, IntPtr pUnkOuter, CLSCTX dwClsContext, [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid, out IntPtr comObject);
-    /*
-    internal static void CreateComInstance(Guid clsid, CLSCTX clsctx, Guid riid, ComObject comObject)
-    {
-        IntPtr pointer;
-        var result = CoCreateInstance(clsid, IntPtr.Zero, clsctx, riid, out pointer);
-        result.CheckError();
-        comObject.NativePointer = pointer;
-    }
-    */
 
     private bool IsQuietModeServerRunning()
     {
@@ -66,27 +53,22 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         return _session;
     }
 
+    private string GetString(string id)
+    {
+        var stringResource = new StringResource("DevHome.QuietBackgroundProcesses.UI/Resources");
+        return stringResource.GetLocalized(id);
+    }
+
     public QuietBackgroundProcessesViewModel()
     {
-        // TimeLeft = "" + (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.Get());
         _zero = new TimeSpan(0, 0, 0);
 
-        if (DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeatureSupported())
-        {
-            TimeLeft = "SUPPORTED";
-        }
-        else
-        {
-            TimeLeft = "NOT SUPPORTED";
-        }
+        TimeLeft = GetString("QuietBackgroundProcesses_Status_FeatureNotSupported");
 
-        var osVersion = Environment.OSVersion;
-        _validOsVersion = osVersion.Version.Build >= 26024;
-        _validOsVersion = true;
-
-        if (!_validOsVersion)
+        _isFeatureSupported = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeatureSupported();
+        if (!_isFeatureSupported)
         {
-            TimeLeft = "This feature requires OS version 10.0.26024.0+";
+            // TimeLeft = "Feature not supported on this OS";
             return;
         }
 
@@ -110,7 +92,7 @@ public class QuietBackgroundProcessesViewModel : INotifyPropertyChanged
         get
         {
             CpuUsageCode = "IsToggleEnabled: ";
-            return _validOsVersion;
+            return _isFeatureSupported;
         }
     }
 

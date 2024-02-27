@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ContentArea.Text" xml:space="preserve">
-    <value>This is a test experiment page</value>
-    <comment>The name is Experiments</comment>
-  </data>
   <data name="NavigationPane.Content" xml:space="preserve">
     <value>Quiet Background Processes</value>
     <comment>The name of the Quiet Background Processes page</comment>
@@ -145,5 +141,13 @@
   </data>
   <data name="QuietBackgroundProcessesExplanation_RelatedLinks.Text" xml:space="preserve">
     <value>Related links</value>
+  </data>
+
+  <!-- Status Messages -->
+  <data name="QuietBackgroundProcesses_Status_FeatureNotSupported" xml:space="preserve">
+    <value>Feature not supported on this OS</value>
+  </data>
+  <data name="QuietBackgroundProcesses_Status_FeatureNotSupportedf" xml:space="preserve">
+    <value>werwer</value>
   </data>
 </root>
