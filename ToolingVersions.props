@@ -5,11 +5,5 @@
     <TargetFramework>net8.0-windows10.0.22000.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-
-    <!-- cpp support -->
-    <CppPlatformTarget>$(Platform)</CppPlatformTarget>
-    <CppPlatformTarget Condition="'$(Platform)' == 'x86'">Win32</CppPlatformTarget>
-    <CppBaseOutDir>$(SolutionDir)tools\bin\$(CppPlatformTarget)\$(Configuration)\</CppBaseOutDir>
-    <CppOutDir>$(CppBaseOutDir)$(MSBuildProjectName)\</CppOutDir>
   </PropertyGroup>
 </Project>
