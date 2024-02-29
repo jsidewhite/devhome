@@ -26,7 +26,7 @@
 
                     <!-- Toggle switch -->
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Bind ViewModel.SessionStateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="{StaticResource AccentTextFillColorTertiaryBrush}"  Margin="{StaticResource MediumLeftRightMargin}" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind ViewModel.SessionStateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="{StaticResource AccentTextFillColorTertiaryBrush}"  Margin="{StaticResource MediumLeftRightMargin}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <ToggleSwitch IsOn="{x:Bind ViewModel.IsToggleOn, Mode=TwoWay}" IsEnabled="{x:Bind ViewModel.IsToggleEnabled, Mode=OneWay}" />
                         </StackPanel>
