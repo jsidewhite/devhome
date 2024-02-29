@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <MdmergeMergedDir>..\DevHome.QuietBackgroundProcesses.Common\AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
+    <OutDir>$(CppOutDir)</OutDir>
   </PropertyGroup>
   
 
