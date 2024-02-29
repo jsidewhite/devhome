@@ -100,8 +100,18 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   
+  <!-- Quiet Background Processes bins -->
   <ItemGroup>
     <Content Include="$(DevHomeInternal_Win32RuntimePath)Microsoft.Internal.Windows.DevHome.Helpers.QuietBackgroundProcesses.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(SolutionDir)\$(Platform)\$(Configuration)\DevHome.QuietBackgroundProcesses.Server\DevHome.QuietBackgroundProcesses.Server.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(SolutionDir)\$(Platform)\$(Configuration)\DevHome.QuietBackgroundProcesses.ElevatedServer\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(SolutionDir)\$(Platform)\$(Configuration)\DevHome.QuietBackgroundProcesses.Common\DevHome.QuietBackgroundProcesses.winmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -110,25 +120,5 @@
     <DefineConstants Condition="'$(BuildRing)'=='Canary'">$(DefineConstants);CANARY_BUILD</DefineConstants>
     <DefineConstants Condition="'$(BuildRing)'=='Stable'">$(DefineConstants);STABLE_BUILD</DefineConstants>
   </PropertyGroup>
-  
-  <!-- Publish QuietBackgroundProcesses dlls/exes/winmds to the Appx package folder -->
-  <Target Name="ExtraAppxFilesInPackage" AfterTargets="_ComputeAppxPackagePayload">
-    <ItemGroup>
-      <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.Server.exe">
-        <PackagePath>.\</PackagePath>
-      </AdditionalPackageFile>
-      <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.ElevatedServer.exe">
-        <PackagePath>.\</PackagePath>
-      </AdditionalPackageFile>
-      <AdditionalPackageFile Include="$(TargetDir)\DevHome.QuietBackgroundProcesses.winmd">
-        <PackagePath>.\</PackagePath>
-      </AdditionalPackageFile>
-    </ItemGroup>
-    <ItemGroup>
-      <AppxPackagePayload Include="%(AdditionalPackageFile.Identity)" KeepDuplicates="false">
-        <TargetPath>%(AdditionalPackageFile.PackagePath)\%(AdditionalPackageFile.RecursiveDir)%(AdditionalPackageFile.Filename)%(AdditionalPackageFile.Extension)</TargetPath>
-      </AppxPackagePayload>
-    </ItemGroup>
-  </Target>
 
 </Project>
