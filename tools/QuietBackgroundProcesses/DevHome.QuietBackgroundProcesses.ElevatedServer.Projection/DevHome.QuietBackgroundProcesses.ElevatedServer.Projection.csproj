@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)ToolingVersions.props" />
-  <Import Project="$(SolutionDir)Directory.CppBuild.props" />
   
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <MdmergeMergedDir>..\DevHome.QuietBackgroundProcesses.Common\AnyCPU\$(Configuration)\Merged\</MdmergeMergedDir>
-    <OutDir>$(CppOutDir)</OutDir>
+    <MdmergeMergedDir>$(CppBaseOutDir)\DevHome.QuietBackgroundProcesses.Common\*.winmd</MdmergeMergedDir>
   </PropertyGroup>
   
 
@@ -40,9 +38,16 @@
   <ItemGroup>
     <None Include="nuget\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.nuspec" />
   </ItemGroup>
+  <Target Name="RemoveWinRTRuntimeReference" 
+          Inputs="@(RuntimeCopyLocalItems)" 
+          AfterTargets="ResolvePackageAssets" 
+          Outputs="@(RuntimeCopyLocalItems)">
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+    <ItemGroup>
+      <Reference Remove="WinRT.Runtime" /> 
+      <RuntimeCopyLocalItems Remove="@(RuntimeCopyLocalItems)" Condition="'%(DestinationSubPath)' == 'WinRT.Runtime.dll'"/>
+      <ResolvedCompileFileDefinitions Remove="@(ResolvedCompileFileDefinitions)" Condition="'%(HintPath)' == '$(CsWinRTPath)lib\net6.0\WinRT.Runtime.dll'"/>
+    </ItemGroup>
 
+  </Target>
 </Project>
