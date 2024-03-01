@@ -16,10 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GeneratedNugetDir>.\nuget\</GeneratedNugetDir>
-    <NuspecFile>$(GeneratedNugetDir)DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.nuspec</NuspecFile>
-    <OutputPath>$(GeneratedNugetDir)</OutputPath>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <OutputPath>$(OutDir)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,17 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="nuget\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.nuspec" />
+    <Folder Include="nuget\" />
   </ItemGroup>
-  <Target Name="RemoveWinRTRuntimeReference" 
-          Inputs="@(RuntimeCopyLocalItems)" 
-          AfterTargets="ResolvePackageAssets" 
-          Outputs="@(RuntimeCopyLocalItems)">
+  <Target Name="RemoveWinRTRuntimeReference" Inputs="@(RuntimeCopyLocalItems)" AfterTargets="ResolvePackageAssets" Outputs="@(RuntimeCopyLocalItems)">
 
     <ItemGroup>
       <Reference Remove="WinRT.Runtime" /> 
-      <RuntimeCopyLocalItems Remove="@(RuntimeCopyLocalItems)" Condition="'%(DestinationSubPath)' == 'WinRT.Runtime.dll'"/>
-      <ResolvedCompileFileDefinitions Remove="@(ResolvedCompileFileDefinitions)" Condition="'%(HintPath)' == '$(CsWinRTPath)lib\net6.0\WinRT.Runtime.dll'"/>
+      <RuntimeCopyLocalItems Remove="@(RuntimeCopyLocalItems)" Condition="'%(DestinationSubPath)' == 'WinRT.Runtime.dll'" />
+      <ResolvedCompileFileDefinitions Remove="@(ResolvedCompileFileDefinitions)" Condition="'%(HintPath)' == '$(CsWinRTPath)lib\net6.0\WinRT.Runtime.dll'" />
     </ItemGroup>
 
   </Target>
