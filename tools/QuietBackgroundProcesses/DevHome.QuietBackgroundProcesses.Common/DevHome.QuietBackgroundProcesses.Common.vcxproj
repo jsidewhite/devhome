@@ -142,8 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession.idl" />
-    <Midl Include="DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.idl" />
+    <Midl Include="DevHome.QuietBackgroundProcesses.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility.h" />
@@ -185,10 +184,10 @@
     <PropertyGroup>
       <MergedWinmdCopyCommand>copy /Y "$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" "$(OutDir)."</MergedWinmdCopyCommand>
     </PropertyGroup>
-    <Message Text="Copying merged winmd file to out folder: $(MergedWinmdFilePath) -> $(OutDir)" Importance="Normal" />
+    <Message Text="Copying merged winmd file to out folder: $(MergedWinmdFilePath) -&gt; $(OutDir)" Importance="Normal" />
     <Copy SkipUnchangedFiles="false" SourceFiles="$(MergedWinmdFilePath)" DestinationFiles="$(OutDir)DevHome.QuietBackgroundProcesses.winmd" />
     <ItemGroup>
-      <FileWrites Include="$(OutDir)DevHome.QuietBackgroundProcesses.winmd"/>
+      <FileWrites Include="$(OutDir)DevHome.QuietBackgroundProcesses.winmd" />
     </ItemGroup>
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

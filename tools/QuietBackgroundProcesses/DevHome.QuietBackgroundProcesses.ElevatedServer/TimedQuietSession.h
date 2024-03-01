@@ -16,7 +16,7 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
-#include "DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.h"
+#include "DevHome.QuietBackgroundProcesses.h"
 
 #include "Timer.h"
 #include "QuietState.h"
