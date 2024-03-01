@@ -16,6 +16,9 @@
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
     <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="W:\repo\devhome\tools\QuietBackgroundProcesses\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\bin\x64\Release\net8.0-windows10.0.22000.0\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <Page Update="Views\QuietBackgroundProcessesPage.xaml">
