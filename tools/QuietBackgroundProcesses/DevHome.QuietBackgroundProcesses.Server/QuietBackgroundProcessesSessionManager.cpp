@@ -49,15 +49,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         CATCH_RETURN()
 
         // IQuietBackgroundProcessesSessionManagerStatics
-        //STDMETHODIMP IsFeaturePresent(_Out_ boolean* isPresent) noexcept override try
-        STDMETHODIMP IsFeatureSupported(_Out_ boolean* isPresent) noexcept override
-        try
+        STDMETHODIMP IsFeaturePresent(_Out_ boolean* isPresent) noexcept override try
         {
-            while (!IsDebuggerPresent())
-            {
-                Sleep(1000);
-            };
-            DebugBreak();
             THROW_IF_FAILED(IsQuietBackgroundProcessesFeaturePresent((bool*)isPresent));
             return S_OK;
         }
