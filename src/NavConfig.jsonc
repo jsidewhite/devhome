@@ -30,7 +30,7 @@
             "assembly": "DevHome.QuietBackgroundProcesses.UI",
             "viewFullName": "DevHome.QuietBackgroundProcesses.UI.Views.QuietBackgroundProcessesPage",
             "viewModelFullName": "DevHome.QuietBackgroundProcesses.UI.ViewModels.QuietBackgroundProcessesViewModel",
-            "icon": "f5b0",
+            "icon": "ec7a",
             "experimentalFeatureIdentity": "QuietBackgroundProcessesExperiment"
           }
         ]

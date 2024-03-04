@@ -59,8 +59,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavigationPane.Content" xml:space="preserve">
-    <value>Quiet Background Processes</value>
-    <comment>The name of the Quiet Background Processes page</comment>
+    <value>Windows customization</value>
+    <comment>The name of the Quiet Background Processes page - but temporarily is being called 'Windows customization' until that page is up.</comment>
   </data>
   <data name="QuietBackgroundProcesses.Description" xml:space="preserve">
     <value>Silence and track background processes that may hinder device performance</value>
