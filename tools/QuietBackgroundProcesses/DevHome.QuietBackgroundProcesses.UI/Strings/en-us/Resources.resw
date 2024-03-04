@@ -90,6 +90,14 @@
     <value>Related links</value>
     <comment>Label for the doc links</comment>
   </data>
+  <data name="SystemSettings_FocusAssist_FocusStartSession.Text" xml:space="preserve">
+    <value>Start session</value>
+    <comment>Label for the doc links</comment>
+  </data>
+  <data name="SystemSettings_FocusAssist_FocusStopSession.Text" xml:space="preserve">
+    <value>Stop session</value>
+    <comment>Label for the doc links</comment>
+  </data>
 
   <!-- Status Messages -->
   <data name="QuietBackgroundProcesses_Status_FeatureNotSupported" xml:space="preserve">

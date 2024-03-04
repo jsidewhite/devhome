@@ -32,9 +32,35 @@
                             Margin="{StaticResource MediumLeftRightMargin}"
                             VerticalAlignment="Center"
                             TextTrimming="CharacterEllipsis" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsToggleOn, Mode=TwoWay}" IsEnabled="{x:Bind ViewModel.IsToggleEnabled, Mode=OneWay}" />
+
+                        <!-- Start button + Stop button-->
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                x:Name="focusStartButton"
+                                AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}"
+                                Click="OnFocusStartClicked"
+                                IsTextScaleFactorEnabled="True"
+                                Style="{StaticResource AccentButtonStyle}">
+                                <TextBlock
+                                    x:Uid="SystemSettings_FocusAssist_FocusStartSession"
+                                    x:Name="StartButtonText"
+                                    VerticalAlignment="Center"
+                                    TextTrimming="CharacterEllipsis"/>
+                            </Button>
+                            <Button
+                                x:Name="focusStopButton"
+                                AutomationProperties.Name="{Binding ElementName=StopButtonText, Path=Text}"
+                                Click="OnFocusStopClicked"
+                                IsTextScaleFactorEnabled="True"
+                                Style="{StaticResource AccentButtonStyle}">
+                                <TextBlock
+                                    x:Uid="SystemSettings_FocusAssist_FocusStopSession"
+                                    x:Name="StopButtonText"
+                                    VerticalAlignment="Center"
+                                    TextTrimming="CharacterEllipsis"/>
+                            </Button>
                         </StackPanel>
+                        
                     </StackPanel>
 
                     <!-- Expander -->
