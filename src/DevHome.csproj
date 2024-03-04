@@ -107,7 +107,7 @@
     <CppPlatformTarget Condition="'$(Platform)' == 'x86'">Win32</CppPlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="$(DevHomeInternal_Win32RuntimePath)Microsoft.Internal.Windows.DevHome.Helpers.QuietBackgroundProcesses.dll">
+    <Content Include="$(DevHomeInternal_Win32RuntimePath)$(CppPlatformTarget)\Microsoft.Internal.Windows.DevHome.Helpers.QuietBackgroundProcesses.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="$(CppBaseOutDir)\DevHome.QuietBackgroundProcesses.Server\DevHome.QuietBackgroundProcesses.Server.exe">
