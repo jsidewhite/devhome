@@ -75,6 +75,7 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
         // Start the focus session
         _isFocusEnabled = true;
         SetButtonVisibility();
+        ViewModel.StartStopSession(true);
     }
 
     private void OnFocusStopClicked(object sender, RoutedEventArgs e)
@@ -82,5 +83,6 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
         // Start the focus session
         _isFocusEnabled = false;
         SetButtonVisibility();
+        ViewModel.StartStopSession(false);
     }
 }

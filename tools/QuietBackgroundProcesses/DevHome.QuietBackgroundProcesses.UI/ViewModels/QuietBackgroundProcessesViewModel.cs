@@ -125,6 +125,47 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         }
     }
 
+    public void StartStopSession(bool start)
+    {
+        if (_isToggleOn == start)
+        {
+            return;
+        }
+
+        _isToggleOn = start;
+
+        // Stop any existing timer
+        _dispatcherTimer?.Stop();
+
+        if (_isToggleOn)
+        {
+            try
+            {
+                // Launch the server, which then elevates itself, showing a UAC prompt
+                var timeLeftInSeconds = GetSession().Start();
+                StartCountdownTimer(timeLeftInSeconds);
+            }
+            catch (Exception ex)
+            {
+                SessionStateText = GetStatusString("SessionError");
+                Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Start failed", ex);
+            }
+        }
+        else
+        {
+            try
+            {
+                GetSession().Stop();
+                SessionStateText = GetStatusString("SessionEnded");
+            }
+            catch (Exception ex)
+            {
+                SessionStateText = GetStatusString("UnableToCancelSession");
+                Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Stop failed", ex);
+            }
+        }
+    }
+
     private bool GetIsActive()
     {
         try
