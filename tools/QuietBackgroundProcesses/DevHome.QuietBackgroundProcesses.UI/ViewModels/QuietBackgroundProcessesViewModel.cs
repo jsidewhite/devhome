@@ -36,6 +36,12 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     [ObservableProperty]
     private string _quietButtonText;
 
+    private enum ButtonState
+    {
+        Start,
+        Stop,
+    }
+
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
         if (_session == null)
@@ -80,20 +86,20 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     public bool IsButtonEnabled => _isFeaturePresent;
 
-    private bool _isSessionRunning;
+    private ButtonState _buttonState;
 
     private void SetQuietSessionRunningState(bool running, long? timeLeftInSeconds = null)
     {
-        _isSessionRunning = running;
-        if (_isSessionRunning)
+        if (running)
         {
+            _buttonState = ButtonState.Stop;
             var seconds = timeLeftInSeconds ?? GetTimeRemaining();
             StartCountdownTimer(seconds);
             QuietButtonText = GetString("QuietBackgroundProcesses_QuietButton_Stop");
         }
         else
         {
-            // Stop any existing timer
+            _buttonState = ButtonState.Start;
             _dispatcherTimer?.Stop();
             QuietButtonText = GetString("QuietBackgroundProcesses_QuietButton_Start");
         }
@@ -101,33 +107,40 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     public void QuietButtonClicked()
     {
-        if (!_isSessionRunning)
+        switch (_buttonState)
         {
-            try
-            {
-                // Launch the server, which then elevates itself, showing a UAC prompt
-                var timeLeftInSeconds = GetSession().Start();
-                SetQuietSessionRunningState(true, timeLeftInSeconds);
-            }
-            catch (Exception ex)
-            {
-                SessionStateText = GetStatusString("SessionError");
-                Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Start failed", ex);
-            }
-        }
-        else
-        {
-            try
-            {
-                GetSession().Stop();
-                SetQuietSessionRunningState(false);
-                SessionStateText = GetStatusString("SessionEnded");
-            }
-            catch (Exception ex)
-            {
-                SessionStateText = GetStatusString("UnableToCancelSession");
-                Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Stop failed", ex);
-            }
+            case ButtonState.Start:
+                {
+                    try
+                    {
+                        // Launch the server, which then elevates itself, showing a UAC prompt
+                        var timeLeftInSeconds = GetSession().Start();
+                        SetQuietSessionRunningState(true, timeLeftInSeconds);
+                    }
+                    catch (Exception ex)
+                    {
+                        SessionStateText = GetStatusString("SessionError");
+                        Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Start failed", ex);
+                    }
+                }
+
+                break;
+            case ButtonState.Stop:
+                {
+                    try
+                    {
+                        GetSession().Stop();
+                        SetQuietSessionRunningState(false);
+                        SessionStateText = GetStatusString("SessionEnded");
+                    }
+                    catch (Exception ex)
+                    {
+                        SessionStateText = GetStatusString("UnableToCancelSession");
+                        Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Stop failed", ex);
+                    }
+                }
+
+                break;
         }
     }
 
