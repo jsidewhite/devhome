@@ -21,6 +21,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Resources;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -33,8 +34,6 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 {
     public override string ShortName => "Quiet Background Processes";
 
-    private bool _isFocusEnabled;
-
     public QuietBackgroundProcessesViewModel ViewModel
     {
         get;
@@ -44,45 +43,10 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
     {
         ViewModel = new QuietBackgroundProcessesViewModel();
         InitializeComponent();
-        SetButtonVisibility();
-    }
-
-    private void SetButtonVisibility()
-    {
-        // Show Start/Stop focus session button exclusively
-        if (_isFocusEnabled)
-        {
-            this.focusStartButton.Visibility = Visibility.Collapsed;
-            this.focusStopButton.Visibility = Visibility.Visible;
-
-            // Need to set focus back on focusStopButton or else the collapsed
-            // focusStartButton will shift the focus away to the next element
-            this.focusStopButton.Focus(FocusState.Programmatic);
-        }
-        else
-        {
-            this.focusStopButton.Visibility = Visibility.Collapsed;
-            this.focusStartButton.Visibility = Visibility.Visible;
-
-            // Need to set focus back on focusStopButton or else the collapsed
-            // focusStartButton will shift the focus away to the next element
-            this.focusStartButton.Focus(FocusState.Programmatic);
-        }
     }
 
     private void OnFocusStartClicked(object sender, RoutedEventArgs e)
     {
-        // Start the focus session
-        _isFocusEnabled = true;
-        SetButtonVisibility();
-        ViewModel.StartStopSession(true);
-    }
-
-    private void OnFocusStopClicked(object sender, RoutedEventArgs e)
-    {
-        // Start the focus session
-        _isFocusEnabled = false;
-        SetButtonVisibility();
-        ViewModel.StartStopSession(false);
+        ViewModel.QuietButtonClicked();
     }
 }
