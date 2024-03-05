@@ -23,7 +23,7 @@
                         <BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/DevHome.ico" />
                     </ctControls:SettingsExpander.HeaderIcon>
 
-                    <!-- Toggle switch -->
+                    <!-- Quiet session setting area -->
                     <StackPanel Orientation="Horizontal">
                         <TextBlock
                             Text="{x:Bind ViewModel.SessionStateText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
