@@ -103,7 +103,7 @@
   
   <!-- Quiet Background Processes bins -->
   <ItemGroup>
-    <Content Include="$(DevHomeInternal_Win32RuntimePath)Microsoft.Internal.Windows.DevHome.Helpers.QuietBackgroundProcesses.dll">
+    <Content Include="$(DevHomeInternal_Win32RuntimePath)$(Platform)\Microsoft.Internal.Windows.DevHome.Helpers.QuietBackgroundProcesses.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="$(CppBaseOutDir)\DevHome.QuietBackgroundProcesses.Server\DevHome.QuietBackgroundProcesses.Server.exe">
