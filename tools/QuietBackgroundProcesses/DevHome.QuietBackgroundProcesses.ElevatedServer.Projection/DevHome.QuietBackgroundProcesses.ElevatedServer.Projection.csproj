@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <MdmergeMergedDir>$(CppBaseOutDir)\DevHome.QuietBackgroundProcesses.Common\</MdmergeMergedDir>
-    <MdmergeMergedDir>W:\repo\devhome\tools\bin\x64\Release\DevHome.QuietBackgroundProcesses.Common\</MdmergeMergedDir>
+    <MdmergeMergedDir>W:\repo\devhomexp\tools\bin\x64\Debug\DevHome.QuietBackgroundProcesses.Common\</MdmergeMergedDir>
   </PropertyGroup>
   
 

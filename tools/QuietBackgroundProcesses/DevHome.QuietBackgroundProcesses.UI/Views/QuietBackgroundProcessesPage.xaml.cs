@@ -45,8 +45,10 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
         InitializeComponent();
     }
 
+    /*
     private void OnFocusStartClicked(object sender, RoutedEventArgs e)
     {
         ViewModel.QuietButtonClicked();
     }
+    */
 }

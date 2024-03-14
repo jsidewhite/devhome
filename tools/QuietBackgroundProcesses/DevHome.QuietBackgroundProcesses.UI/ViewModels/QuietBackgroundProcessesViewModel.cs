@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DevHome.Common;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
@@ -84,7 +85,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         SetQuietSessionRunningState(running);
     }
 
-    public bool IsButtonEnabled => _isFeaturePresent;
+    // public bool IsButtonEnabled => _isFeaturePresent;
+    [ObservableProperty]
+    private bool _isButtonEnabled;
 
     private ButtonState _buttonState;
 
@@ -105,6 +108,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
     public void QuietButtonClicked()
     {
         switch (_buttonState)

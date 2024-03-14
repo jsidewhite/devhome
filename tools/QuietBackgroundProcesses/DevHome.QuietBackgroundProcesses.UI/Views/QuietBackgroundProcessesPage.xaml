@@ -8,7 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pg="using:DevHome.Common"
     xmlns:ctControls="using:CommunityToolkit.WinUI.Controls"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:i="using:Microsoft.Xaml.Interactivity">
 
     <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
         <Grid.RowDefinitions>
@@ -38,15 +40,22 @@
                             <Button
                                 x:Name="focusStartButton"
                                 AutomationProperties.Name="{Binding ElementName=StartButtonText, Path=Text}"
-                                Click="OnFocusStartClicked"
+                                
+                                
+                                
                                 IsTextScaleFactorEnabled="True"
-                                IsEnabled="{x:Bind ViewModel.IsButtonEnabled}"
+                                
                                 Style="{StaticResource AccentButtonStyle}">
                                 <TextBlock
                                     x:Name="QuietButtonText"
                                     Text="{x:Bind ViewModel.QuietButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     VerticalAlignment="Center"
                                     TextTrimming="CharacterEllipsis"/>
+                                <i:Interaction.Behaviors>
+                                    <ic:EventTriggerBehavior EventName="Click">
+                                        <ic:InvokeCommandAction Command="{x:Bind ViewModel.QuietButtonClickedCommand}"/>
+                                    </ic:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
                             </Button>
                         </StackPanel>
                         
