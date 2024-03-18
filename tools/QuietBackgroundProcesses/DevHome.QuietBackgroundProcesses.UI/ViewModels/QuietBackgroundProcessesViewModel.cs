@@ -5,6 +5,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevHome.Common.Services;
+using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 using Serilog;
 
@@ -18,12 +19,14 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     private readonly TimeSpan _zero = new(0, 0, 0);
     private readonly TimeSpan _oneSecond = new(0, 0, 1);
-#nullable enable
     private QuietBackgroundProcessesSession? _session;
-#nullable disable
+    private ProcessPerformanceTable? _table;
 
     [ObservableProperty]
     private bool _isFeaturePresent;
+
+    [ObservableProperty]
+    private bool _isAnalyticSummaryAvailable;
 
     [ObservableProperty]
     private string _sessionStateText;
@@ -32,7 +35,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     private bool _quietButtonChecked;
 
     [ObservableProperty]
-    private string _quietButtonText;
+    private string? _quietButtonText;
 
     private QuietBackgroundProcessesSession GetSession()
     {
@@ -60,7 +63,12 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     public QuietBackgroundProcessesViewModel(IExperimentationService experimentationService)
     {
         _experimentationService = experimentationService;
+        _sessionStateText = string.Empty;
+
         IsFeaturePresent = QuietBackgroundProcessesSessionManager.IsFeaturePresent();
+        IsAnalyticSummaryAvailable = _table != null;
+
+        _dispatcherTimer = new DispatcherTimer();
 
         var running = false;
         if (IsFeaturePresent)
@@ -102,12 +110,16 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             try
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+
                 // Launch the server, which then elevates itself, showing a UAC prompt
                 var timeLeftInSeconds = GetSession().Start();
                 SetQuietSessionRunningState(true, timeLeftInSeconds);
             }
             catch (Exception ex)
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_StartError", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+
                 SessionStateText = GetStatusString("SessionError");
                 _log.Error("QuietBackgroundProcessesSession::Start failed", ex);
             }
@@ -116,12 +128,17 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             try
             {
-                GetSession().Stop();
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Stop", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+
+                _table = GetSession().Stop();
+                IsAnalyticSummaryAvailable = _table != null;
                 SetQuietSessionRunningState(false);
                 SessionStateText = GetStatusString("SessionEnded");
             }
             catch (Exception ex)
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_StopError", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+
                 SessionStateText = GetStatusString("UnableToCancelSession");
                 _log.Error("QuietBackgroundProcessesSession::Stop failed", ex);
             }
@@ -180,7 +197,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         SessionStateText = _secondsLeft.ToString();
     }
 
-    private void DispatcherTimer_Tick(object sender, object e)
+    private void DispatcherTimer_Tick(object? sender, object e)
     {
         // Subtract 1 second
         _secondsLeft = _secondsLeft.Subtract(_oneSecond);
@@ -211,5 +228,10 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             SessionStateText = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
         }
+    }
+
+    public ProcessPerformanceTable? GetProcessPerformanceTable()
+    {
+        return _table;
     }
 }

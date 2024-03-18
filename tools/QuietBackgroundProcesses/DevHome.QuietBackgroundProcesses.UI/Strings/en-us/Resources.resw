@@ -99,6 +99,62 @@
     <comment>Label for the doc links</comment>
   </data>
 
+  <!-- Analytic Summary -->
+  <data name="AnalyticSummary_Title.Text" xml:space="preserve">
+    <value>Analytic Summary</value>
+    <comment>Title of the analytic summary page</comment>
+  </data>
+  <data name="AnalyticSummary_Description.Text" xml:space="preserve">
+    <value>Analytic summary description...</value>
+    <comment>Desciption of the analytic summary page</comment>
+  </data>
+  <data name="AnalyticSummary_SortBy_Label.Text" xml:space="preserve">
+    <value>Sort by</value>
+    <comment>Label for the combo box for sorting</comment>
+  </data>
+  <data name="ComboBox_SortBy_Process.Content" xml:space="preserve">
+    <value>Process</value>
+    <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="ComboBox_SortBy_Type.Content" xml:space="preserve">
+    <value>Type</value>
+    <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="ComboBox_SortBy_CpuAboveThreshold.Content" xml:space="preserve">
+    <value>CPU above threshold</value>
+    <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="AnalyticSummary_FilterProcesses_PlaceholderText.PlaceholderText" xml:space="preserve">
+    <value>Search for a process</value>
+    <comment>Label for analytic summary save report button</comment>
+  </data>
+  <data name="AnalyticSummary_SaveReportButton.Text" xml:space="preserve">
+    <value>Save report</value>
+    <comment>Label for analytic summary save report button</comment>
+  </data>
+  <data name="AnalyticSummary_CloseButton.Text" xml:space="preserve">
+    <value>Close</value>
+    <comment>Label for analytic summary close button</comment>
+  </data>
+
+  <!-- Simple table control -->
+  <data name="SimpleTableControl_Heading_Process.Text" xml:space="preserve">
+    <value>Process</value>
+    <comment>Table heading for Process column</comment>
+  </data>
+  <data name="SimpleTableControl_Heading_ProcessType.Text" xml:space="preserve">
+    <value>Type</value>
+    <comment>Table heading for Type column</comment>
+  </data>
+  <data name="SimpleTableControl_Heading_CpuAboveThreshold.Text" xml:space="preserve">
+    <value>Process</value>
+    <comment>Table heading for 'CPU above threshold' column</comment>
+  </data>
+  <data name="MinutesAbbreviation.Text" xml:space="preserve">
+    <value>min</value>
+    <comment>Abbreviation for the word minutes</comment>
+  </data>
+
   <!-- Status Messages -->
   <data name="QuietBackgroundProcesses_Status_FeatureNotSupported" xml:space="preserve">
     <value>Feature not supported on this version of Windows</value>
