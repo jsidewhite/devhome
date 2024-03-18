@@ -27,7 +27,7 @@
             </controls:SettingsCard.HeaderIcon>
         </controls:SettingsCard>
 
-        <!--  Quiet Background Processes  -->
+        <!--  Quiet background processes  -->
         <quietviews:QuietBackgroundProcessesView />
         
         <!--  More Windows settings  -->

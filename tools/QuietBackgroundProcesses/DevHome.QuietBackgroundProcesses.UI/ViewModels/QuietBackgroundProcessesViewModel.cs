@@ -2,11 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevHome.Common.Services;
+using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 using Serilog;
+using Windows.Foundation.Diagnostics;
 
 namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
@@ -18,12 +21,15 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     private readonly TimeSpan _zero = new(0, 0, 0);
     private readonly TimeSpan _oneSecond = new(0, 0, 1);
-#nullable enable
+    private TimeSpan _sessionDuration;
     private QuietBackgroundProcessesSession? _session;
-#nullable disable
+    private ProcessPerformanceTable? _table;
 
     [ObservableProperty]
     private bool _isFeaturePresent;
+
+    [ObservableProperty]
+    private bool _isAnalyticSummaryAvailable;
 
     [ObservableProperty]
     private string _sessionStateText;
@@ -32,7 +38,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     private bool _quietButtonChecked;
 
     [ObservableProperty]
-    private string _quietButtonText;
+    private string? _quietButtonText;
 
     private QuietBackgroundProcessesSession GetSession()
     {
@@ -60,7 +66,12 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     public QuietBackgroundProcessesViewModel(IExperimentationService experimentationService)
     {
         _experimentationService = experimentationService;
+        _sessionStateText = string.Empty;
+
         IsFeaturePresent = QuietBackgroundProcessesSessionManager.IsFeaturePresent();
+        IsAnalyticSummaryAvailable = _table != null;
+
+        _dispatcherTimer = new DispatcherTimer();
 
         var running = false;
         if (IsFeaturePresent)
@@ -102,12 +113,17 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             try
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Session", LogLevel.Critical, new QuietBackgroundProcessesEvent(LoggingOpcode.Start));
+
                 // Launch the server, which then elevates itself, showing a UAC prompt
                 var timeLeftInSeconds = GetSession().Start();
+                _sessionDuration = TimeSpan.FromSeconds(timeLeftInSeconds);
                 SetQuietSessionRunningState(true, timeLeftInSeconds);
             }
             catch (Exception ex)
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_SessionStartError", LogLevel.Critical, new QuietBackgroundProcessesEvent());
+
                 SessionStateText = GetStatusString("SessionError");
                 _log.Error("QuietBackgroundProcessesSession::Start failed", ex);
             }
@@ -116,12 +132,17 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             try
             {
-                GetSession().Stop();
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Session", LogLevel.Critical, new QuietBackgroundProcessesEvent(LoggingOpcode.Stop));
+
+                _table = GetSession().Stop();
+                IsAnalyticSummaryAvailable = _table != null;
                 SetQuietSessionRunningState(false);
-                SessionStateText = GetStatusString("SessionEnded");
+                SessionStateText = GetLastSessionLengthString(_sessionDuration - _secondsLeft);
             }
             catch (Exception ex)
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_SessionStopError", LogLevel.Critical, new QuietBackgroundProcessesEvent());
+
                 SessionStateText = GetStatusString("UnableToCancelSession");
                 _log.Error("QuietBackgroundProcessesSession::Stop failed", ex);
             }
@@ -180,7 +201,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         SessionStateText = _secondsLeft.ToString();
     }
 
-    private void DispatcherTimer_Tick(object sender, object e)
+    private void DispatcherTimer_Tick(object? sender, object e)
     {
         // Subtract 1 second
         _secondsLeft = _secondsLeft.Subtract(_oneSecond);
@@ -204,12 +225,23 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         if (sessionEnded)
         {
             SetQuietSessionRunningState(false);
+            var lastSessionLength = _sessionDuration - _secondsLeft;
             _secondsLeft = _zero;
-            SessionStateText = GetStatusString("SessionEnded");
+            SessionStateText = GetLastSessionLengthString(lastSessionLength);
         }
         else
         {
             SessionStateText = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
         }
+    }
+
+    private string GetLastSessionLengthString(TimeSpan lastSessionLength)
+    {
+        return GetString("QuietBackgroundProcesses_Time_LastSessionLength") + " " + lastSessionLength.ToString("g", CultureInfo.CurrentCulture);
+    }
+
+    public ProcessPerformanceTable? GetProcessPerformanceTable()
+    {
+        return _table;
     }
 }
