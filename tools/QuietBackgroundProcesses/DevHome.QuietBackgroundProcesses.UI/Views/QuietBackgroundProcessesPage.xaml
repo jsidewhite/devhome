@@ -9,11 +9,11 @@
     <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
         <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
-                <ctControls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+                <ctControls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="False" Margin="{ThemeResource SettingsCardMargin}">
 
                     <!-- Header icon -->
                     <ctControls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xec7a;"/>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xefff;"/>
                     </ctControls:SettingsExpander.HeaderIcon>
 
                     <!-- Quiet session setting area -->
@@ -36,7 +36,16 @@
 
                     <!-- Expander -->
                     <ctControls:SettingsExpander.Items>
-                        <ctControls:SettingsCard x:Uid="QuietBackgroundProcessesExplanation" HorizontalContentAlignment="Left" >
+                        <ctControls:SettingsCard x:Uid="QuietBackgroundProcessesExplanation" HorizontalContentAlignment="Left" ContentAlignment="Vertical">
+                            
+                            <!-- Analytic Summary button -->
+                            <Button
+                                x:Name="analyticSummaryButton"
+                                Content="Analytic summary"
+                                IsEnabled="{x:Bind ViewModel.IsAnalyticSummaryAvailable, Mode=OneWay}"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Click="ShowAnalyticSummaryButton_Click" />
+                            
                         </ctControls:SettingsCard>
                     </ctControls:SettingsExpander.Items>
 

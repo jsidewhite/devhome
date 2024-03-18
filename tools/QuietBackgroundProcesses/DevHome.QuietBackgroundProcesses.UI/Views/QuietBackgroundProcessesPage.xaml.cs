@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
 using DevHome.Common;
 using DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
@@ -22,5 +24,13 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
     {
         ViewModel = new QuietBackgroundProcessesViewModel();
         InitializeComponent();
+    }
+
+    private async void ShowAnalyticSummaryButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var analyticSummaryPopup = new AnalyticSummaryPopup(ViewModel.GetProcessPerformanceTable());
+        analyticSummaryPopup.XamlRoot = this.Content.XamlRoot;
+        analyticSummaryPopup.RequestedTheme = this.ActualTheme;
+        await analyticSummaryPopup.ShowAsync();
     }
 }

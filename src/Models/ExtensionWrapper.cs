@@ -32,7 +32,8 @@ public class ExtensionWrapper : IExtensionWrapper
 
     public ExtensionWrapper(AppExtension appExtension, string classId)
     {
-        Name = appExtension.DisplayName;
+        // todo:jw
+        Name = "sdf";
         PackageFullName = appExtension.Package.Id.FullName;
         PackageFamilyName = appExtension.Package.Id.FamilyName;
         ExtensionClassId = classId ?? throw new ArgumentNullException(nameof(classId));

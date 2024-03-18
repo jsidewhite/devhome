@@ -5,13 +5,29 @@
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="SimpleTableControl.xaml" />
+    <None Remove="Views\AnalyticSummaryPopup.xaml" />
     <None Remove="Views\QuietBackgroundProcessesPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Collections" Version="8.0.240109" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
     <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\AnalyticSummaryPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SimpleTableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
