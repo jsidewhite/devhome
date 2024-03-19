@@ -22,9 +22,6 @@
 
                     <!-- Quiet session setting area -->
                     <StackPanel Orientation="Horizontal">
-
-                        <Button x:Name="myButton">Click Me</Button>
-                        <cc:TableCustomControl Background="Red" Label="Hello, World!"/>
                         
                         <TextBlock Text="{x:Bind ViewModel.CpuUsageCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="Red" />
                         
@@ -51,6 +48,12 @@
                     </ctControls:SettingsExpander.Items>
 
                 </ctControls:SettingsExpander>
+
+                <!-- Custom control -->
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="myButton">Click Me</Button>
+                    <cc:TableCustomControl Background="Red" Label="Hello, World!" ItemsSource="{Binding ViewModel.Polygons, Mode=OneWay}" />
+                </StackPanel>
 
             </StackPanel>
         </ScrollViewer>

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Xaml;
@@ -16,23 +17,27 @@ namespace DevHome.QuietBackgroundProcesses.CustomControl.Table;
 
 public sealed class TableCustomControl : Control
 {
-    private readonly DependencyProperty _labelProperty;
-
-    public TableCustomControl()
-    {
-        this.DefaultStyleKey = typeof(TableCustomControl);
-
-        _labelProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty LabelProperty = DependencyProperty.Register(
             nameof(Label),
             typeof(string),
             typeof(TableCustomControl),
             new PropertyMetadata(default(string), new PropertyChangedCallback(OnLabelChanged)));
+
+    public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register(
+        nameof(ItemsSource),
+        typeof(object),
+        typeof(TableCustomControl),
+        new PropertyMetadata(default));
+
+    public TableCustomControl()
+    {
+        this.DefaultStyleKey = typeof(TableCustomControl);
     }
 
     public string Label
     {
-        get => (string)GetValue(_labelProperty);
-        set => SetValue(_labelProperty, value);
+        get => (string)GetValue(LabelProperty);
+        set => SetValue(LabelProperty, value);
     }
 
     public bool HasLabelValue { get; set; }
@@ -49,5 +54,11 @@ public sealed class TableCustomControl : Control
         {
             labelControl.HasLabelValue = true;
         }
+    }
+
+    public object ItemsSource
+    {
+        get => (object)GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
     }
 }

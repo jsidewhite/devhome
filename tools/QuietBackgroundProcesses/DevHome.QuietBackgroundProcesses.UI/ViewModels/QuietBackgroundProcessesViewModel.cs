@@ -2,11 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Shapes;
 
 namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
@@ -33,6 +35,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     [ObservableProperty]
     private string _cpuUsageCode;
 
+    [ObservableProperty]
+    private ObservableCollection<Polygon> _polygons = new();
+
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
         if (_session == null)
@@ -57,6 +62,12 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     public QuietBackgroundProcessesViewModel()
     {
         IsFeaturePresent = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeaturePresent();
+
+        Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
+        Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
+        Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
+        Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
+        Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
 
         var running = false;
         if (IsFeaturePresent)
