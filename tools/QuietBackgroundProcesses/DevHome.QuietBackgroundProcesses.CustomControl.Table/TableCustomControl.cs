@@ -12,14 +12,42 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace DevHome.QuietBackgroundProcesses.CustomControl.Table;
+
 public sealed class TableCustomControl : Control
 {
+    private readonly DependencyProperty _labelProperty;
+
     public TableCustomControl()
     {
         this.DefaultStyleKey = typeof(TableCustomControl);
+
+        _labelProperty = DependencyProperty.Register(
+            nameof(Label),
+            typeof(string),
+            typeof(TableCustomControl),
+            new PropertyMetadata(default(string), new PropertyChangedCallback(OnLabelChanged)));
+    }
+
+    public string Label
+    {
+        get => (string)GetValue(_labelProperty);
+        set => SetValue(_labelProperty, value);
+    }
+
+    public bool HasLabelValue { get; set; }
+
+    private static void OnLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        TableCustomControl labelControl = d as TableCustomControl;
+        var s = e.NewValue as string;
+        if (s == string.Empty)
+        {
+            labelControl.HasLabelValue = false;
+        }
+        else
+        {
+            labelControl.HasLabelValue = true;
+        }
     }
 }
