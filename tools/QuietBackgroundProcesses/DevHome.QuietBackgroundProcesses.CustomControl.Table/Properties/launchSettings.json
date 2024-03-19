@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DevHome.QuietBackgroundProcesses.CustomControl.Table (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DevHome.QuietBackgroundProcesses.CustomControl.Table (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
