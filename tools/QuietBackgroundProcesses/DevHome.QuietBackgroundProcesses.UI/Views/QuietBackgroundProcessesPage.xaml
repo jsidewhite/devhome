@@ -4,12 +4,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:DevHome.Common"
-    xmlns:ctControls="using:CommunityToolkit.WinUI.Controls">
+    xmlns:ctControls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:cc="using:DevHome.QuietBackgroundProcesses.CustomControl.Table"
+    >
 
     <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
         <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
                 <ctControls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+                    
+                    
 
                     <!-- Header icon -->
                     <ctControls:SettingsExpander.HeaderIcon>
@@ -18,6 +22,10 @@
 
                     <!-- Quiet session setting area -->
                     <StackPanel Orientation="Horizontal">
+
+                        <Button x:Name="myButton">Click Me</Button>
+                        <cc:TableCustomControl Background="Red" Label="Hello, World!"/>
+                        
                         <TextBlock Text="{x:Bind ViewModel.CpuUsageCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="Red" />
                         
                         <TextBlock
