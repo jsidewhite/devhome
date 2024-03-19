@@ -6,26 +6,34 @@
     <Style TargetType="local:TableCustomControl" >
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:TableCustomControl" >
+                <ControlTemplate TargetType="local:TableCustomControl">
                     <Grid Width="100" Height="100" Background="{TemplateBinding Background}">
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{TemplateBinding Label}"/>
+
+                        <ItemsControl x:Key="dsf">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,5,5,0" VerticalAlignment="Top">
+
+                                        <TextBlock TextAlignment="Right" FontWeight="Bold" Text="test" Height="16"/>
+                                        <TextBlock TextAlignment="Right" Text="test2" FontSize="26" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
+                    
+                    
                 </ControlTemplate>
+                
+                
             </Setter.Value>
+            
+            
         </Setter>
+        
+        
     </Style>
 
-    <TextBlock TextAlignment="Right" FontWeight="Bold" Text="{Binding Label}" Height="16" x:Key="were" />
-    
-    <ItemsControl ItemsSource="{Binding ItemsSource}" x:Key="dsf">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <StackPanel Margin="0,5,5,0" VerticalAlignment="Top">
-                    
-                    <TextBlock TextAlignment="Right" FontWeight="Bold" Text="test" Height="16"/>
-                    <TextBlock TextAlignment="Right" Text="test2" FontSize="26" />
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+
 </ResourceDictionary>

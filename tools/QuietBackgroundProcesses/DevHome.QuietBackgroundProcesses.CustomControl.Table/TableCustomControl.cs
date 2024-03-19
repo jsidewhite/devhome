@@ -21,7 +21,7 @@ public sealed class TableCustomControl : Control
             nameof(Label),
             typeof(string),
             typeof(TableCustomControl),
-            new PropertyMetadata(default(string), new PropertyChangedCallback(OnLabelChanged)));
+            new PropertyMetadata(default));
 
     public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register(
         nameof(ItemsSource),
@@ -44,15 +44,9 @@ public sealed class TableCustomControl : Control
 
     private static void OnLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        TableCustomControl labelControl = d as TableCustomControl;
-        var s = e.NewValue as string;
-        if (s == string.Empty)
+        if (d is TableCustomControl labelControl)
         {
-            labelControl.HasLabelValue = false;
-        }
-        else
-        {
-            labelControl.HasLabelValue = true;
+            labelControl.HasLabelValue = !(e.NewValue?.ToString() == string.Empty);
         }
     }
 
