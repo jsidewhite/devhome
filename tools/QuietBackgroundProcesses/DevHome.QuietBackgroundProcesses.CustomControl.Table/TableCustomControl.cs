@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -32,6 +34,14 @@ public sealed class TableCustomControl : Control
     public TableCustomControl()
     {
         this.DefaultStyleKey = typeof(TableCustomControl);
+
+
+        List<string> Projects = new List<string>();
+
+        var sdf = "string";
+        Projects.Add(sdf);
+
+        cvsProjects.Source = Projects;
     }
 
     public string Label

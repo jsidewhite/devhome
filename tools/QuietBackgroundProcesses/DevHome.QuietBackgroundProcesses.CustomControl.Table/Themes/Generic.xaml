@@ -10,17 +10,40 @@
                     <Grid Width="100" Height="100" Background="{TemplateBinding Background}">
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{TemplateBinding Label}"/>
 
-                        <ItemsControl x:Key="dsf">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,5,5,0" VerticalAlignment="Top">
 
-                                        <TextBlock TextAlignment="Right" FontWeight="Bold" Text="test" Height="16"/>
-                                        <TextBlock TextAlignment="Right" Text="test2" FontSize="26" />
+                        <GridView ItemsSource="{Binding Source={StaticResource cvsProjects}}" MaxHeight="500">
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="20">
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" 
+                                   Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding DueDate}" TextWrapping="NoWrap" 
+                                   Style="{StaticResource BodyTextBlockStyle}" />
+                                        <CheckBox Content="Complete" IsChecked="{Binding Complete}" 
+                                  IsEnabled="False"/>
                                     </StackPanel>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                            </GridView.ItemTemplate>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid MaximumRowsOrColumns="3"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+
+                            <GridView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <Grid Background="LightGray" Margin="0">
+                                                <TextBlock Text='{Binding Name}' 
+                                           Foreground="Black" Margin="12"
+                                           Style="{StaticResource HeaderTextBlockStyle}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </GridView.GroupStyle>
+                        </GridView>
                     </Grid>
                     
                     
