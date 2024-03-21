@@ -62,7 +62,7 @@
 
         </ScrollViewer>
 
-        <Grid x:Name="AddWidgetTitleBar22fwfe" Grid.Row="2" Background="{StaticResource SolidBackgroundFillColorBaseBrush}">
+        <Grid x:Name="AddWidgetTitleBar22fwfe" Grid.Row="2" Background="{StaticResource SmokeFillColorDefaultBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>

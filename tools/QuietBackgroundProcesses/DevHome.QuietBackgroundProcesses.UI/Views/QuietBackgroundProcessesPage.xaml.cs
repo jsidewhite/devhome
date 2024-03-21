@@ -29,6 +29,7 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
     {
         var analyticSummaryPopup = new AnalyticSummaryPopup();
         analyticSummaryPopup.XamlRoot = this.Content.XamlRoot;
+        analyticSummaryPopup.RequestedTheme = this.ActualTheme;
         await analyticSummaryPopup.ShowAsync();
     }
 }
