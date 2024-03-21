@@ -8,8 +8,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///DevHome.SetupFlow/Styles/SetupFlowStyles.xaml" />
+                <ResourceDictionary>
+                    <Style x:Key="ListViewItemStretchStyle" TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                    <Style x:Key="BorderStyle" TargetType="Border">
+                        <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <StackPanel Orientation="Horizontal">
         <ListView ItemsSource="{x:Bind ProcessDatas}" HorizontalContentAlignment="Stretch">
+            <ListView.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 1">
+                        <TextBlock Text="Process" Padding="10, 0, 10, 0" VerticalAlignment="Center" HorizontalTextAlignment="Left"/>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 1" >
+                        <TextBlock Text="Process type" Padding="10, 0, 0, 0" VerticalAlignment="Center" HorizontalTextAlignment="Left"/>
+                    </Border>
+                    <Border Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 1" >
+                        <TextBlock Text="CPU above threshold" Padding="10, 0, 0, 0" VerticalAlignment="Center" HorizontalTextAlignment="Left" TextTrimming="CharacterEllipsis" />
+                    </Border>
+                </Grid>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:ProcessData">
                     <StackPanel Orientation="Horizontal">

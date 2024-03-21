@@ -81,12 +81,6 @@
                     <!--<commonviews:CloseButton Command="{x:Bind CancelButtonClickCommand}" />-->
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="15,0,15,0">
-                    <TextBlock Foreground="{StaticResource TextFillColorSecondaryBrush}" Text="Process" Width="240" />
-                    <TextBlock Foreground="{StaticResource TextFillColorSecondaryBrush}" Text="Process type" Width="130" />
-                    <TextBlock Foreground="{StaticResource TextFillColorSecondaryBrush}" Text="Cpu above threshold" Width="110" TextTrimming="CharacterEllipsis" />
-                </StackPanel>
-
                 <local:SimpleTableControl x:Name="processListControl" />
 
             </StackPanel>
