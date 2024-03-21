@@ -40,11 +40,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
-        if (_session == null)
-        {
-            _session = QuietBackgroundProcessesSessionManager.GetSession();
-        }
-
+        _session = null;
         return _session;
     }
 
@@ -69,12 +65,12 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
         Polygons.Add(new Polygon() { Id = Polygons.Count + 1 });
 
-        var running = false;
+        // var running = false;
         if (IsFeaturePresent)
         {
             // Check if an existing quiet session is running.
             // Note: GetIsActive() won't ever launch a UAC prompt, but GetTimeRemaining() will if no session is running - so be careful with call order
-            running = GetIsActive();
+            // running = GetIsActive();
         }
         else
         {
@@ -82,7 +78,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         }
 
         // Resume countdown if there's an existing quiet window
-        SetQuietSessionRunningState(running);
+        // SetQuietSessionRunningState(running);
     }
 
     private void SetQuietSessionRunningState(bool running, long? timeLeftInSeconds = null)
@@ -137,20 +133,6 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     private bool GetIsActive()
     {
-        try
-        {
-            _session = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.TryGetSession();
-            if (_session != null)
-            {
-                return _session.IsActive;
-            }
-        }
-        catch (Exception ex)
-        {
-            SessionStateText = GetStatusString("SessionError");
-            Log.Logger()?.ReportError("QuietBackgroundProcessesSession::IsActive failed", ex);
-        }
-
         return false;
     }
 

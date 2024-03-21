@@ -6,6 +6,7 @@
     xmlns:common="using:DevHome.Common"
     xmlns:ctControls="using:CommunityToolkit.WinUI.Controls"
     xmlns:cc="using:DevHome.QuietBackgroundProcesses.CustomControl.Table"
+    xmlns:muc="using:MyUserControl"
     >
 
     <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
@@ -53,6 +54,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="myButton">Click Me</Button>
                     <cc:TableCustomControl Background="Red" Label="Hello, World!" ItemsSource="{Binding ViewModel.Polygons, Mode=OneWay}" />
+                    <muc:MyUserControl />
                 </StackPanel>
 
             </StackPanel>

@@ -35,13 +35,10 @@ public sealed class TableCustomControl : Control
     {
         this.DefaultStyleKey = typeof(TableCustomControl);
 
-
-        List<string> Projects = new List<string>();
-
-        var sdf = "string";
-        Projects.Add(sdf);
-
-        cvsProjects.Source = Projects;
+        // List<string> Projects = new List<string>();
+        // var sdf = "string";
+        // Projects.Add(sdf);
+        // cvsProjects.Source = Projects;
     }
 
     public string Label
