@@ -41,7 +41,7 @@
                         <ctControls:SettingsCard x:Uid="QuietBackgroundProcessesExplanation" HorizontalContentAlignment="Left" ContentAlignment="Vertical">
                             
                             <!-- Analytic Summary button -->
-                            <Button x:Name="analyticSummaryButton" Content="Analytic summary" Style="{StaticResource AccentButtonStyle}" />
+                            <Button x:Name="analyticSummaryButton" Content="Analytic summary" Style="{StaticResource AccentButtonStyle}" Click="ShowAnalyticSummaryButton_Click" />
                             
                         </ctControls:SettingsCard>
                     </ctControls:SettingsExpander.Items>

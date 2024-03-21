@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="DevHome.QuietBackgroundProcesses.UI.Views.SimpleTableControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DevHome.QuietBackgroundProcesses.UI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Orientation="Horizontal">
+        <ListView ItemsSource="{x:Bind ProcessDatas}" HorizontalContentAlignment="Stretch">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:ProcessData">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind Process}" Width="240"/>
+                        <TextBlock Text="{x:Bind Type}" Width="130" />
+                        <TextBlock Text="{x:Bind CpuAboveThreshold}" Width="110" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</UserControl>

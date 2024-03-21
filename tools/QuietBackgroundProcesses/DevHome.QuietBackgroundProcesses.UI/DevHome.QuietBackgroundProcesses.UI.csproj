@@ -7,11 +7,23 @@
     <UseWinUI>true</UseWinUI>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="SimpleTableControl.xaml" />
+    <None Remove="Views\AnalyticSummaryPopup.xaml" />
     <None Remove="Views\QuietBackgroundProcessesPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
     <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\AnalyticSummaryPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SimpleTableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
