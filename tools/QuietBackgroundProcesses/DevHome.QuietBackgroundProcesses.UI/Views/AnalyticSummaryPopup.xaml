@@ -41,11 +41,42 @@
                 <Run Text="open .json file" />
             </Hyperlink>
             </TextBlock>
+            
+            <!-- Filters -->
+            <Grid x:Name="AfsedddWidgetTitleBar" Margin="15 40 15 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <DropDownButton Grid.Column="0" Content="View" Margin="5 0 5 0">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="Table"/>
+                            <MenuFlyoutItem Text="Pie chart"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+
+                <DropDownButton Grid.Column="1" Content="Sort by" Margin="5 0 5 0">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="Process"/>
+                            <MenuFlyoutItem Text="Process type"/>
+                            <MenuFlyoutItem Text="CPU above threshold"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+
+                <TextBox Grid.Column="2" x:Name="FilterTextBox" Margin="50 0 0 0" PlaceholderText="Search for a process" />
+            </Grid>
+            
             <!--<commonviews:CloseButton Command="{x:Bind CancelButtonClickCommand}" />-->
         </StackPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Padding="10 0 10 0">
-            <StackPanel Padding="15">
+            <StackPanel Padding="15 0 15 15">
                 <StackPanel x:Name="AddWidgeffftTitleBar">
                     <!--<commonviews:CloseButton Command="{x:Bind CancelButtonClickCommand}" />-->
                 </StackPanel>
