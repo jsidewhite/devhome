@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Drawing;
+using Windows.UI;
+
 namespace DevHome.QuietBackgroundProcesses.UI;
 
 public class ProcessData

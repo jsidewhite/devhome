@@ -6,6 +6,7 @@
     xmlns:local="using:DevHome.QuietBackgroundProcesses.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -21,6 +22,7 @@
                     <Style x:Key="BorderStyle" TargetType="Border">
                         <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}" />
                     </Style>
+                    
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -32,55 +34,53 @@
         </Grid.RowDefinitions>
 
 
-        <ListView ItemsSource="{x:Bind ProcessDatas}" HorizontalContentAlignment="Stretch">
+        <ListView ItemsSource="{x:Bind ProcessDatas}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" Margin="0" Padding="0" ui:ListViewExtensions.AlternateColor="{StaticResource CardBackgroundFillColorDefaultBrush}" >
             <ListView.Header>
-                <Grid>
+                <Grid ColumnSpacing="0">
+                    
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 1">
-                        <TextBlock Text="Process" Padding="10, 0, 10, 0" VerticalAlignment="Center" HorizontalTextAlignment="Left"/>
+                    
+                    <Border Grid.Column="0" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 0">
+                        <TextBlock Text="Process" Padding="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalTextAlignment="Left" />
                     </Border>
-                    <Border Grid.Column="1" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 1" >
-                        <TextBlock Text="Process type" Padding="10, 0, 0, 0" VerticalAlignment="Center" HorizontalTextAlignment="Left"/>
+                    <Border Grid.Column="1" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 0" >
+                        <TextBlock Text="Process type" Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalTextAlignment="Left" />
                     </Border>
-                    <Border Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 1" >
-                        <TextBlock Text="CPU above threshold" Padding="10, 0, 0, 0" VerticalAlignment="Center" HorizontalTextAlignment="Left" TextTrimming="CharacterEllipsis" />
+                    <Border Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 0" >
+                        <TextBlock Text="CPU above threshold" Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalTextAlignment="Left" TextTrimming="CharacterEllipsis" />
                     </Border>
                 </Grid>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:ProcessData">
 
-                    <Grid ColumnSpacing="20">
+                    <Grid ColumnSpacing="5">
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Style="{StaticResource BorderStyle}" Grid.Column="0" BorderThickness="0, 0, 1, 0">
-                            <Grid ColumnSpacing="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{x:Bind Process}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
-                            </Grid>
+                        <Border Grid.Column="0" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 0">
+                            <TextBlock Text="{x:Bind Process}" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalTextAlignment="Left" TextTrimming="CharacterEllipsis"
+                                Padding="11 11 11 11" />
                         </Border>
 
-
-
-                        <Border Style="{StaticResource BorderStyle}" Grid.Column="1" BorderThickness="0, 0, 1, 0">
-                            <TextBlock Text="{x:Bind Type}" />
+                        <Border Grid.Column="1" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 0">
+                            <TextBlock Text="{x:Bind Type}" VerticalAlignment="Center" Margin="20 0 0 0" HorizontalAlignment="Left" HorizontalTextAlignment="Left" />
                         </Border>
 
-                        <Border Style="{StaticResource BorderStyle}" Grid.Column="2" BorderThickness="0, 0, 0, 0">
-                            <TextBlock Text="{x:Bind CpuAboveThreshold}" />
+                        <Border Grid.Column="2" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 0">
+                            <TextBlock Text="{x:Bind CpuAboveThreshold}" VerticalAlignment="Center" Margin="20 0 0 0" HorizontalAlignment="Left" HorizontalTextAlignment="Left" />
                         </Border>
 
                     </Grid>

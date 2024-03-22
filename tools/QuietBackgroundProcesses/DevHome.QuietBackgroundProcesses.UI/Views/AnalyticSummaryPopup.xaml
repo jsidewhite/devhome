@@ -101,7 +101,7 @@
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
-                Margin="20,20,5,20"
+                Margin="20,20,5,35"
                 MinHeight="32" MinWidth="118">
                 <TextBlock FontSize="14" Text="Save report" />
             </Button>
@@ -115,7 +115,7 @@
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
-                Margin="5,20,20,20"
+                Margin="5,20,20,35"
                 MinHeight="32" MinWidth="118">
                 <TextBlock FontSize="14" Text="Close" />
             </Button>
