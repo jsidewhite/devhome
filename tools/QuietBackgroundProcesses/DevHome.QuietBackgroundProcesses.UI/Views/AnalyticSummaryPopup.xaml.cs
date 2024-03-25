@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Net.WebSockets;
+using DevHome.Common.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -71,5 +72,17 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         {
             processListControl.ProcessDatas.Add(item);
         }
+    }
+
+    private void DropDownButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
+        Log.Logger()?.ReportInfo(dropDown.Content.ToString());
+    }
+
+    private void DropDownButton_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+    {
+        var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
+        Log.Logger()?.ReportInfo(dropDown.Content.ToString());
     }
 }

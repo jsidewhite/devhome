@@ -59,7 +59,7 @@
                     </DropDownButton.Flyout>
                 </DropDownButton>
 
-                <DropDownButton Grid.Column="1" Content="Sort by" Margin="5 0 5 0">
+                <DropDownButton Grid.Column="1" Content="Sort by" Margin="5 0 5 0" Click="DropDownButton_Click" DataContextChanged="DropDownButton_DataContextChanged" ClickMode="Release">
                     <DropDownButton.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Text="Process"/>
