@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using DevHome.Common;
 using DevHome.QuietBackgroundProcesses.UI.ViewModels;
 

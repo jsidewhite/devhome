@@ -10,7 +10,7 @@ namespace DevHome.QuietBackgroundProcesses.UI.Views;
 
 public sealed partial class SimpleTableControl : UserControl
 {
-    public ObservableCollection<ProcessData> ProcessDatas { get; } = new ObservableCollection<ProcessData>();
+    public ObservableCollection<ProcessData> ProcessDatas { get; set; } = new ObservableCollection<ProcessData>();
 
     public SimpleTableControl()
     {
