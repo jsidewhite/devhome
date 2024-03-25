@@ -31,7 +31,7 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         _processDatas.Add(new ProcessData { Process = "msword.exe", Type = ProcessType.User, CpuAboveThreshold = 6 });
         _processDatas.Add(new ProcessData { Process = "System", Type = ProcessType.System, CpuAboveThreshold = 7 });
         _processDatas.Add(new ProcessData { Process = "SearchIndexer.exe", Type = ProcessType.Background, CpuAboveThreshold = 8 });
-        _processDatas.Add(new ProcessData { Process = "Code.exe", Type = ProcessType.Developer, CpuAboveThreshold = 9 });
+        _processDatas.Add(new ProcessData { Process = "Code.exe", Type = ProcessType.Developer, CpuAboveThreshold = 209 });
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 10 });
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 11 });
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 12 });
@@ -84,5 +84,24 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
     {
         var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
         Log.Logger()?.ReportInfo(dropDown.Content.ToString());
+    }
+
+    private void ColorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var dropDown = sender as Microsoft.UI.Xaml.Controls.ComboBox;
+        Log.Logger()?.ReportInfo(dropDown.SelectedValue.ToString());
+
+        var list = processListControl.ProcessDatas.OrderByDescending(x => x.CpuAboveThreshold).ToList<ProcessData>();
+
+        processListControl.ProcessDatas.Clear();
+
+        foreach (var item in list)
+        {
+            processListControl.ProcessDatas.Add(item);
+        }
+    }
+
+    private void ColorComboBox_SelectionChanged2(object sender, SelectionChangedEventArgs e)
+    {
     }
 }
