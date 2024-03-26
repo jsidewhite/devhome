@@ -34,7 +34,7 @@
         </Grid.RowDefinitions>
 
 
-        <ListView ItemsSource="{x:Bind ProcessDatas}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" Margin="0" Padding="0" ui:ListViewExtensions.AlternateColor="{StaticResource CardBackgroundFillColorDefaultBrush}" >
+        <ListView ItemsSource="{x:Bind ItemsSource}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" Margin="0" Padding="0" ui:ListViewExtensions.AlternateColor="{StaticResource CardBackgroundFillColorDefaultBrush}" >
             <ListView.Header>
                 <Grid ColumnSpacing="0">
                     
