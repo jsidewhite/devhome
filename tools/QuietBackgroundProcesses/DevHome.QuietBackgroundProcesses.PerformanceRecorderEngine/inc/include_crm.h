@@ -116,6 +116,19 @@ namespace performance
         return hr;
     }
 
+    ULONGLONG TryGetCycleTime()
+    {
+        HRESULT hr = S_OK;
+        THREAD_CYCLE_TIME_INFORMATION timeInfo;
+
+        if (FAILED(hr = HRESULT_FROM_NT(NtQueryInformationThread(GetCurrentThread(), tic(ThreadCycleTime), &timeInfo, sizeof(timeInfo), NULL))))
+        {
+            return 0;
+        }
+
+        return timeInfo.CurrentCycleCount;
+    }
+
     std::optional<SYSTEM_PROCESS_INFORMATION> GetProcessInfo(ULONG pid)
     {
         ULONG performanceInformationLength;
@@ -270,6 +283,129 @@ namespace performance
             
             // Process ended, so send CPU usage as zero
             callback(0);
+        });
+
+        return thread;
+    }
+
+
+
+    std::vector<std::pair<ULONG, std::wstring>> GetProcesses()
+    {
+        auto processes = std::vector<std::pair<ULONG, std::wstring>>{};
+
+        wil::unique_handle hSnapShot(CreateToolhelp32Snapshot(TH32CS_SNAPALL, NULL));
+        THROW_LAST_ERROR_IF(hSnapShot.get() == INVALID_HANDLE_VALUE);
+        PROCESSENTRY32 pEntry;
+        pEntry.dwSize = sizeof(pEntry);
+        BOOL hRes = Process32First(hSnapShot.get(), &pEntry);
+        while (hRes)
+        {
+            processes.emplace_back(pEntry.th32ProcessID, pEntry.szExeFile);
+            hRes = Process32Next(hSnapShot.get(), &pEntry);
+        }
+        return processes;
+    }
+
+    struct ProcessPerformanceInfo
+    {
+        ULONGLONG thistimestamp{};
+        ULONGLONG thissystemCycle{};
+
+        // hrm
+        ULONGLONG previousCycleTime = 0;
+        ULONGLONG previousNewTime = 0;
+
+        //double current = 0.0;
+        //double cycles = 0.0;
+        /////////ULONGLONG timestampEnter;
+        //////////ULONGLONG timestampExit;
+        /////////////ULONGLONG systemCycleEnter;
+        ///////////ULONGLONG systemCycleExit;
+        //SYSTEM_PROCESS_INFORMATION* processInfo;
+        //SYSTEM_PROCESS_INFORMATION* processInfoNext;
+        ULONGLONG cycleDuration = 0;
+        ULONGLONG duration = 0;
+    };
+
+    std::map<std::pair<ULONG, std::wstring>, ProcessPerformanceInfo> g_processPerformanceInfos;
+
+    ULONGLONG DoQueryUnbiasedInterruptTime()
+    {
+        ULONGLONG ret;
+        QueryUnbiasedInterruptTime(&ret);
+        return ret;
+    }
+
+    template<typename CallbackT>
+    std::thread StartPerformanceMonitor(std::chrono::milliseconds interval, CallbackT&& callback)
+    {
+        // Let's do this on another thread
+        auto thread = std::thread([interval, callback = std::move(callback)]()
+        {
+            SYSTEM_INFO systemInfo;
+            GetSystemInfo(&systemInfo);
+            auto numCpus = (short)systemInfo.dwNumberOfProcessors;
+
+            while (true)
+            {
+                auto processes = GetProcesses();
+
+                for (auto& process : processes)
+                {
+                    auto& processPerformance = g_processPerformanceInfos[process];
+
+                    auto timestampEnter = DoQueryUnbiasedInterruptTime();
+                    auto systemCycleEnter = performance::TryGetCycleTime();
+
+                    auto pid = process.first;
+
+                    auto maybeProcessInfo = performance::GetProcessInfo(pid);
+                    if (!maybeProcessInfo)
+                    {
+                        continue;
+                    }
+
+                    auto processInfo = maybeProcessInfo.value();
+
+                    auto timestampExit = DoQueryUnbiasedInterruptTime();
+                    auto systemCycleExit = performance::TryGetCycleTime();
+
+                    if (processPerformance.thistimestamp != 0)
+                    {
+                        processPerformance.duration = timestampExit - processPerformance.thistimestamp;
+                    }
+
+                    if (processPerformance.thissystemCycle != 0 && systemCycleExit != 0)
+                    {
+                        processPerformance.cycleDuration = systemCycleExit - processPerformance.thissystemCycle;
+                    }
+
+                    processPerformance.thistimestamp = timestampEnter;
+                    processPerformance.thissystemCycle = systemCycleEnter;
+
+                    ULONGLONG newTime = (ULONGLONG)(as_internal_type(processInfo).UserTime.QuadPart + as_internal_type(processInfo).KernelTime.QuadPart);
+
+                    double procUsage = performance::CalcProcessor(processPerformance.previousCycleTime, as_internal_type(processInfo).CycleTime, processPerformance.cycleDuration, numCpus);
+
+                    callback(pid, procUsage);
+
+                    processPerformance.previousCycleTime = as_internal_type(processInfo).CycleTime;
+                    processPerformance.previousNewTime = newTime;
+
+                    {
+                        //std::scoped_lock<std::mutex> lock;
+                        //g_procUsage.push_back(procUsage);
+                        //g_procUsage = procUsage;
+                    }
+                }
+
+                //Sleep(500);
+                std::this_thread::sleep_for(interval);
+            }
+
+            // Process ended, so send CPU usage as zero
+            // callback(0);
         });
 
         return thread;
