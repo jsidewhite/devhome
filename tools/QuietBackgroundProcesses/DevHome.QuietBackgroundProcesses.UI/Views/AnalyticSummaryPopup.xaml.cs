@@ -51,23 +51,14 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
 
     private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        // AddRepoViewModel.FilterRepositories(FilterTextBox.Text);
-
-        // SelectRepositories(AddRepoViewModel.EverythingToClone);
-
-        // Filtered collection based on the condition
-
-        // var filteredCollection = new ObservableCollection<ProcessData>(processListControl.ProcessDatas.Where(item => System.Text.RegularExpressions.Regex.IsMatch(item.Process, @"^Def.*")));
-
-        // processListControl.ProcessDatas = new ObservableCollection<ProcessData>(processListControl.ProcessDatas.Where(item => System.Text.RegularExpressions.Regex.IsMatch(item.Process, @"^Def.*")));
         var textBox = sender as Microsoft.UI.Xaml.Controls.TextBox;
-
         var filterExpression = textBox.Text.Trim();
-
-        var filteredList = new ObservableCollection<ProcessData>(_processDatas.Where(x => x.Process.Contains(filterExpression, StringComparison.OrdinalIgnoreCase) || x.Type.ToString().Contains(filterExpression, StringComparison.OrdinalIgnoreCase) || x.CpuAboveThreshold.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase)));
+        var filteredList = new ObservableCollection<ProcessData>(_processDatas.Where(
+            x => x.Process.Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
+              || x.Type.ToString().Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
+              || x.CpuAboveThreshold.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase)));
 
         processListControl.ProcessDatas.Clear();
-
         foreach (var item in filteredList.ToList())
         {
             processListControl.ProcessDatas.Add(item);
@@ -94,7 +85,6 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         var list = processListControl.ProcessDatas.OrderByDescending(x => x.CpuAboveThreshold).ToList<ProcessData>();
 
         processListControl.ProcessDatas.Clear();
-
         foreach (var item in list)
         {
             processListControl.ProcessDatas.Add(item);
