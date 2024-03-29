@@ -90,7 +90,7 @@ namespace performance
         _In_ ULONGLONG const previousValue,
         _In_ ULONGLONG const currentValue,
         _In_ ULONGLONG const duration,
-        _In_ USHORT numberOfCpus)
+        _In_ DWORD numberOfCpus)
     {
         if (currentValue > previousValue && duration != 0)
         {
@@ -337,15 +337,20 @@ namespace performance
         return ret;
     }
 
+    DWORD GetCpuCount()
+    {
+        SYSTEM_INFO systemInfo;
+        GetSystemInfo(&systemInfo);
+        return systemInfo.dwNumberOfProcessors;
+    }
+
     template<typename CallbackT>
     std::thread StartPerformanceMonitor(std::chrono::milliseconds interval, CallbackT&& callback)
     {
         // Let's do this on another thread
         auto thread = std::thread([interval, callback = std::move(callback)]()
         {
-            SYSTEM_INFO systemInfo;
-            GetSystemInfo(&systemInfo);
-            auto numCpus = (short)systemInfo.dwNumberOfProcessors;
+            auto numCpus = GetCpuCount();
 
             while (true)
             {

@@ -174,6 +174,17 @@ extern "C" HRESULT __declspec(dllexport) PerformanceState_StartPerformanceMonito
     return S_OK;
 }
 
+extern "C" HRESULT __declspec(dllexport) PerformanceState_ProcessPerformanceSnapshot()
+{
+    static std::mutex s_mutex;
+    auto lock = std::scoped_lock<std::mutex>(s_mutex);
+    auto thread = performance::StartPerformanceMonitor(500ms, [](ULONG pid, double cpuUsage) {
+        g_cpuUsages[pid] = cpuUsage;
+    });
+    thread.detach();
+    return S_OK;
+}
+
 
 extern "C" ULONG __declspec(dllexport) PerformanceState_GetCpuUsageForProcess(ULONG pid)
 {
