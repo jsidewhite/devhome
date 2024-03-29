@@ -15,19 +15,19 @@ namespace DevHome.QuietBackgroundProcesses
     [default_interface]
     runtimeclass ProcessRow
     {
-        Int64 Id { get; };
+        //Int64 Id { get; };
         String Name { get; };
         ProcessType Type { get; };
-        Int64 ProcessDuration { get; };
-        Int64 CpuTime { get; };
-        Int64 CpuTimeSigma { get; };
+        //Int64 ProcessDuration { get; };
+        //Int64 CpuTime { get; };
+        //Int64 CpuTimeSigma { get; };
         Int64 CpuTimeAboveThreshold { get; };
     }
 
     [default_interface]
     runtimeclass ProcessPerformanceTable
     {
-        IVector<ProcessRow> Rows { get; };
+        ProcessRow[] Rows { get; };
     }
 
     [default_interface]

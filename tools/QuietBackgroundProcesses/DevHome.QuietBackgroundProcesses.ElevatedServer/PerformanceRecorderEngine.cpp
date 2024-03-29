@@ -18,9 +18,57 @@
 
 #include "TimedQuietSession.h"
 
+
+#include <Windows.Foundation.h>
+#include <Windows.Foundation.Collections.h>
+
 #include "DevHome.QuietBackgroundProcesses.h"
 
 extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId);
+
+namespace ABI::DevHome::QuietBackgroundProcesses
+{
+    class ProcessRow :
+        public Microsoft::WRL::RuntimeClass<
+            Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
+            IProcessRow,
+            Microsoft::WRL::FtmBase>
+    {
+        InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_ProcessRow, BaseTrust);
+
+    public:
+        STDMETHODIMP RuntimeClassInitialize() noexcept
+        {
+            return S_OK;
+        }
+
+        STDMETHODIMP get_Name(HSTRING* value) noexcept override
+        try
+        {
+            Microsoft::WRL::Wrappers::HStringReference name(L"sdf");
+            *value = name.Get();
+            //*value = name.Detach();
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_Type(ABI::DevHome::QuietBackgroundProcesses::ProcessType* value) noexcept override
+        try
+        {
+            *value = ProcessType_User;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_CpuTimeAboveThreshold(__int64* value) noexcept override
+        try
+        {
+            *value = 94;
+            return S_OK;
+        }
+        CATCH_RETURN()
+    };
+}
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -38,10 +86,21 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             return S_OK;
         }
 
-        STDMETHODIMP get_Rows(__FIVector_1_DevHome__CQuietBackgroundProcesses__CProcessRow** value) noexcept override
+        STDMETHODIMP get_Rows(unsigned int* valueLength, ABI::DevHome::QuietBackgroundProcesses::IProcessRow*** value) noexcept override
         try
         {
-            *value = nullptr;
+            std::vector<wil::com_ptr<ProcessRow>> rows;
+
+            // add rows
+            {
+                wil::com_ptr<ProcessRow> obj;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj));
+                rows.push_back(std::move(obj));
+            }
+
+            auto list = wil::unique_cotaskmem_array_ptr<IProcessRow*>{ static_cast<IProcessRow**>(CoTaskMemAlloc(rows.size() * sizeof(IProcessRow*))), rows.size() };
+            *valueLength = static_cast<unsigned int>(rows.size());
+            *value = list.release();
             return S_OK;
         }
         CATCH_RETURN()
