@@ -176,6 +176,8 @@ extern "C" HRESULT __declspec(dllexport) PerformanceState_StartPerformanceMonito
 
 extern "C" HRESULT __declspec(dllexport) PerformanceState_ProcessPerformanceSnapshot()
 {
+    using namespace std::chrono_literals;
+
     static std::mutex s_mutex;
     auto lock = std::scoped_lock<std::mutex>(s_mutex);
     auto thread = performance::StartPerformanceMonitor(500ms, [](ULONG pid, double cpuUsage) {

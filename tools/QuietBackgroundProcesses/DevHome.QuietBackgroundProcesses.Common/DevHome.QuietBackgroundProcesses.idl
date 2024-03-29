@@ -5,6 +5,42 @@ import "inspectable.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
+    // Performance Engine types
+    enum ProcessType
+    {
+        User,
+        Background,
+    };
+
+    [default_interface]
+    runtimeclass ProcessRow
+    {
+        Int64 Id { get; };
+        String Name { get; };
+        ProcessType Type { get; };
+        Int64 ProcessDuration { get; };
+        Int64 CpuTime { get; };
+        Int64 CpuTimeSigma { get; };
+        Int64 CpuTimeAboveThreshold { get; };
+    }
+
+    [default_interface]
+    runtimeclass ProcessPerformanceTable
+    {
+        IVector<ProcessRow> Rows { get; };
+    }
+
+    [default_interface]
+    runtimeclass PerformanceRecorderEngine
+    {
+        PerformanceRecorderEngine();
+        Int64 Start();
+        void Stop();
+        UInt64 GetProcessCpuUsage2(UInt32 processId);
+        ProcessPerformanceTable GetProcessPerformanceTable();
+    }
+
+    // Quiet Background Process types
     [default_interface]
     runtimeclass QuietBackgroundProcessesSession
     {
@@ -21,14 +57,5 @@ namespace DevHome.QuietBackgroundProcesses
         static Boolean IsFeaturePresent();
         static QuietBackgroundProcessesSession GetSession();
         static QuietBackgroundProcessesSession TryGetSession();
-    }
-
-    [default_interface]
-    runtimeclass PerformanceRecorderEngine
-    {
-        PerformanceRecorderEngine();
-        Int64 Start();
-        void Stop();
-        UInt64 GetProcessCpuUsage2(UInt32 processId);
     }
 }
