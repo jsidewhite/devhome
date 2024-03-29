@@ -45,8 +45,11 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_Name(HSTRING* value) noexcept override
         try
         {
-            Microsoft::WRL::Wrappers::HStringReference name(L"sdf");
-            *value = name.Get();
+            //Microsoft::WRL::Wrappers::HStringReference name(L"sdf");
+            Microsoft::WRL::Wrappers::HString name;
+            name.Set(L"weeefw2e");
+            
+            *value = name.Detach();
             //*value = name.Detach();
             return S_OK;
         }
@@ -99,6 +102,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             }
 
             auto list = wil::unique_cotaskmem_array_ptr<IProcessRow*>{ static_cast<IProcessRow**>(CoTaskMemAlloc(rows.size() * sizeof(IProcessRow*))), rows.size() };
+            for (int i = 0; i < rows.size(); i++)
+            {
+                list[i] = rows[i].detach();
+            }
             *valueLength = static_cast<unsigned int>(rows.size());
             *value = list.release();
             return S_OK;

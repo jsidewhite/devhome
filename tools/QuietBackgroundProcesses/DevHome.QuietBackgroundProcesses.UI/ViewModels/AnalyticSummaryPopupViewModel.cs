@@ -23,6 +23,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public AnalyticSummaryPopupViewModel()
     {
+        /*
         _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = ProcessType.User, CpuAboveThreshold = 1 });
         _processDatas.Add(new ProcessData { Process = "msbuild.exe", Type = ProcessType.Developer, CpuAboveThreshold = 2 });
         _processDatas.Add(new ProcessData { Process = "Defender", Type = ProcessType.System, CpuAboveThreshold = 3 });
@@ -37,6 +38,15 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 12 });
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 13 });
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 14 });
+        */
+
+        var engine = new QuietBackgroundProcesses.PerformanceRecorderEngine();
+        var table = engine.GetProcessPerformanceTable();
+        var rows = table.Rows;
+        foreach (var row in rows)
+        {
+            _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+        }
 
         ProcessDatasAd = new AdvancedCollectionView(_processDatas, true);
     }
