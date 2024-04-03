@@ -112,6 +112,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             if (m_context)
             {
+                m_rows.clear();
+
                 size_t summaryCount;
                 ProcessPerformanceSummary* pSummaries;
                 THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &pSummaries, &summaryCount));
@@ -136,7 +138,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                     m_rows.push_back(std::move(obj));
                 }
 
-                m_context.reset();
+                // m_context.reset();
             }
 
             //todo smart pointers
