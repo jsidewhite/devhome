@@ -52,6 +52,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             //Microsoft::WRL::Wrappers::HStringReference name(L"sdf");
             Microsoft::WRL::Wrappers::HString name;
             name.Set(L"weeefw2e");
+            name.Set(m_summary.processName);
             
             *value = name.Detach();
             //*value = name.Detach();

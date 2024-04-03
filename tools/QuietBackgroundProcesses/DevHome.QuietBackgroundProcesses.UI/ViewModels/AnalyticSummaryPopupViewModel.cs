@@ -53,7 +53,8 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         var rows = table.Rows;
         foreach (var row in rows)
         {
-            _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+            // _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+            _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = (int)row.CpuTimeAboveThreshold });
         }
 
         ProcessDatasAd = new AdvancedCollectionView(_processDatas, true);

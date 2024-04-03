@@ -186,86 +186,94 @@ struct MonitorThread
         //using namespace std::chrono_literals;
 
         m_thread = std::thread([this, periodMs]() {
-            auto numCpus = GetVirtualNumCpus();
-
-            auto previousSnapshotTime = std::chrono::steady_clock::now();
-
-            while (true)
+            try
             {
-                if (m_cancellationMechanism.m_cancelled)
+                auto numCpus = GetVirtualNumCpus();
+
+                auto previousSnapshotTime = std::chrono::steady_clock::now();
+
+                while (true)
                 {
-                    break;
-                }
-
-                auto currentTime = std::chrono::steady_clock::now();
-
-                std::chrono::microseconds totalMicroseconds{};
-
-                DWORD pidArray[1024];
-                auto pids = GetPids(pidArray);
-
-                {
-                    auto lock = std::scoped_lock(m_dataMutex);
-
-                    for (auto& pid : pids)
+                    if (m_cancellationMechanism.m_cancelled)
                     {
-                        // Ignore process "0" - the 'SYSTEM 'System' process
-                        if (pid == 0)
+                        break;
+                    }
+
+                    auto currentTime = std::chrono::steady_clock::now();
+
+                    std::chrono::microseconds totalMicroseconds{};
+
+                    DWORD pidArray[1024];
+                    auto pids = GetPids(pidArray);
+
+                    {
+                        auto lock = std::scoped_lock(m_dataMutex);
+
+                        for (auto& pid : pids)
                         {
-                            continue;
-                        }
+                            try
+                            {
+                                // Ignore process "0" - the 'SYSTEM 'System' process
+                                if (pid == 0)
+                                {
+                                    continue;
+                                }
 
-                        // Make a new entry
-                        if (m_infos.find(pid) == m_infos.end())
-                        {
-                            auto info = MakeProcessPerformanceInfo(pid);
-                            m_infos[pid] = std::move(info);
-                            continue;
-                        }
+                                // Make a new entry
+                                if (m_infos.find(pid) == m_infos.end())
+                                {
+                                    auto info = MakeProcessPerformanceInfo(pid);
+                                    m_infos[pid] = std::move(info);
+                                    continue;
+                                }
 
-                        // Get entry
-                        auto& info = m_infos[pid];
-                        if (!UpdateProcessPerformanceInfo(info))
-                        {
-                            // m_infos.erase(pid);
-                        }
+                                // Get entry
+                                auto& info = m_infos[pid];
+                                if (!UpdateProcessPerformanceInfo(info))
+                                {
+                                    // m_infos.erase(pid);
+                                }
 
-                        // Collect cpuTime for process
-                        auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
-                        cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
+                                // Collect cpuTime for process
+                                auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
+                                cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
 
-                        float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
-                        auto sigma = std::pow(1.0f + percent, 2.0f) - 1.0f;
+                                float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
+                                auto sigma = std::pow(1.0f + percent, 2.0f) - 1.0f;
 
 #if 1
-                        if (percent > 0.01f)
-                        {
-                            std::cout << "PID percent: " << pid << " = " << (100.0 * percent) << " %" << std::endl;
-                        }
+                                if (percent > 0.01f)
+                                {
+                                    std::cout << "PID percent: " << pid << " = " << (100.0 * percent) << " %" << std::endl;
+                                }
 #endif
 
-                        info.sampleCount++;
-                        info.percentCumulative += percent;
-                        info.sigmaCumulative += sigma;
+                                info.sampleCount++;
+                                info.percentCumulative += percent;
+                                info.sigmaCumulative += sigma;
 
-                        totalMicroseconds += cpuTime;
+                                totalMicroseconds += cpuTime;
+                            }
+                            CATCH_LOG();
+                        }
+                    }
+
+#if 1
+                    float percent = (float)totalMicroseconds.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
+                    std::cout << "Total percent: " << (100.0 * percent) << " %" << std::endl;
+#endif
+
+                    previousSnapshotTime = currentTime;
+
+                    // Wait for interval period or user cancellation
+                    if (m_cancellationMechanism.wait_for_cancel(periodMs))
+                    {
+                        // User cancelled
+                        break;
                     }
                 }
-
-#if 1
-                float percent = (float)totalMicroseconds.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
-                std::cout << "Total percent: " << (100.0 * percent) << " %" << std::endl;
-#endif
-
-                previousSnapshotTime = currentTime;
-
-                // Wait for interval period or user cancellation
-                if (m_cancellationMechanism.wait_for_cancel(periodMs))
-                {
-                    // User cancelled
-                    break;
-                }
             }
+            CATCH_LOG();
         });
     }
 
