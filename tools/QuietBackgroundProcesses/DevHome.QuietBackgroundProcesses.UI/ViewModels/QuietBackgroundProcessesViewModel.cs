@@ -16,6 +16,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     private readonly TimeSpan _oneSecond = new TimeSpan(0, 0, 1);
 #nullable enable
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
+    private DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine? _monitor;
 #nullable disable
 
     [ObservableProperty]
@@ -41,6 +42,16 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         }
 
         return _session;
+    }
+
+    private DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine GetProcessUtilizationMonitoringThread()
+    {
+        if (_monitor == null)
+        {
+            _monitor = new PerformanceRecorderEngine();
+        }
+
+        return _monitor;
     }
 
     private string GetString(string id)
