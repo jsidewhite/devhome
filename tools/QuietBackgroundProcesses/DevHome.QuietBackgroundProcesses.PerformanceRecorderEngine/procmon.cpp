@@ -239,7 +239,8 @@ struct MonitorThread
                                 cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
 
                                 float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
-                                auto sigma = std::pow(1.0f + percent, 2.0f) - 1.0f;
+                                // auto sigma = std::pow(1.0f + percent, 2.0f) - 1.0f;
+                                auto sigma = (float) std::pow(percent * 100.0, 2.0f);
 
 #if 1
                                 if (percent > 0.01f)
@@ -299,7 +300,12 @@ struct MonitorThread
             summary.sampleCount = info.sampleCount;
             summary.percentCumulative = info.percentCumulative;
             summary.sigmaCumulative = info.sigmaCumulative;
-            summaries.push_back(summary);
+
+            if (summary.percentCumulative / (float)summary.sampleCount > 1.00f
+                || summary.sigmaCumulative / (float)summary.sampleCount > 1.00f)
+            {
+                summaries.push_back(summary);
+            }
         }
         return summaries;
     }

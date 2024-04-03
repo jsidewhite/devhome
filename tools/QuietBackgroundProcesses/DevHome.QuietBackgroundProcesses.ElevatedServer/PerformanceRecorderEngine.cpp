@@ -71,8 +71,15 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_CpuTimeAboveThreshold(__int64* value) noexcept override
         try
         {
-            auto standardDeviation = sqrt((1 + m_summary.sigmaCumulative) / m_summary.sampleCount);
-            *value = (__int64) (standardDeviation * 100.0);
+            if (m_summary.sampleCount == 0)
+            {
+                *value = 0;
+                return S_OK;
+            }
+            // auto standardDeviation = sqrt((1 + m_summary.sigmaCumulative) / m_summary.sampleCount);
+            auto standardDeviation = sqrt(m_summary.sigmaCumulative / m_summary.sampleCount);
+            //*value = (__int64) (standardDeviation * 100.0);
+            *value = (__int64)(standardDeviation);
             return S_OK;
         }
         CATCH_RETURN()
