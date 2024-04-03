@@ -49,15 +49,20 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
             _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
         }
         */
-        var table = performanceTable;
-        if (table != null)
+        if (performanceTable != null)
         {
-            var rows = table.Rows;
+            var entry2 = new ProcessData { Process = "sdf", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 0 };
+            _processDatas.Add(entry2);
+
+            var rows = performanceTable.Rows;
             foreach (var row in rows)
             {
-                // _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
-                var entry = new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = (int)row.CpuTimeAboveThreshold };
-                _processDatas.Add(entry);
+                if (row != null)
+                {
+                    // _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+                    var entry = new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = (int)row.CpuTimeAboveThreshold };
+                    _processDatas.Add(entry);
+                }
             }
         }
 
