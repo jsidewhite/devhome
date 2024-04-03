@@ -49,6 +49,7 @@ namespace DevHome.QuietBackgroundProcesses
         void Stop();
         Boolean IsActive { get; };
         Int64 TimeLeftInSeconds { get; };
+        ProcessPerformanceTable GetProcessPerformanceTable();
     }
 
     [default_interface]

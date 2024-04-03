@@ -23,9 +23,9 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         get;
     }
 
-    public AnalyticSummaryPopup()
+    public AnalyticSummaryPopup(QuietBackgroundProcesses.ProcessPerformanceTable performanceTable)
     {
-        ViewModel = new AnalyticSummaryPopupViewModel();
+        ViewModel = new AnalyticSummaryPopupViewModel(performanceTable);
 
         this.InitializeComponent();
 

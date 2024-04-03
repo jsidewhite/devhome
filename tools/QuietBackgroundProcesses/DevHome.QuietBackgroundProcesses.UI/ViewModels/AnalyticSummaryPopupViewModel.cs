@@ -21,7 +21,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public AdvancedCollectionView ProcessDatasAd { get; private set; }
 
-    public AnalyticSummaryPopupViewModel()
+    public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable performanceTable)
     {
         /*
         _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = ProcessType.User, CpuAboveThreshold = 1 });
@@ -40,8 +40,16 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = ProcessType.User, CpuAboveThreshold = 14 });
         */
 
+        /*
         var engine = new QuietBackgroundProcesses.PerformanceRecorderEngine();
         var table = engine.GetProcessPerformanceTable();
+        var rows = table.Rows;
+        foreach (var row in rows)
+        {
+            _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+        }
+        */
+        var table = performanceTable;
         var rows = table.Rows;
         foreach (var row in rows)
         {

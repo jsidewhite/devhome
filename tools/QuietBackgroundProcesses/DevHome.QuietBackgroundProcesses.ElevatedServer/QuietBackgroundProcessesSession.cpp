@@ -120,6 +120,18 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             return S_OK;
         }
         CATCH_RETURN()
+
+        STDMETHODIMP GetProcessPerformanceTable(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
+        try
+        {
+            if (!g_performanceRecorderEngine)
+            {
+                return E_UNEXPECTED;
+            }
+            THROW_IF_FAILED(g_performanceRecorderEngine->GetProcessPerformanceTable(result));
+            return S_OK;
+        }
+        CATCH_RETURN()
     };
 
     class QuietBackgroundProcessesSessionStatics WrlFinal :

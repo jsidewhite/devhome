@@ -28,7 +28,7 @@ public sealed partial class QuietBackgroundProcessesPage : ToolPage
 
     private async void ShowAnalyticSummaryButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        var analyticSummaryPopup = new AnalyticSummaryPopup();
+        var analyticSummaryPopup = new AnalyticSummaryPopup(ViewModel.GetProcessPerformanceTable());
         analyticSummaryPopup.XamlRoot = this.Content.XamlRoot;
         analyticSummaryPopup.RequestedTheme = this.ActualTheme;
         await analyticSummaryPopup.ShowAsync();

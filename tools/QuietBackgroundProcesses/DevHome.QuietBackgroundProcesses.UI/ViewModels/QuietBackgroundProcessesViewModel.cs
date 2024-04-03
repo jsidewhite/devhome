@@ -223,4 +223,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             SessionStateText = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
         }
     }
+
+    public ProcessPerformanceTable GetProcessPerformanceTable()
+    {
+        return GetSession().GetProcessPerformanceTable();
+    }
 }
