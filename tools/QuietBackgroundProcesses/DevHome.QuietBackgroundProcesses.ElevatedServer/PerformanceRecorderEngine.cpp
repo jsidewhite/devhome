@@ -23,8 +23,8 @@
 #include <Windows.Foundation.Collections.h>
 
 #include "DevHome.QuietBackgroundProcesses.h"
+#include "procmon.h"
 
-extern "C" __declspec(dllexport) double GetProcessCpuUsage(DWORD processId);
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
@@ -84,8 +84,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_ProcessPerformanceTable, BaseTrust);
 
     public:
-        STDMETHODIMP RuntimeClassInitialize() noexcept
+        STDMETHODIMP RuntimeClassInitialize(unique_process_utilization_monitoring_thread context) noexcept
         {
+            m_context = std::move(context);
             return S_OK;
         }
 
@@ -113,6 +114,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             return S_OK;
         }
         CATCH_RETURN()
+
+    private:
+        unique_process_utilization_monitoring_thread m_context;
     };
 }
 
@@ -136,6 +140,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP Start(__int64* result) noexcept override
         try
         {
+            THROW_IF_FAILED(StartMonitoringProcessUtilization(1000, &m_context));
             *result = 0;
             return S_OK;
         }
@@ -144,14 +149,16 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP Stop() noexcept override
         try
         {
+            THROW_IF_FAILED(StopMonitoringProcessUtilization(m_context.get()));
             return S_OK;
         }
         CATCH_RETURN()
 
-        STDMETHODIMP GetProcessCpuUsage2(unsigned int processId, unsigned __int64* value) noexcept override
+        STDMETHODIMP GetProcessCpuUsage2(unsigned int , unsigned __int64* value) noexcept override
         try
         {
-            auto x = ::GetProcessCpuUsage(processId);
+            //auto x = ::GetProcessCpuUsage(processId);
+            auto x = 5;
             *value = *reinterpret_cast<uint64_t*>(&x);
             return S_OK;
         }
@@ -161,11 +168,14 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         try
         {
             wil::com_ptr<ProcessPerformanceTable> obj;
-            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&obj));
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&obj, std::move(m_context)));
             *result = obj.detach();
             return S_OK;
         }
         CATCH_RETURN()
+
+    private:
+        unique_process_utilization_monitoring_thread m_context;
     };
 
     ActivatableClass(PerformanceRecorderEngine);
