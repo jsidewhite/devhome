@@ -101,6 +101,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                 rows.push_back(std::move(obj));
             }
 
+
+            //todo smart pointers
             auto list = wil::unique_cotaskmem_array_ptr<IProcessRow*>{ static_cast<IProcessRow**>(CoTaskMemAlloc(rows.size() * sizeof(IProcessRow*))), rows.size() };
             for (int i = 0; i < rows.size(); i++)
             {
