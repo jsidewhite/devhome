@@ -34,10 +34,8 @@ namespace DevHome.QuietBackgroundProcesses
     runtimeclass PerformanceRecorderEngine
     {
         PerformanceRecorderEngine();
-        Int64 Start();
-        void Stop();
-        UInt64 GetProcessCpuUsage2(UInt32 processId);
-        ProcessPerformanceTable GetProcessPerformanceTable();
+        void Start(Int32 periodInMs);
+        ProcessPerformanceTable Stop();
     }
 
     // Quiet Background Process types
@@ -46,10 +44,9 @@ namespace DevHome.QuietBackgroundProcesses
     {
         static QuietBackgroundProcessesSession GetSingleton();
         Int64 Start();
-        void Stop();
+        ProcessPerformanceTable Stop();
         Boolean IsActive { get; };
         Int64 TimeLeftInSeconds { get; };
-        ProcessPerformanceTable GetProcessPerformanceTable();
     }
 
     [default_interface]

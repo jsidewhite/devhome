@@ -63,13 +63,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             // Start timer
             g_activeTimer.reset(new TimedQuietSession(duration));
 
-            if (!g_performanceRecorderEngine)
-            {
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<PerformanceRecorderEngine>(&g_performanceRecorderEngine));
-            }
-
-            __int64 result2;
-            LOG_IF_FAILED(g_performanceRecorderEngine->Start(&result2));
+            // Start performance recorder
+            g_performanceRecorderEngine.reset();
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<PerformanceRecorderEngine>(&g_performanceRecorderEngine));
+            THROW_IF_FAILED(g_performanceRecorderEngine->Start(1000));
 
             // Return duration for showing countdown
             *result = g_activeTimer->TimeLeftInSeconds();
@@ -77,13 +74,15 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         }
         CATCH_RETURN()
 
-        STDMETHODIMP Stop() noexcept override try
+        STDMETHODIMP Stop(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
+        try
         {
             auto lock = std::scoped_lock(g_mutex);
 
             if (g_performanceRecorderEngine)
             {
-                LOG_IF_FAILED(g_performanceRecorderEngine->Stop());
+                THROW_IF_FAILED(g_performanceRecorderEngine->Stop(result));
+                g_performanceRecorderEngine.reset();
             }
 
             // Turn off quiet mode and cancel timer
@@ -117,18 +116,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             {
                 *value = g_activeTimer->TimeLeftInSeconds();
             }
-            return S_OK;
-        }
-        CATCH_RETURN()
-
-        STDMETHODIMP GetProcessPerformanceTable(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
-        try
-        {
-            if (!g_performanceRecorderEngine)
-            {
-                return E_UNEXPECTED;
-            }
-            THROW_IF_FAILED(g_performanceRecorderEngine->GetProcessPerformanceTable(result));
             return S_OK;
         }
         CATCH_RETURN()

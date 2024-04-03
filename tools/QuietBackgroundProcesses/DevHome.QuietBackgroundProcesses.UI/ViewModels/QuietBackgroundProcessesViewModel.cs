@@ -14,10 +14,8 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 {
     private readonly TimeSpan _zero = new TimeSpan(0, 0, 0);
     private readonly TimeSpan _oneSecond = new TimeSpan(0, 0, 1);
-#nullable enable
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
-    private DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine? _monitor;
-#nullable disable
+    private DevHome.QuietBackgroundProcesses.ProcessPerformanceTable? _table;
 
     [ObservableProperty]
     private bool _isFeaturePresent;
@@ -29,10 +27,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     private bool _quietButtonChecked;
 
     [ObservableProperty]
-    private string _quietButtonText;
-
-    [ObservableProperty]
-    private string _cpuUsageCode;
+    private string? _quietButtonText;
 
     private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession GetSession()
     {
@@ -42,16 +37,6 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         }
 
         return _session;
-    }
-
-    private DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine GetProcessUtilizationMonitoringThread()
-    {
-        if (_monitor == null)
-        {
-            _monitor = new PerformanceRecorderEngine();
-        }
-
-        return _monitor;
     }
 
     private string GetString(string id)
@@ -67,7 +52,11 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     public QuietBackgroundProcessesViewModel()
     {
+        _sessionStateText = string.Empty;
+
         IsFeaturePresent = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeaturePresent();
+
+        _dispatcherTimer = new DispatcherTimer();
 
         var running = false;
         if (IsFeaturePresent)
@@ -123,7 +112,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             try
             {
-                GetSession().Stop();
+                _table = GetSession().Stop();
                 SetQuietSessionRunningState(false);
                 SessionStateText = GetStatusString("SessionEnded");
             }
@@ -187,12 +176,8 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         SessionStateText = _secondsLeft.ToString();
     }
 
-    private void DispatcherTimer_Tick(object sender, object e)
+    private void DispatcherTimer_Tick(object? sender, object e)
     {
-        uint y = 17104;
-        var x = new DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine();
-        CpuUsageCode = y + ": " + x.GetProcessCpuUsage2(y);
-
         // Subtract 1 second
         _secondsLeft = _secondsLeft.Subtract(_oneSecond);
 
@@ -224,8 +209,10 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         }
     }
 
-    public ProcessPerformanceTable GetProcessPerformanceTable()
+    public string? ProcessPerformanceTable2 { get; set; }
+
+    public ProcessPerformanceTable? GetProcessPerformanceTable()
     {
-        return GetSession().GetProcessPerformanceTable();
+        return _table;
     }
 }

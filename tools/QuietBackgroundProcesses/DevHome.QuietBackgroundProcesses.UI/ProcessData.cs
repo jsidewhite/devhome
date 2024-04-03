@@ -16,6 +16,11 @@ public class ProcessData
         Background,
     }
 
+    public ProcessData()
+    {
+        Process = string.Empty;
+    }
+
     public string Process { get; set; }
 
     public ProcessType Type { get; set; }

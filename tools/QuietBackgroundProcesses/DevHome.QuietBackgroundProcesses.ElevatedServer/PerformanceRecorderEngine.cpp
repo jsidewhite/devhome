@@ -110,41 +110,42 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_Rows(unsigned int* valueLength, ABI::DevHome::QuietBackgroundProcesses::IProcessRow*** value) noexcept override
         try
         {
-            std::vector<wil::com_ptr<ProcessRow>> rows;
-
-            size_t summaryCount;
-            ProcessPerformanceSummary* pSummaries;
-            THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &pSummaries, &summaryCount));
-
-            // add rows
+            if (m_context)
             {
-                //wil::com_ptr<ProcessRow> obj;
-                //THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, L"sdsdfs", ProcessType_User, 1.0));
-                //rows.push_back(std::move(obj));
+                size_t summaryCount;
+                ProcessPerformanceSummary* pSummaries;
+                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &pSummaries, &summaryCount));
+
+                // add rows
+                {
+                    //wil::com_ptr<ProcessRow> obj;
+                    //THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, L"sdsdfs", ProcessType_User, 1.0));
+                    //rows.push_back(std::move(obj));
+                }
+
+                for (uint32_t i = 0; i < summaryCount; i++)
+                {
+                    auto& summary = pSummaries[i];
+                    //std::wcout << L"i=" << i << L" pid=" << summary.pid << L" name=" << str << std::endl;
+                    //std::wcout << L"i="<< str << std::endl;
+                    //std::wcout << L"i=" << i << L" str=" << std::endl;
+
+                    wil::com_ptr<ProcessRow> obj;
+                    //auto y = (1 + summary.percentCumulative) + 
+                    THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, summary));
+                    m_rows.push_back(std::move(obj));
+                }
+
+                m_context.reset();
             }
-
-            for (uint32_t i = 0; i < summaryCount; i++)
-            {
-                auto& summary = pSummaries[i];
-                //std::wcout << L"i=" << i << L" pid=" << summary.pid << L" name=" << str << std::endl;
-                //std::wcout << L"i="<< str << std::endl;
-                //std::wcout << L"i=" << i << L" str=" << std::endl;
-
-                wil::com_ptr<ProcessRow> obj;
-                //auto y = (1 + summary.percentCumulative) + 
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, summary));
-                rows.push_back(std::move(obj));
-            }
-
-
 
             //todo smart pointers
-            auto list = wil::unique_cotaskmem_array_ptr<IProcessRow*>{ static_cast<IProcessRow**>(CoTaskMemAlloc(rows.size() * sizeof(IProcessRow*))), rows.size() };
-            for (int i = 0; i < rows.size(); i++)
+            auto list = wil::unique_cotaskmem_array_ptr<IProcessRow*>{ static_cast<IProcessRow**>(CoTaskMemAlloc(m_rows.size() * sizeof(IProcessRow*))), m_rows.size() };
+            for (int i = 0; i < m_rows.size(); i++)
             {
-                list[i] = rows[i].detach();
+                list[i] = m_rows[i].detach();
             }
-            *valueLength = static_cast<unsigned int>(rows.size());
+            *valueLength = static_cast<unsigned int>(m_rows.size());
             *value = list.release();
             return S_OK;
         }
@@ -152,6 +153,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     private:
         unique_process_utilization_monitoring_thread m_context;
+        std::vector<wil::com_ptr<ProcessRow>> m_rows;
     };
 }
 
@@ -172,39 +174,26 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         }
 
         // IPerformanceRecorderEngine
-        STDMETHODIMP Start(__int64* result) noexcept override
+        STDMETHODIMP Start(int periodInMs) noexcept override
         try
         {
-            THROW_IF_FAILED(StartMonitoringProcessUtilization(1000, &m_context));
-            *result = 0;
+            THROW_IF_FAILED(StartMonitoringProcessUtilization(periodInMs, &m_context));
             return S_OK;
         }
         CATCH_RETURN()
 
-        STDMETHODIMP Stop() noexcept override
+        STDMETHODIMP Stop(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
         try
         {
             THROW_IF_FAILED(StopMonitoringProcessUtilization(m_context.get()));
-            return S_OK;
-        }
-        CATCH_RETURN()
 
-        STDMETHODIMP GetProcessCpuUsage2(unsigned int , unsigned __int64* value) noexcept override
-        try
-        {
-            //auto x = ::GetProcessCpuUsage(processId);
-            auto x = 5;
-            *value = *reinterpret_cast<uint64_t*>(&x);
-            return S_OK;
-        }
-        CATCH_RETURN()
+            if (result)
+            {
+                wil::com_ptr<ProcessPerformanceTable> performanceTable;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context)));
+                *result = performanceTable.detach();
+            }
 
-        STDMETHODIMP GetProcessPerformanceTable(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
-        try
-        {
-            wil::com_ptr<ProcessPerformanceTable> obj;
-            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&obj, std::move(m_context)));
-            *result = obj.detach();
             return S_OK;
         }
         CATCH_RETURN()

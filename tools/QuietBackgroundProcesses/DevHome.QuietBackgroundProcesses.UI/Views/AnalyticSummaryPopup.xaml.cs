@@ -23,7 +23,7 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         get;
     }
 
-    public AnalyticSummaryPopup(QuietBackgroundProcesses.ProcessPerformanceTable performanceTable)
+    public AnalyticSummaryPopup(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
     {
         ViewModel = new AnalyticSummaryPopupViewModel(performanceTable);
 
@@ -76,20 +76,29 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         */
 
         var textBox = sender as Microsoft.UI.Xaml.Controls.TextBox;
-        var filterExpression = textBox.Text.Trim();
-        ViewModel.FilterProcesses(filterExpression);
+        if (textBox != null)
+        {
+            var filterExpression = textBox.Text.Trim();
+            ViewModel.FilterProcesses(filterExpression);
+        }
     }
 
     private void DropDownButton_Click(object sender, RoutedEventArgs e)
     {
         var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
-        Log.Logger()?.ReportInfo(dropDown.Content.ToString());
+        if (dropDown != null)
+        {
+            Log.Logger()?.ReportInfo(dropDown.Content.ToString() ?? "unk");
+        }
     }
 
     private void DropDownButton_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
         var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
-        Log.Logger()?.ReportInfo(dropDown.Content.ToString());
+        if (dropDown != null)
+        {
+            Log.Logger()?.ReportInfo(dropDown.Content.ToString() ?? "unk");
+        }
     }
 
     private void ColorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

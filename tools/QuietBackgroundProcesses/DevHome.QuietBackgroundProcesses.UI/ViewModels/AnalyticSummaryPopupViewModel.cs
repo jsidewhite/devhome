@@ -21,7 +21,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public AdvancedCollectionView ProcessDatasAd { get; private set; }
 
-    public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable performanceTable)
+    public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
     {
         /*
         _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = ProcessType.User, CpuAboveThreshold = 1 });
@@ -50,11 +50,15 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         }
         */
         var table = performanceTable;
-        var rows = table.Rows;
-        foreach (var row in rows)
+        if (table != null)
         {
-            // _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
-            _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = (int)row.CpuTimeAboveThreshold });
+            var rows = table.Rows;
+            foreach (var row in rows)
+            {
+                // _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+                var entry = new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = (int)row.CpuTimeAboveThreshold };
+                _processDatas.Add(entry);
+            }
         }
 
         ProcessDatasAd = new AdvancedCollectionView(_processDatas, true);

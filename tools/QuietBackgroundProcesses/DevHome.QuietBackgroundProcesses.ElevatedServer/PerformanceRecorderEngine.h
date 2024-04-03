@@ -157,14 +157,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP RuntimeClassInitialize() noexcept;
 
         // IPerformanceRecorderEngine
-        STDMETHODIMP Start(__int64* result) noexcept override;
+        STDMETHODIMP Start(int periodInMs) noexcept override;
 
-        STDMETHODIMP Stop() noexcept override;
-
-        STDMETHODIMP GetProcessCpuUsage2(unsigned int, unsigned __int64* value) noexcept override;
-
-        STDMETHODIMP GetProcessPerformanceTable(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override;
-
+        STDMETHODIMP Stop(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override;
     private:
         unique_process_utilization_monitoring_thread m_context;
     };
