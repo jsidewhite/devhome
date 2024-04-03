@@ -37,8 +37,12 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_ProcessRow, BaseTrust);
 
     public:
-        STDMETHODIMP RuntimeClassInitialize(std::wstring processName, ABI::DevHome::QuietBackgroundProcesses::ProcessType type, float standardDeviation) noexcept
+        STDMETHODIMP RuntimeClassInitialize(ProcessPerformanceSummary summary) noexcept
         {
+            m_summary = summary;
+            
+
+//            auto processName = std::wstring(summary.processName);
             return S_OK;
         }
 
@@ -66,10 +70,14 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_CpuTimeAboveThreshold(__int64* value) noexcept override
         try
         {
-            *value = 94;
+            auto standardDeviation = sqrt((1 + m_summary.sigmaCumulative) / m_summary.sampleCount);
+            *value = (__int64) (standardDeviation * 100.0);
             return S_OK;
         }
         CATCH_RETURN()
+
+    private:
+        ProcessPerformanceSummary m_summary;
     };
 
 }
@@ -96,29 +104,27 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             std::vector<wil::com_ptr<ProcessRow>> rows;
 
-            uint32_t summaryCount;
+            size_t summaryCount;
             ProcessPerformanceSummary* pSummaries;
-            THROW_IF_FAILED(GetMonitoringProcessUtilization(context.get(), &pSummaries, &summaryCount));
+            THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &pSummaries, &summaryCount));
 
             // add rows
             {
-                wil::com_ptr<ProcessRow> obj;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, L"sdsdfs", ProcessType_User, 1.0));
-                rows.push_back(std::move(obj));
+                //wil::com_ptr<ProcessRow> obj;
+                //THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, L"sdsdfs", ProcessType_User, 1.0));
+                //rows.push_back(std::move(obj));
             }
 
             for (uint32_t i = 0; i < summaryCount; i++)
             {
                 auto& summary = pSummaries[i];
-                auto processName = std::wstring(summary.processName);
                 //std::wcout << L"i=" << i << L" pid=" << summary.pid << L" name=" << str << std::endl;
                 //std::wcout << L"i="<< str << std::endl;
                 //std::wcout << L"i=" << i << L" str=" << std::endl;
 
                 wil::com_ptr<ProcessRow> obj;
                 //auto y = (1 + summary.percentCumulative) + 
-                auto standardDeviation = sqrt((1 + summary.sigmaCumulative) / summary.sampleCount);
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, processName, ProcessType_User, standardDeviation));
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, summary));
                 rows.push_back(std::move(obj));
             }
 
