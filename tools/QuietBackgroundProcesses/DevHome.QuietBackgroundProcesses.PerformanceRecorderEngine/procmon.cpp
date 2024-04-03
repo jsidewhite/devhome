@@ -334,7 +334,7 @@ try
 }
 CATCH_RETURN()
 
-extern "C" __declspec(dllexport) HRESULT GetMonitoringProcessUtilization(void* context, ProcessPerformanceSummary** ppSummaries, uint32_t* summaryCount) noexcept
+extern "C" __declspec(dllexport) HRESULT GetMonitoringProcessUtilization(void* context, ProcessPerformanceSummary** ppSummaries, size_t* summaryCount) noexcept
 try
 {
     auto monitorThread = reinterpret_cast<MonitorThread*>(context);
