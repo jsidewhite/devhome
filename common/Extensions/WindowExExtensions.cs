@@ -179,7 +179,7 @@ public static class WindowExExtensions
     /// <param name="window">Target window</param>
     /// <param name="filters">List of type filters (e.g. *.yaml, *.txt), or empty/<c>null</c> to allow all file types</param>
     /// <returns>Storage file or <c>null</c> if no file was selected</returns>
-    public static async Task<StorageFile?> OpenFileSaveDialogAsync(this WindowEx window, Logger? logger, params (string Type, string Name)[] filters)
+    public static async Task<StorageFile?> OpenFileSaveDialogAsync(this WindowEx window, Logger? logger, string filenameDefault, params (string Type, string Name)[] filters)
     {
         try
         {
@@ -245,19 +245,13 @@ public static class WindowExExtensions
                     null,
                     typeof(IShellItem).GUID,
                     out var directoryShellItem);
-                if (hr < 0)
-                {
-                    Marshal.ThrowExceptionForHR(hr);
-                }
+                Marshal.ThrowExceptionForHR(hr);
 
                 fsd.SetFolder((IShellItem)directoryShellItem);
                 fsd.SetDefaultFolder((IShellItem)directoryShellItem);
 
                 // Set the default file name.
-                fsd.SetFileName($"{DateTime.Now:yyyyMMddHHmm}");
-
-                // Set the default extension.
-                fsd.SetDefaultExtension(".docx");
+                fsd.SetFileName(filenameDefault);
 
                 fsd.Show(new HWND(hWnd));
 
@@ -281,11 +275,7 @@ public static class WindowExExtensions
                     return filename2;
                 });
 
-                // var pFileName = pFileNameTask.GetResultOrDefault<string>();
-                // var pFileName = pFileNameTask.AsAsyncOperation().AsTask().GetResultOrDefault<string>();
-                var pFileName = pFileNameTask.Result;
-
-                fileName = pFileName;
+                fileName = pFileNameTask.Result;
             }
 
             return await StorageFile.GetFileFromPathAsync(fileName);

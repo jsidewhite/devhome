@@ -115,7 +115,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         // Log.Logger?.ReportInfo(Log.Component.Configuration, "Launching file picker to select configuration file");
         // var file = await mainWindow.OpenFilePickerAsync(Log.Logger, ("*.yaml;*.yml", StringResource.GetLocalized(StringResourceKey.FilePickerFileTypeOption, "YAML")));
         // var file = await mainWindow.OpenFilePickerAsync(Log.Logger, ("*.yaml;*.yml", "YAML"));
-        var file = await mainWindow.OpenFileSaveDialogAsync(null, ("*.yaml;*.yml", "YAML"));
+        var file = await mainWindow.OpenFileSaveDialogAsync(null, $"analyticSummary-{DateTime.Now:yyyy-MM-dd_HH-mm}", ("*.json", "JSON"));
 
         // Check if a file was selected
         if (file == null)
