@@ -4,12 +4,22 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI.Animations;
 using CommunityToolkit.WinUI.Collections;
+using DevHome.Common.Extensions;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.DevHome.SDK;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinUIEx;
 
 using static DevHome.QuietBackgroundProcesses.UI.ProcessData;
 
@@ -94,5 +104,31 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         };
 
         ProcessDatasAd.RefreshFilter();
+    }
+
+    public async Task<bool> PickConfigurationFileAsync()
+    {
+        // Get the application root window.
+        var mainWindow = Application.Current.GetService<WindowEx>();
+
+        // Create and configure file picker
+        // Log.Logger?.ReportInfo(Log.Component.Configuration, "Launching file picker to select configuration file");
+        // var file = await mainWindow.OpenFilePickerAsync(Log.Logger, ("*.yaml;*.yml", StringResource.GetLocalized(StringResourceKey.FilePickerFileTypeOption, "YAML")));
+        // var file = await mainWindow.OpenFilePickerAsync(Log.Logger, ("*.yaml;*.yml", "YAML"));
+        var file = await mainWindow.OpenFileSaveDialogAsync(null, ("*.yaml;*.yml", "YAML"));
+
+        // Check if a file was selected
+        if (file == null)
+        {
+            // Log.Logger?.ReportInfo(Log.Component.Configuration, "No configuration file selected");
+        }
+
+        return false;
+    }
+
+    [RelayCommand]
+    public void SaveReportButtonClicked()
+    {
+        var x = PickConfigurationFileAsync().Result;
     }
 }

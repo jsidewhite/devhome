@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using CommunityToolkit.Common;
 using DevHome.Common.Helpers;
 using DevHome.Logging;
 using Microsoft.UI.Xaml;
@@ -156,6 +157,135 @@ public static class WindowExExtensions
                 ppsi.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, out pFileName);
                 fileName = new string(pFileName);
                 Marshal.FreeCoTaskMem((IntPtr)pFileName.Value);
+            }
+
+            return await StorageFile.GetFileFromPathAsync(fileName);
+        }
+        catch (COMException e) when (e.ErrorCode == FilePickerCanceledErrorCode)
+        {
+            // No-op: Operation was canceled by the user
+            return null;
+        }
+        catch (Exception e)
+        {
+            logger?.ReportError("File picker failed. Returning null.", e);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Open file save dialog
+    /// </summary>
+    /// <param name="window">Target window</param>
+    /// <param name="filters">List of type filters (e.g. *.yaml, *.txt), or empty/<c>null</c> to allow all file types</param>
+    /// <returns>Storage file or <c>null</c> if no file was selected</returns>
+    public static async Task<StorageFile?> OpenFileSaveDialogAsync(this WindowEx window, Logger? logger, params (string Type, string Name)[] filters)
+    {
+        try
+        {
+            if (filters.Length == 0)
+            {
+                throw new ArgumentException("Input filters cannot be empty");
+            }
+
+            string? fileName;
+
+            // File picker fails when running the application as admin.
+            // To workaround this issue, we instead use the Win32 picking APIs
+            // as suggested in the documentation for the FileSavePicker:
+            // >> Original code reference: https://learn.microsoft.com/uwp/api/windows.storage.pickers.filesavepicker?view=winrt-22621#in-a-desktop-app-that-requires-elevation
+            // >> GitHub issue: https://github.com/microsoft/WindowsAppSDK/issues/2504
+            // "In a desktop app (which includes WinUI 3 apps), you can use
+            // FileSavePicker (and other types from Windows.Storage.Pickers).
+            // But if the desktop app requires elevation to run, then you'll
+            // need a different approach (that's because these APIs aren't
+            // designed to be used in an elevated app). The code snippet below
+            // illustrates how you can use the C#/Win32 P/Invoke Source
+            // Generator (CsWin32) to call the Win32 picking APIs instead."
+            unsafe
+            {
+                // Retrieve the window handle (HWND) of the main WinUI 3 window.
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+
+                int hr = PInvoke.CoCreateInstance<IFileSaveDialog>(
+                    typeof(FileSaveDialog).GUID,
+                    null,
+                    CLSCTX.CLSCTX_INPROC_SERVER,
+                    out var fsd);
+                Marshal.ThrowExceptionForHR(hr);
+
+                var extensions = new List<COMDLG_FILTERSPEC>();
+
+                try
+                {
+                    // Set filters (e.g. "*.yaml", "*.yml", etc...)
+                    foreach (var filter in filters)
+                    {
+                        COMDLG_FILTERSPEC extension;
+                        extension.pszName = (char*)Marshal.StringToHGlobalUni(filter.Name);
+                        extension.pszSpec = (char*)Marshal.StringToHGlobalUni(filter.Type);
+                        extensions.Add(extension);
+                    }
+
+                    fsd.SetFileTypes(CollectionsMarshal.AsSpan(extensions));
+                }
+                finally
+                {
+                    // Free all filter names and specs
+                    foreach (var extension in extensions)
+                    {
+                        Marshal.FreeHGlobal((IntPtr)extension.pszName.Value);
+                        Marshal.FreeHGlobal((IntPtr)extension.pszSpec.Value);
+                    }
+                }
+
+                // Set the default folder.
+                hr = PInvoke.SHCreateItemFromParsingName(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    null,
+                    typeof(IShellItem).GUID,
+                    out var directoryShellItem);
+                if (hr < 0)
+                {
+                    Marshal.ThrowExceptionForHR(hr);
+                }
+
+                fsd.SetFolder((IShellItem)directoryShellItem);
+                fsd.SetDefaultFolder((IShellItem)directoryShellItem);
+
+                // Set the default file name.
+                fsd.SetFileName($"{DateTime.Now:yyyyMMddHHmm}");
+
+                // Set the default extension.
+                fsd.SetDefaultExtension(".docx");
+
+                fsd.Show(new HWND(hWnd));
+
+                fsd.GetResult(out var ppsi);
+
+                // await ppsi.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &filename);
+                var pFileNameTask = Task.Run(() =>
+                {
+                    PWSTR pwstrFilename;
+                    ppsi.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &pwstrFilename);
+
+                    // string? filename2 = new string(pwstrFilename);
+                    // filename2 = new string(pwstrFilename);
+                    // filename2 = new string("sdf");
+                    string? filename2 = null;
+                    if (pwstrFilename != null)
+                    {
+                        filename2 = new string(pwstrFilename);
+                    }
+
+                    return filename2;
+                });
+
+                // var pFileName = pFileNameTask.GetResultOrDefault<string>();
+                // var pFileName = pFileNameTask.AsAsyncOperation().AsTask().GetResultOrDefault<string>();
+                var pFileName = pFileNameTask.Result;
+
+                fileName = pFileName;
             }
 
             return await StorageFile.GetFileFromPathAsync(fileName);

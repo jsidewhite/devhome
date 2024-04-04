@@ -89,6 +89,7 @@
                 x:Name="SaveButton"
                 x:Uid="PinButton"
                 Width="Auto"
+                Command="{x:Bind ViewModel.SaveReportButtonClickedCommand}"
                 Style="{ThemeResource AccentButtonStyle}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Stretch"
