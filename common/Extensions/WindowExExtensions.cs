@@ -179,7 +179,7 @@ public static class WindowExExtensions
     /// <param name="window">Target window</param>
     /// <param name="filters">List of type filters (e.g. *.yaml, *.txt), or empty/<c>null</c> to allow all file types</param>
     /// <returns>Storage file or <c>null</c> if no file was selected</returns>
-    public static async Task<StorageFile?> OpenFileSaveDialogAsync(this WindowEx window, Logger? logger, string filenameDefault, params (string Type, string Name)[] filters)
+    public static string? OpenFileSaveDialogAsync(this WindowEx window, Logger? logger, string filenameDefault, params (string Type, string Name)[] filters)
     {
         try
         {
@@ -278,7 +278,7 @@ public static class WindowExExtensions
                 fileName = pFileNameTask.Result;
             }
 
-            return await StorageFile.GetFileFromPathAsync(fileName);
+            return fileName;
         }
         catch (COMException e) when (e.ErrorCode == FilePickerCanceledErrorCode)
         {
