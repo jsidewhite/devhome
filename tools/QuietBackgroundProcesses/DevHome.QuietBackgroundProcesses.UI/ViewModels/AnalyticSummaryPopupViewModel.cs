@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -111,17 +112,27 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         // Get the application root window.
         var mainWindow = Application.Current.GetService<WindowEx>();
 
-        // Create and configure file picker
-        // Log.Logger?.ReportInfo(Log.Component.Configuration, "Launching file picker to select configuration file");
-        // var file = await mainWindow.OpenFilePickerAsync(Log.Logger, ("*.yaml;*.yml", StringResource.GetLocalized(StringResourceKey.FilePickerFileTypeOption, "YAML")));
-        // var file = await mainWindow.OpenFilePickerAsync(Log.Logger, ("*.yaml;*.yml", "YAML"));
-        // var file = await mainWindow.OpenFileSaveDialogAsync(null, $"analyticSummary-{DateTime.Now:yyyy-MM-dd_HH-mm}", ("*.json", "JSON"));
+        // Show the file save dialog
         var file = mainWindow.OpenFileSaveDialogAsync(null, $"analyticSummary-{DateTime.Now:yyyy-MM-dd_HH-mm}", ("*.json", "JSON"));
 
         // Check if a file was selected
         if (file == null)
         {
-            // Log.Logger?.ReportInfo(Log.Component.Configuration, "No configuration file selected");
+            return;
+        }
+
+        // Save the report to a .csv
+        using (StreamWriter writer = new StreamWriter(file))
+        {
+            // Write the .csv header
+            writer.WriteLine("Process, Type, CpuAboveThreshold");
+
+            // Write each item from the list to the file
+            foreach (var data in this._processDatas)
+            {
+                string row = $"{data.Process}, {data.Type}, {data.CpuAboveThreshold}";
+                writer.WriteLine(row);
+            }
         }
     }
 
