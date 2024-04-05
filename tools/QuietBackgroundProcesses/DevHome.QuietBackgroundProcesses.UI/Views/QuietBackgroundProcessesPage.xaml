@@ -9,7 +9,7 @@
     <Grid MaxWidth="{ThemeResource MaxPageContentWidth}" Margin="{ThemeResource ContentPageMargin}">
         <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
-                <ctControls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="True" Margin="{ThemeResource SettingsCardMargin}">
+                <ctControls:SettingsExpander x:Uid="QuietBackgroundProcesses" IsExpanded="False" Margin="{ThemeResource SettingsCardMargin}">
 
                     <!-- Header icon -->
                     <ctControls:SettingsExpander.HeaderIcon>
