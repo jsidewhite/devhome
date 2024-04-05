@@ -21,6 +21,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     private bool _isFeaturePresent;
 
     [ObservableProperty]
+    private bool _isAnalyticSummaryAvailable;
+
+    [ObservableProperty]
     private string _sessionStateText;
 
     [ObservableProperty]
@@ -55,6 +58,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         _sessionStateText = string.Empty;
 
         IsFeaturePresent = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeaturePresent();
+        IsAnalyticSummaryAvailable = _table != null;
 
         _dispatcherTimer = new DispatcherTimer();
 
@@ -113,6 +117,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             try
             {
                 _table = GetSession().Stop();
+                IsAnalyticSummaryAvailable = _table != null;
                 SetQuietSessionRunningState(false);
                 SessionStateText = GetStatusString("SessionEnded");
             }
