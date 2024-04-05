@@ -178,7 +178,7 @@ public static class WindowExExtensions
     /// </summary>
     /// <param name="window">Target window</param>
     /// <param name="filters">List of type filters (e.g. *.yaml, *.txt), or empty/<c>null</c> to allow all file types</param>
-    /// <returns>Storage file or <c>null</c> if no file was selected</returns>
+    /// <returns>File path or <c>null</c> if no name was specified</returns>
     public static string? OpenFileSaveDialogAsync(this WindowEx window, Logger? logger, string filenameDefault, params (string Type, string Name)[] filters)
     {
         try
@@ -190,7 +190,7 @@ public static class WindowExExtensions
 
             string? fileName;
 
-            // File picker fails when running the application as admin.
+            // Save dialog fails when running the application as admin.
             // To workaround this issue, we instead use the Win32 picking APIs
             // as suggested in the documentation for the FileSavePicker:
             // >> Original code reference: https://learn.microsoft.com/uwp/api/windows.storage.pickers.filesavepicker?view=winrt-22621#in-a-desktop-app-that-requires-elevation
@@ -262,7 +262,10 @@ public static class WindowExExtensions
                 {
                     PWSTR pwstrFilename;
                     ppsi.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &pwstrFilename);
+
                     return pwstrFilename != null ? new string(pwstrFilename) : null;
+
+                    return filename2;
                 });
 
                 fileName = pFileNameTask.Result;

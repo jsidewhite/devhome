@@ -32,6 +32,7 @@ public class ExtensionWrapper : IExtensionWrapper
 
     public ExtensionWrapper(AppExtension appExtension, string classId)
     {
+        //todo:jw
         Name = "sdf";
         PackageFullName = appExtension.Package.Id.FullName;
         PackageFamilyName = appExtension.Package.Id.FamilyName;

@@ -106,9 +106,10 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         }
 
         ProcessDatasAd = new AdvancedCollectionView(_processDatas, true);
+        ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
     }
 
-    public void FilterProcesses(string filterExpression)
+    public void FilterProcessesTextInputChanged(string filterExpression)
     {
         ProcessDatasAd.Filter = item =>
         {
@@ -136,51 +137,20 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void SortComboBoxChanged(string index)
+    public void SortProcessesComboBoxChanged(string selectedValue)
     {
-        // ProcessDataComparer comparer = new ProcessDataComparer();
-        // MySort sort = new("ProcessName", SortDirection.Ascending, comparer);
-
-        // var direction = index == 0 ? SortDirection.Ascending : SortDirection.Descending;
         ProcessDatasAd.SortDescriptions.Clear();
-
-        // ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessName", direction));
-        // ProcessDatasAd.SortDescriptions.Add(sort);
-        // ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Descending));
-        if (index == "Process")
+        if (selectedValue == "Process")
         {
             ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Ascending));
         }
-
-        if (index == "sdf")
+        else if (selectedValue == "Type")
         {
             ProcessDatasAd.SortDescriptions.Add(new SortDescription("Type", SortDirection.Ascending));
         }
-
-        if (index == "werf")
+        else if (selectedValue == "CPU above threshold")
         {
             ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
-        }
-    }
-
-    [RelayCommand]
-    public void SortHandler(string critieria)
-    {
-        ProcessDatasAd.SortDescriptions.Clear();
-        if (critieria == "Process Name")
-        {
-            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending));
-            return;
-        }
-        else if (critieria == "Process Type")
-        {
-            ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessType", SortDirection.Descending));
-            return;
-        }
-        else if (critieria == "CPU above threshold")
-        {
-            ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Ascending));
-            return;
         }
     }
 

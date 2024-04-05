@@ -79,7 +79,7 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         if (textBox != null)
         {
             var filterExpression = textBox.Text.Trim();
-            ViewModel.FilterProcesses(filterExpression);
+            ViewModel.FilterProcessesTextInputChanged(filterExpression);
         }
     }
 
