@@ -59,6 +59,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
         IsFeaturePresent = DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSessionManager.IsFeaturePresent();
         IsAnalyticSummaryAvailable = _table != null;
+        IsAnalyticSummaryAvailable = true;
 
         _dispatcherTimer = new DispatcherTimer();
 

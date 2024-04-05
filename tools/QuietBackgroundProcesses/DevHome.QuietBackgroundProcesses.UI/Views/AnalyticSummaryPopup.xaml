@@ -9,6 +9,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     Style="{StaticResource DefaultContentDialogStyle}">
 
     <!-- ContentDialog Width and Height are not properly hooked up and must be set this way -->
@@ -55,10 +57,15 @@
                     <x:String>Pie chart</x:String>
                 </ComboBox>
 
-                <ComboBox Grid.Column="1" Margin="5 0 5 0" SelectionChanged="ColorComboBox_SelectionChanged" PlaceholderText="Sort by" SelectedValue="">
-                    <x:String>Process</x:String>
-                    <x:String>Process type</x:String>
-                    <x:String>CPU above threshold</x:String>
+                <ComboBox Grid.Column="1" x:Name="Abc" Margin="5 0 5 0" PlaceholderText="Sort by" SelectedIndex="" SelectedValue=""
+                          ItemsSource="{x:Bind ViewModel.ProcessRowSortOptions22, Mode=OneWay}">
+                    <i:Interaction.Behaviors>
+                        <ic:EventTriggerBehavior EventName="SelectionChanged">
+                            <ic:InvokeCommandAction  
+                                    Command="{x:Bind ViewModel.SortComboBoxChangedCommand, Mode=OneWay}"
+                                    CommandParameter="{x:Bind SelectedIndex, ElementName=Abc, Mode=OneWay}"/>
+                        </ic:EventTriggerBehavior>
+                    </i:Interaction.Behaviors>
                 </ComboBox>
 
                 <TextBox Grid.Column="2" x:Name="FilterTextBox" TextChanged="FilterTextBox_TextChanged" Margin="50 0 0 0" PlaceholderText="Search for a process" />

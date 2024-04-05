@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -30,10 +31,35 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 {
     private readonly List<ProcessData> _processDatas = new();
 
+    [ObservableProperty]
+    private ObservableCollection<string> _processRowSortOptions22 = new();
+
     public AdvancedCollectionView ProcessDatasAd { get; private set; }
 
     public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
     {
+        ProcessRowSortOptions22 = new ObservableCollection<string>
+        {
+            "Process Name",
+            "Process Type",
+            "CPU above threshold",
+        };
+
+        _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 1 });
+        _processDatas.Add(new ProcessData { Process = "msbuild.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Developer, CpuAboveThreshold = 2 });
+        _processDatas.Add(new ProcessData { Process = "Defender", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.System, CpuAboveThreshold = 3 });
+        _processDatas.Add(new ProcessData { Process = "msteams.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 4 });
+        _processDatas.Add(new ProcessData { Process = "excel.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 5 });
+        _processDatas.Add(new ProcessData { Process = "msword.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 6 });
+        _processDatas.Add(new ProcessData { Process = "System", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.System, CpuAboveThreshold = 7 });
+        _processDatas.Add(new ProcessData { Process = "SearchIndexer.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Background, CpuAboveThreshold = 8 });
+        _processDatas.Add(new ProcessData { Process = "Code.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Developer, CpuAboveThreshold = 209 });
+        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 10 });
+        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 11 });
+        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 12 });
+        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 13 });
+        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+
         /*
         _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = ProcessType.User, CpuAboveThreshold = 1 });
         _processDatas.Add(new ProcessData { Process = "msbuild.exe", Type = ProcessType.Developer, CpuAboveThreshold = 2 });
@@ -105,6 +131,35 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         };
 
         ProcessDatasAd.RefreshFilter();
+    }
+
+    [RelayCommand]
+    public void SortComboBoxChanged(int index)
+    {
+        var direction = index == 0 ? SortDirection.Ascending : SortDirection.Descending;
+        ProcessDatasAd.SortDescriptions.Clear();
+        ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessName", direction));
+    }
+
+    [RelayCommand]
+    public void SortHandler(string critieria)
+    {
+        ProcessDatasAd.SortDescriptions.Clear();
+        if (critieria == "Process Name")
+        {
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending));
+            return;
+        }
+        else if (critieria == "Process Type")
+        {
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessType", SortDirection.Descending));
+            return;
+        }
+        else if (critieria == "CPU above threshold")
+        {
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Ascending));
+            return;
+        }
     }
 
     public void PickConfigurationFileAsync()
