@@ -3,18 +3,26 @@
 
 #pragma once
 
+#include <appmodel.h>
+
 struct ProcessPerformanceSummary
 {
     // Process info
     ULONG pid{};
-    //std::wstring processName;
-    //wil::unique_cotaskmem_string processName;
-    wchar_t processName[14];
+    wchar_t processName[64];
+    wchar_t packageFullName[PACKAGE_FULL_NAME_MAX_LENGTH + 1]{};
+    wchar_t aumid[APPLICATION_USER_MODEL_ID_MAX_LENGTH]{};
 
     // Sampling
     uint64_t sampleCount{};
     float percentCumulative{};
-    float sigmaCumulative{};
+    float varianceCumulative{};
+    float sigma4Cumulative{};
+    float maxPercent{};
+    uint32_t samplesAboveThreshold{};
+
+    // Other
+    uint64_t totalCpuTimeInMicroseconds{};
 };
 
 extern "C" __declspec(dllexport) HRESULT StartMonitoringProcessUtilization(uint32_t periodInMs, void** context) noexcept;

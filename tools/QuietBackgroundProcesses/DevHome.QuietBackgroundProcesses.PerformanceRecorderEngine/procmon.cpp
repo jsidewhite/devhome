@@ -16,9 +16,42 @@
 #include <wil/win32_helpers.h>
 
 #include <windows.h>
+#include <appmodel.h>
 #include <psapi.h>
 
 #include "procmon.h"
+
+#define CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE 0.015f
+
+struct ProcessPerformanceInfo
+{
+    // Process id
+    wil::unique_process_handle process;
+    ULONG pid{};
+
+    // Process info
+    std::wstring processName;
+    std::wstring processPath;
+    std::wstring packageFullName;
+    std::wstring aumid;
+    FILETIME createTime{};
+
+    // CPU times
+    FILETIME startUserTime{};
+    FILETIME startKernelTime{};
+    FILETIME previousUserTime{};
+    FILETIME currentUserTime{};
+    FILETIME previousKernelTime{};
+    FILETIME currentKernelTime{};
+
+    // Sampling
+    uint64_t sampleCount{};
+    float percentCumulative{};
+    float varianceCumulative{};
+    float sigma4Cumulative{};
+    float maxPercent{};
+    uint32_t samplesAboveThreshold{};
+};
 
 template<typename T>
 wil::unique_cotaskmem_array_ptr<T> make_unique_cotaskmem_array_ptr(size_t numOfElements)
@@ -75,27 +108,21 @@ std::span<DWORD> GetPids(DWORD (&pidArray)[size])
     return { &pidArray[0], needed / sizeof(DWORD) };
 }
 
-struct ProcessPerformanceInfo
+std::wstring GetPackageFullNameFromTokenHelper(HANDLE token)
 {
-    // Process info
-    wil::unique_process_handle process;
-    ULONG pid{};
-    std::wstring processName;
-    FILETIME createTime{};
+    wchar_t packageFullName[PACKAGE_FULL_NAME_MAX_LENGTH + 1]{};
+    uint32_t packageFullNameLength = ARRAYSIZE(packageFullName);
+    THROW_IF_WIN32_ERROR(GetPackageFullNameFromToken(token, &packageFullNameLength, packageFullName));
+    return { packageFullName };
+}
 
-    // CPU times
-    FILETIME startUserTime{};
-    FILETIME startKernelTime{};
-    FILETIME previousUserTime{};
-    FILETIME currentUserTime{};
-    FILETIME previousKernelTime{};
-    FILETIME currentKernelTime{};
-
-    // Sampling
-    uint64_t sampleCount{};
-    float percentCumulative{};
-    float sigmaCumulative{};
-};
+std::wstring GetAppUserModelIdFromTokenHelper(HANDLE token)
+{
+    wchar_t aumid[APPLICATION_USER_MODEL_ID_MAX_LENGTH]{};
+    uint32_t aumidLength = ARRAYSIZE(aumid);
+    THROW_IF_WIN32_ERROR(GetApplicationUserModelIdFromToken(token, &aumidLength, aumid));
+    return { aumid };
+}
 
 ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
 {
@@ -113,10 +140,17 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
     FILETIME createTime, exitTime, kernelTime, userTime;
     THROW_IF_WIN32_BOOL_FALSE(GetProcessTimes(process.get(), &createTime, &exitTime, &kernelTime, &userTime));
 
+    wil::unique_handle processToken;
+    THROW_IF_WIN32_BOOL_FALSE(OpenProcessToken(process.get(), TOKEN_QUERY, &processToken));
+
     auto info = ProcessPerformanceInfo{};
     info.process = std::move(process);
     info.pid = processId;
     info.processName = path.filename().wstring();
+    info.processPath = path.parent_path().wstring();
+    std::wcout << info.processPath << std::endl;
+    info.packageFullName = GetPackageFullNameFromTokenHelper(processToken.get());
+    info.aumid = GetAppUserModelIdFromTokenHelper(processToken.get());
     info.createTime = createTime;
 
     // Start times
@@ -183,7 +217,10 @@ struct MonitorThread
 
     MonitorThread(std::chrono::milliseconds periodMs)
     {
-        //using namespace std::chrono_literals;
+        if (periodMs.count() <= 0)
+        {
+            THROW_HR(E_INVALIDARG);
+        }
 
         m_thread = std::thread([this, periodMs]() {
             try
@@ -239,10 +276,11 @@ struct MonitorThread
                                 cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
 
                                 float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
-                                // auto sigma = std::pow(1.0f + percent, 2.0f) - 1.0f;
-                                auto sigma = (float) std::pow(percent * 100.0, 2.0f);
+                                auto variance = (float)std::pow(percent * 100.0, 2.0f);
+                                auto sigma4 = (float)std::pow(percent * 100.0, 4.0f);
 
 #if 1
+                                //todo:jw
                                 if (percent > 0.01f)
                                 {
                                     std::cout << "PID percent: " << pid << " = " << (100.0 * percent) << " %" << std::endl;
@@ -251,7 +289,16 @@ struct MonitorThread
 
                                 info.sampleCount++;
                                 info.percentCumulative += percent;
-                                info.sigmaCumulative += sigma;
+                                info.varianceCumulative += variance;
+                                info.sigma4Cumulative += sigma4;
+                                if (percent > info.maxPercent)
+                                {
+                                    info.maxPercent = percent;
+                                }
+                                if (percent > CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE)
+                                {
+                                    info.samplesAboveThreshold++;
+                                }
 
                                 totalMicroseconds += cpuTime;
                             }
@@ -260,6 +307,7 @@ struct MonitorThread
                     }
 
 #if 1
+                    //todo:jw
                     float percent = (float)totalMicroseconds.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
                     std::cout << "Total percent: " << (100.0 * percent) << " %" << std::endl;
 #endif
@@ -287,6 +335,12 @@ struct MonitorThread
         }
     }
 
+    template <size_t N>
+    void copystr(wchar_t(& dst)[N], const std::wstring& src)
+    {
+        wcscpy_s(dst, N, src.substr(0, N - 1).c_str());
+    }
+
     std::vector<ProcessPerformanceSummary> GetProcessPerformanceSummaries()
     {
         auto lock = std::scoped_lock(m_dataMutex);
@@ -295,17 +349,32 @@ struct MonitorThread
         for (auto const& [key, info] : m_infos)
         {
             auto summary = ProcessPerformanceSummary{};
-            wcscpy_s(summary.processName, _countof(summary.processName), info.processName.substr(0, _countof(summary.processName) - 1).c_str());
+            auto totalUserTime = CpuTimeDuration(info.startUserTime, info.currentUserTime);
+            auto totalKernelTime = CpuTimeDuration(info.startKernelTime, info.currentKernelTime);
+
+            // Process info
             summary.pid = info.pid;
+            copystr(summary.processName, info.processName);
+            copystr(summary.packageFullName, info.packageFullName);
+            copystr(summary.aumid, info.aumid);
+
+            // Sampling
             summary.sampleCount = info.sampleCount;
             summary.percentCumulative = info.percentCumulative;
-            summary.sigmaCumulative = info.sigmaCumulative;
+            summary.varianceCumulative = info.varianceCumulative;
+            summary.sigma4Cumulative = info.sigma4Cumulative;
+            summary.maxPercent = info.maxPercent;
+            summary.samplesAboveThreshold = info.samplesAboveThreshold;
 
-            if (summary.percentCumulative / (float)summary.sampleCount > 1.00f
-                || summary.sigmaCumulative / (float)summary.sampleCount > 1.00f)
+            // Other
+            summary.totalCpuTimeInMicroseconds = totalUserTime.count() + totalKernelTime.count();
+
+            if (summary.sampleCount <= 0)
             {
-                summaries.push_back(summary);
+                summary.sampleCount = 0;
             }
+
+            summaries.push_back(summary);
         }
         return summaries;
     }
