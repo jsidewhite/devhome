@@ -148,7 +148,6 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
     info.pid = processId;
     info.processName = path.filename().wstring();
     info.processPath = path.parent_path().wstring();
-    std::wcout << info.processPath << std::endl;
     info.packageFullName = GetPackageFullNameFromTokenHelper(processToken.get());
     info.aumid = GetAppUserModelIdFromTokenHelper(processToken.get());
     info.createTime = createTime;

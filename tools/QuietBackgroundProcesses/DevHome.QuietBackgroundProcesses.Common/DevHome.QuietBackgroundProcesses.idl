@@ -15,7 +15,7 @@ namespace DevHome.QuietBackgroundProcesses
     [default_interface]
     runtimeclass ProcessRow
     {
-        //Int64 Id { get; };
+        Int64 Id { get; };
         String Name { get; };
         ProcessType Type { get; };
         //Int64 ProcessDuration { get; };
