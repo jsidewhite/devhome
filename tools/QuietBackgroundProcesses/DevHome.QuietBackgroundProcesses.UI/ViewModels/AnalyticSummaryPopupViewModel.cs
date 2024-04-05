@@ -31,6 +31,8 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 {
     private readonly List<ProcessData> _processDatas = new();
 
+    public int SelectedComputeSystemSortComboBoxIndex { get; set; }
+
     [ObservableProperty]
     private ObservableCollection<string> _processRowSortOptions22 = new();
 
@@ -134,7 +136,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void SortComboBoxChanged()
+    public void SortComboBoxChanged(int index)
     {
         // ProcessDataComparer comparer = new ProcessDataComparer();
         // MySort sort = new("ProcessName", SortDirection.Ascending, comparer);
@@ -145,7 +147,20 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         // ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessName", direction));
         // ProcessDatasAd.SortDescriptions.Add(sort);
         // ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Descending));
-        ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
+        if (index == 0)
+        {
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Ascending));
+        }
+
+        if (index == 1)
+        {
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Type", SortDirection.Ascending));
+        }
+
+        if (index == 2)
+        {
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
+        }
     }
 
     [RelayCommand]

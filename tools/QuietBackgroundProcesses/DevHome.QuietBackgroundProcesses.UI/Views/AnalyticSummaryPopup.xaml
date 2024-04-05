@@ -57,11 +57,13 @@
                     <x:String>Pie chart</x:String>
                 </ComboBox>
 
-                <ComboBox Grid.Column="1" x:Name="Abc" Margin="5 0 5 0" PlaceholderText="Sort by" SelectedValue=""
-                          ItemsSource="{x:Bind ViewModel.ProcessRowSortOptions22, Mode=OneWay}">
+                <ComboBox Grid.Column="1" x:Name="ComputeSystemsSortComboBox" Margin="5 0 5 0" PlaceholderText="Sort by" SelectedValue=""
+                          ItemsSource="{x:Bind ViewModel.ProcessRowSortOptions22, Mode=OneWay}"
+                          SelectedIndex="{x:Bind ViewModel.SelectedComputeSystemSortComboBoxIndex, Mode=TwoWay}">
                     <i:Interaction.Behaviors>
                         <ic:EventTriggerBehavior EventName="SelectionChanged">
-                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.SortComboBoxChangedCommand, Mode=OneWay}" />
+                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.SortComboBoxChangedCommand, Mode=OneWay}"
+                                    CommandParameter="{Binding SelectedIndex, ElementName=ComputeSystemsSortComboBox, Mode=OneWay}"/>
                         </ic:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </ComboBox>
