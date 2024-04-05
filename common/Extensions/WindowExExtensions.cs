@@ -262,17 +262,7 @@ public static class WindowExExtensions
                 {
                     PWSTR pwstrFilename;
                     ppsi.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &pwstrFilename);
-
-                    // string? filename2 = new string(pwstrFilename);
-                    // filename2 = new string(pwstrFilename);
-                    // filename2 = new string("sdf");
-                    string? filename2 = null;
-                    if (pwstrFilename != null)
-                    {
-                        filename2 = new string(pwstrFilename);
-                    }
-
-                    return filename2;
+                    return pwstrFilename != null ? new string(pwstrFilename) : null;
                 });
 
                 fileName = pFileNameTask.Result;
