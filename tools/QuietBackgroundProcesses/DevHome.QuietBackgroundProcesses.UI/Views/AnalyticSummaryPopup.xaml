@@ -58,12 +58,14 @@
                 </ComboBox>
 
                 <ComboBox Grid.Column="1" x:Name="ComputeSystemsSortComboBox" Margin="5 0 5 0" PlaceholderText="Sort by" SelectedValue=""
-                          ItemsSource="{x:Bind ViewModel.ProcessRowSortOptions22, Mode=OneWay}"
+                          
                           SelectedIndex="{x:Bind ViewModel.SelectedComputeSystemSortComboBoxIndex, Mode=TwoWay}">
+                    <ComboBoxItem Content="SortByName"/>
+                    <ComboBoxItem Content="SortByAltName"/>
                     <i:Interaction.Behaviors>
                         <ic:EventTriggerBehavior EventName="SelectionChanged">
                             <ic:InvokeCommandAction Command="{x:Bind ViewModel.SortComboBoxChangedCommand, Mode=OneWay}"
-                                    CommandParameter="{Binding SelectedIndex, ElementName=ComputeSystemsSortComboBox, Mode=OneWay}"/>
+                                    CommandParameter="{x:Bind ((ComboBoxItem)ComputeSystemsSortComboBox.SelectedItem).Content, Mode=OneWay}" />
                         </ic:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </ComboBox>

@@ -136,7 +136,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void SortComboBoxChanged(int index)
+    public void SortComboBoxChanged(string index)
     {
         // ProcessDataComparer comparer = new ProcessDataComparer();
         // MySort sort = new("ProcessName", SortDirection.Ascending, comparer);
@@ -147,17 +147,17 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         // ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessName", direction));
         // ProcessDatasAd.SortDescriptions.Add(sort);
         // ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Descending));
-        if (index == 0)
+        if (index == "Process")
         {
             ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Ascending));
         }
 
-        if (index == 1)
+        if (index == "sdf")
         {
             ProcessDatasAd.SortDescriptions.Add(new SortDescription("Type", SortDirection.Ascending));
         }
 
-        if (index == 2)
+        if (index == "werf")
         {
             ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
         }
