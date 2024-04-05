@@ -62,8 +62,7 @@
                     <i:Interaction.Behaviors>
                         <ic:EventTriggerBehavior EventName="SelectionChanged">
                             <ic:InvokeCommandAction  
-                                    Command="{x:Bind ViewModel.SortComboBoxChangedCommand, Mode=OneWay}"
-                                    CommandParameter="{x:Bind SelectedIndex, ElementName=Abc, Mode=OneWay}"/>
+                                    Command="{x:Bind ViewModel.SortComboBoxChangedCommand, Mode=OneWay}" />
                         </ic:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </ComboBox>

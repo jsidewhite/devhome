@@ -136,9 +136,14 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     [RelayCommand]
     public void SortComboBoxChanged(int index)
     {
+        ProcessDataComparer comparer = new ProcessDataComparer();
+        MySort sort = new("ProcessName", SortDirection.Ascending, comparer);
+
         var direction = index == 0 ? SortDirection.Ascending : SortDirection.Descending;
         ProcessDatasAd.SortDescriptions.Clear();
-        ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessName", direction));
+
+        // ProcessDatasAd.SortDescriptions.Add(new SortDescription("ProcessName", direction));
+        ProcessDatasAd.SortDescriptions.Add(sort);
     }
 
     [RelayCommand]
