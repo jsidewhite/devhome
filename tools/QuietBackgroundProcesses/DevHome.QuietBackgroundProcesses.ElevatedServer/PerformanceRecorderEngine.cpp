@@ -46,16 +46,40 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             return S_OK;
         }
 
+        STDMETHODIMP get_Pid(__int64* value) noexcept override
+        try
+        {
+            *value = m_summary.pid;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
         STDMETHODIMP get_Name(HSTRING* value) noexcept override
         try
         {
-            //Microsoft::WRL::Wrappers::HStringReference name(L"sdf");
-            Microsoft::WRL::Wrappers::HString name;
-            name.Set(L"weeefw2e");
-            name.Set(m_summary.processName);
-            
-            *value = name.Detach();
-            //*value = name.Detach();
+            Microsoft::WRL::Wrappers::HString str;
+            str.Set(m_summary.processName);
+            *value = str.Detach();
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_PackageFullName(HSTRING* value) noexcept override
+        try
+        {
+            Microsoft::WRL::Wrappers::HString str;
+            str.Set(m_summary.packageFullName);
+            *value = str.Detach();
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_Aumid(HSTRING* value) noexcept override
+        try
+        {
+            Microsoft::WRL::Wrappers::HString str;
+            str.Set(m_summary.aumid);
+            *value = str.Detach();
             return S_OK;
         }
         CATCH_RETURN()
@@ -68,18 +92,58 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         }
         CATCH_RETURN()
 
-        STDMETHODIMP get_CpuTimeAboveThreshold(__int64* value) noexcept override
+        STDMETHODIMP get_SampleCount(unsigned __int64* value) noexcept override
         try
         {
-            if (m_summary.sampleCount == 0)
-            {
-                *value = 0;
-                return S_OK;
-            }
-            // auto standardDeviation = sqrt((1 + m_summary.sigmaCumulative) / m_summary.sampleCount);
-            auto standardDeviation = sqrt(m_summary.sigmaCumulative / m_summary.sampleCount);
-            //*value = (__int64) (standardDeviation * 100.0);
-            *value = (__int64)(standardDeviation);
+            *value = m_summary.sampleCount;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_PercentCumulative(float* value) noexcept override
+        try
+        {
+            *value = m_summary.percentCumulative;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_VarianceCumulative(float* value) noexcept override
+        try
+        {
+            *value = m_summary.varianceCumulative;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_Sigma4Cumulative(float* value) noexcept override
+        try
+        {
+            *value = m_summary.sigma4Cumulative;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_MaxPercent(float* value) noexcept override
+        try
+        {
+            *value = m_summary.maxPercent;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_SamplesAboveThreshold(unsigned __int32* value) noexcept override
+        try
+        {
+            *value = m_summary.samplesAboveThreshold;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_TotalCpuTimeInMicroseconds(unsigned __int64* value) noexcept override
+        try
+        {
+            *value = m_summary.totalCpuTimeInMicroseconds;
             return S_OK;
         }
         CATCH_RETURN()

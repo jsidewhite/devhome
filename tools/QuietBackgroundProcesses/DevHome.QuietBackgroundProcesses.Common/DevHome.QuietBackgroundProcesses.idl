@@ -15,13 +15,20 @@ namespace DevHome.QuietBackgroundProcesses
     [default_interface]
     runtimeclass ProcessRow
     {
-        Int64 Id { get; };
+        Int64 Pid { get; };
         String Name { get; };
+        String PackageFullName { get; };
+        String Aumid { get; };
         ProcessType Type { get; };
-        //Int64 ProcessDuration { get; };
-        //Int64 CpuTime { get; };
-        //Int64 CpuTimeSigma { get; };
-        Int64 CpuTimeAboveThreshold { get; };
+
+        UInt64 SampleCount { get; };
+        Single PercentCumulative { get; };
+        Single VarianceCumulative { get; };
+        Single Sigma4Cumulative { get; };
+        Single MaxPercent { get; };
+        UInt32 SamplesAboveThreshold { get; };
+
+        UInt64 TotalCpuTimeInMicroseconds { get; };
     }
 
     [default_interface]
