@@ -264,8 +264,6 @@ public static class WindowExExtensions
                     ppsi.GetDisplayName(SIGDN.SIGDN_FILESYSPATH, &pwstrFilename);
 
                     return pwstrFilename != null ? new string(pwstrFilename) : null;
-
-                    return filename2;
                 });
 
                 fileName = pFileNameTask.Result;

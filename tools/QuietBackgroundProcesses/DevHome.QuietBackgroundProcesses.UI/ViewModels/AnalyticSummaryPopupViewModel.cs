@@ -30,6 +30,7 @@ namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 public partial class AnalyticSummaryPopupViewModel : ObservableObject
 {
     private readonly List<ProcessData> _processDatas = new();
+    private readonly List<DevHome.QuietBackgroundProcesses.ProcessRow> _processDatas2 = new();
 
     public int SelectedComputeSystemSortComboBoxIndex { get; set; }
 
@@ -37,6 +38,11 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     private ObservableCollection<string> _processRowSortOptions22 = new();
 
     public AdvancedCollectionView ProcessDatasAd { get; private set; }
+
+    private DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType ConvertProcessType(DevHome.QuietBackgroundProcesses.ProcessType inputType)
+    {
+        return (DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType)inputType;
+    }
 
     public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
     {
@@ -47,20 +53,24 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
             "CPU above threshold",
         };
 
-        _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 1 });
-        _processDatas.Add(new ProcessData { Process = "msbuild.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Developer, CpuAboveThreshold = 2 });
-        _processDatas.Add(new ProcessData { Process = "Defender", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.System, CpuAboveThreshold = 3 });
-        _processDatas.Add(new ProcessData { Process = "msteams.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 4 });
-        _processDatas.Add(new ProcessData { Process = "excel.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 5 });
-        _processDatas.Add(new ProcessData { Process = "msword.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 6 });
-        _processDatas.Add(new ProcessData { Process = "System", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.System, CpuAboveThreshold = 7 });
-        _processDatas.Add(new ProcessData { Process = "SearchIndexer.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Background, CpuAboveThreshold = 8 });
-        _processDatas.Add(new ProcessData { Process = "Code.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Developer, CpuAboveThreshold = 209 });
-        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 10 });
-        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 11 });
-        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 12 });
-        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 13 });
-        _processDatas.Add(new ProcessData { Process = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+        /*
+        _processDatas.Add(new ProcessData { Name = "Powerpoint.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 1 });
+        _processDatas.Add(new ProcessData { Name = "msbuild.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Developer, CpuAboveThreshold = 2 });
+        _processDatas.Add(new ProcessData { Name = "Defender", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.System, CpuAboveThreshold = 3 });
+        _processDatas.Add(new ProcessData { Name = "msteams.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 4 });
+        _processDatas.Add(new ProcessData { Name = "excel.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 5 });
+        _processDatas.Add(new ProcessData { Name = "msword.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 6 });
+        _processDatas.Add(new ProcessData { Name = "System", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.System, CpuAboveThreshold = 7 });
+        _processDatas.Add(new ProcessData { Name = "SearchIndexer.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Background, CpuAboveThreshold = 8 });
+        _processDatas.Add(new ProcessData { Name = "Code.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.Developer, CpuAboveThreshold = 209 });
+        _processDatas.Add(new ProcessData { Name = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 10 });
+        _processDatas.Add(new ProcessData { Name = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 11 });
+        _processDatas.Add(new ProcessData { Name = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 12 });
+        _processDatas.Add(new ProcessData { Name = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 13 });
+        _processDatas.Add(new ProcessData { Name = "msedge.exe", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
+        */
+
+        // DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User
 
         /*
         _processDatas.Add(new ProcessData { Process = "Powerpoint.exe", Type = ProcessType.User, CpuAboveThreshold = 1 });
@@ -90,23 +100,38 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         */
         if (performanceTable != null)
         {
-            var entry2 = new ProcessData { Process = "sdf", Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 0 };
-            _processDatas.Add(entry2);
-
             var rows = performanceTable.Rows;
             foreach (var row in rows)
             {
                 if (row != null)
                 {
                     // _processDatas.Add(new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = 14 });
-                    var entry = new ProcessData { Process = row.Name, Type = DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType.User, CpuAboveThreshold = (int)row.CpuTimeAboveThreshold };
+                    var sampleCount = row.SampleCount;
+
+                    // todo:jw mult SamplesAboveThreshold by sampling duration
+                    var sampleDuration = 1;
+
+                    var entry = new ProcessData
+                    {
+                        Pid = row.Pid,
+                        Name = row.Name,
+                        PackageFullName = row.PackageFullName,
+                        Aumid = row.Aumid,
+                        Type = ConvertProcessType(row.Type),
+                        Percent = row.PercentCumulative / sampleCount,
+                        StandardDeviation = (float)Math.Sqrt(row.VarianceCumulative / sampleCount),
+                        Sigma4Deviation = (float)Math.Sqrt(Math.Sqrt(row.Sigma4Cumulative / sampleCount)),
+                        MaxPercent = row.MaxPercent,
+                        CpuAboveThreshold = TimeSpan.FromSeconds(row.SamplesAboveThreshold * sampleDuration),
+                        TotalCpuTimeInMicroseconds = row.TotalCpuTimeInMicroseconds,
+                    };
                     _processDatas.Add(entry);
                 }
             }
         }
 
-        ProcessDatasAd = new AdvancedCollectionView(_processDatas, true);
-        ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
+        ProcessDatasAd = new AdvancedCollectionView(_processDatas2, true);
+        ProcessDatasAd.SortDescriptions.Add(new SortDescription("Pid", SortDirection.Descending));
     }
 
     public void FilterProcessesTextInputChanged(string filterExpression)
@@ -118,9 +143,9 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                 if (item is DevHome.QuietBackgroundProcesses.UI.ProcessData process)
                 {
                     return
-                        process.Process.Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
+                        process.Name.Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
                         || process.Type.ToString().Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
-                        || process.CpuAboveThreshold.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase);
+                        || process.CpuAboveThreshold.Minutes.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase);
                 }
 
                 return false;
@@ -142,7 +167,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         ProcessDatasAd.SortDescriptions.Clear();
         if (selectedValue == "Process")
         {
-            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Process", SortDirection.Ascending));
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending));
         }
         else if (selectedValue == "Type")
         {
@@ -172,12 +197,12 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         using (StreamWriter writer = new StreamWriter(file))
         {
             // Write the .csv header
-            writer.WriteLine("Process, Type, CpuAboveThreshold");
+            writer.WriteLine("Pid, Name, PackageFullName, Aumid, Type, Percent, StandardDeviation, Sigma4Deviation, MaxPercent, CpuAboveThreshold, TotalCpuTimeInMicroseconds");
 
             // Write each item from the list to the file
             foreach (var data in this._processDatas)
             {
-                string row = $"{data.Process}, {data.Type}, {data.CpuAboveThreshold}";
+                string row = $"{data.Pid}, {data.Name}, {data.PackageFullName}, {data.Aumid}, {data.Type}, {data.Percent}, {data.StandardDeviation}, {data.Sigma4Deviation}, {data.MaxPercent}, {data.CpuAboveThreshold}, {data.TotalCpuTimeInMicroseconds}";
                 writer.WriteLine(row);
             }
         }

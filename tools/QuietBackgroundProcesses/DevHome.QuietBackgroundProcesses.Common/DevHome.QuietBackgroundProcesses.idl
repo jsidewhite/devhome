@@ -8,7 +8,10 @@ namespace DevHome.QuietBackgroundProcesses
     // Performance Engine types
     enum ProcessType
     {
+        Unknown,
         User,
+        System,
+        Developer,
         Background,
     };
 

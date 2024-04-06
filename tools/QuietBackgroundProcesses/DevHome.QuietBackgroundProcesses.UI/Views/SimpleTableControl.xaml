@@ -71,7 +71,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 0">
-                            <TextBlock Text="{x:Bind Process}" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalTextAlignment="Left" TextTrimming="CharacterEllipsis"
+                            <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalTextAlignment="Left" TextTrimming="CharacterEllipsis"
                                 Padding="11 11 11 11" />
                         </Border>
 

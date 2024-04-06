@@ -25,6 +25,6 @@ internal sealed class ProcessDataComparer : IComparer<object>
         var left = x as ProcessData;
         var right = y as ProcessData;
 
-        return string.Compare(left?.Process, right?.Process, StringComparison.Ordinal);
+        return string.Compare(left?.Name, right?.Name, StringComparison.Ordinal);
     }
 }
