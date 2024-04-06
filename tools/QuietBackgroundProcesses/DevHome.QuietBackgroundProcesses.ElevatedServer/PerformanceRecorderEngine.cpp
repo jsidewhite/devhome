@@ -16,12 +16,10 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
-#include "TimedQuietSession.h"
-
-
 #include <Windows.Foundation.h>
 #include <Windows.Foundation.Collections.h>
 
+#include "TimedQuietSession.h"
 #include "DevHome.QuietBackgroundProcesses.h"
 #include "procmon.h"
 
@@ -40,9 +38,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP RuntimeClassInitialize(ProcessPerformanceSummary summary) noexcept
         {
             m_summary = summary;
-            
-
-//            auto processName = std::wstring(summary.processName);
             return S_OK;
         }
 
