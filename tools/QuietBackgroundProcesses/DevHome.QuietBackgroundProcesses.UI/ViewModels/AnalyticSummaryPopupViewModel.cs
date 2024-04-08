@@ -123,9 +123,11 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                         StandardDeviation = (float)Math.Sqrt(row.VarianceCumulative / sampleCount),
                         Sigma4Deviation = (float)Math.Sqrt(Math.Sqrt(row.Sigma4Cumulative / sampleCount)),
                         MaxPercent = row.MaxPercent,
-                        CpuAboveThreshold = TimeSpan.FromSeconds(row.SamplesAboveThreshold * sampleDuration),
+                        TimeAboveThreshold = TimeSpan.FromSeconds(row.SamplesAboveThreshold * sampleDuration),
                         TotalCpuTimeInMicroseconds = row.TotalCpuTimeInMicroseconds,
                     };
+
+                    entry.TimeAboveThresholdInMinutes = entry.TimeAboveThreshold.TotalMinutes;
                     _processDatas.Add(entry);
                 }
             }
@@ -146,7 +148,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                     return
                         process.Name.Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
                         || process.Type.ToString().Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
-                        || process.CpuAboveThreshold.Minutes.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase);
+                        || process.TimeAboveThreshold.Minutes.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase);
                 }
 
                 return false;
@@ -176,7 +178,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         }
         else if (selectedValue == "CPU above threshold")
         {
-            ProcessDatasAd.SortDescriptions.Add(new SortDescription("CpuAboveThreshold", SortDirection.Descending));
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("TimeAboveThreshold", SortDirection.Descending));
         }
     }
 
@@ -198,12 +200,12 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         using (StreamWriter writer = new StreamWriter(file))
         {
             // Write the .csv header
-            writer.WriteLine("Pid,Name,Samples,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,CpuAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Type");
+            writer.WriteLine("Pid,Name,Samples,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,TimeAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Type");
 
             // Write each item from the list to the file
             foreach (var data in this._processDatas)
             {
-                string row = $"{data.Pid},{data.Name},{data.Samples},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.CpuAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Type}";
+                string row = $"{data.Pid},{data.Name},{data.Samples},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.TimeAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Type}";
                 writer.WriteLine(row);
             }
         }

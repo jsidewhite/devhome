@@ -46,7 +46,9 @@ public class ProcessData
 
     public float MaxPercent { get; set; }
 
-    public TimeSpan CpuAboveThreshold { get; set; }
+    public TimeSpan TimeAboveThreshold { get; set; }
+
+    public double TimeAboveThresholdInMinutes { get; set; }
 
     public ulong TotalCpuTimeInMicroseconds { get; set; }
 }
