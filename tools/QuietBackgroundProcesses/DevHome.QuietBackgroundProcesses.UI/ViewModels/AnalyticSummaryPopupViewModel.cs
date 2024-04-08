@@ -197,12 +197,12 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         using (StreamWriter writer = new StreamWriter(file))
         {
             // Write the .csv header
-            writer.WriteLine("Pid, Name, Percent, StandardDeviation, Sigma4Deviation, MaxPercent, CpuAboveThreshold, TotalCpuTimeInMicroseconds, PackageFullName, Aumid, Type");
+            writer.WriteLine("Pid,Name,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,CpuAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Type");
 
             // Write each item from the list to the file
             foreach (var data in this._processDatas)
             {
-                string row = $"{data.Pid}, {data.Name}, {data.Percent}, {data.StandardDeviation}, {data.Sigma4Deviation}, {data.MaxPercent}, {data.CpuAboveThreshold}, {data.TotalCpuTimeInMicroseconds}, {data.PackageFullName}, {data.Aumid}, {data.Type}";
+                string row = $"{data.Pid},{data.Name},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.CpuAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Type}";
                 writer.WriteLine(row);
             }
         }
