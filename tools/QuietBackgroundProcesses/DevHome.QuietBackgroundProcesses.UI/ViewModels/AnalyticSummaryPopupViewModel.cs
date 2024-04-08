@@ -118,6 +118,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                         PackageFullName = row.PackageFullName,
                         Aumid = row.Aumid,
                         Type = ConvertProcessType(row.Type),
+                        Samples = row.SampleCount,
                         Percent = row.PercentCumulative / sampleCount,
                         StandardDeviation = (float)Math.Sqrt(row.VarianceCumulative / sampleCount),
                         Sigma4Deviation = (float)Math.Sqrt(Math.Sqrt(row.Sigma4Cumulative / sampleCount)),
@@ -185,7 +186,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         var mainWindow = Application.Current.GetService<WindowEx>();
 
         // Show the file save dialog
-        var file = mainWindow.OpenFileSaveDialogAsync(null, $"analyticSummary-{DateTime.Now:yyyy-MM-dd_HH-mm}", ("*.json", "JSON"));
+        var file = mainWindow.OpenFileSaveDialogAsync(null, $"analyticSummary-{DateTime.Now:yyyy-MM-dd_HH-mm}.csv", ("*.csv", "CSV"));
 
         // Check if a file was selected
         if (file == null)
@@ -197,12 +198,12 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         using (StreamWriter writer = new StreamWriter(file))
         {
             // Write the .csv header
-            writer.WriteLine("Pid,Name,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,CpuAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Type");
+            writer.WriteLine("Pid,Name,Samples,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,CpuAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Type");
 
             // Write each item from the list to the file
             foreach (var data in this._processDatas)
             {
-                string row = $"{data.Pid},{data.Name},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.CpuAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Type}";
+                string row = $"{data.Pid},{data.Name},{data.Samples},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.CpuAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Type}";
                 writer.WriteLine(row);
             }
         }

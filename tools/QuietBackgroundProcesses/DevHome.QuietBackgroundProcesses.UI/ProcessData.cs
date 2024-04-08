@@ -36,6 +36,8 @@ public class ProcessData
 
     public ProcessType Type { get; set; }
 
+    public ulong Samples { get; set; }
+
     public float Percent { get; set; }
 
     public float StandardDeviation { get; set; }
