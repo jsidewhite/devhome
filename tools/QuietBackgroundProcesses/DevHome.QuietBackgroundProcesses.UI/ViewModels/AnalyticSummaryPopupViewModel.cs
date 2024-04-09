@@ -16,6 +16,8 @@ using CommunityToolkit.WinUI.Collections;
 using DevHome.Common.Extensions;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
+using DevHome.Common.TelemetryEvents.DeveloperId;
+using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.DevHome.SDK;
@@ -24,6 +26,7 @@ using Windows.Storage.Pickers;
 using WinUIEx;
 
 using static DevHome.QuietBackgroundProcesses.UI.ProcessData;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
@@ -46,6 +49,8 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
     {
+        TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_AnalyticSummary_View", LogLevel.Info, new QuietBackgroundProcessesEvent());
+
         ProcessRowSortOptions22 = new ObservableCollection<string>
         {
             "Process Name",
