@@ -7,7 +7,7 @@ import "windows.foundation.idl";
 namespace DevHome.QuietBackgroundProcesses
 {
     // Performance Engine types
-    enum ProcessType
+    enum ProcessCategory
     {
         Unknown,
         User,
@@ -24,7 +24,7 @@ namespace DevHome.QuietBackgroundProcesses
         String PackageFullName { get; };
         String Aumid { get; };
         String Path { get; };
-        ProcessType Type { get; };
+        ProcessCategory Category { get; };
         Windows.Foundation.DateTime CreateTime { get; };
         Windows.Foundation.DateTime ExitTime { get; };
 

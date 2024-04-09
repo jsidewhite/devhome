@@ -89,10 +89,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         }
         CATCH_RETURN()
 
-        STDMETHODIMP get_Type(ABI::DevHome::QuietBackgroundProcesses::ProcessType* value) noexcept override
+        STDMETHODIMP get_Category(ABI::DevHome::QuietBackgroundProcesses::ProcessCategory* value) noexcept override
         try
         {
-            *value = ProcessType_User;
+            *value = static_cast<ABI::DevHome::QuietBackgroundProcesses::ProcessCategory>(m_summary.category);
             return S_OK;
         }
         CATCH_RETURN()

@@ -10,6 +10,7 @@
 #include <mutex>
 #include <span>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <vector>
 
@@ -25,6 +26,15 @@
 
 #define CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE 0.015f
 
+enum class ProcessCategory
+{
+    Unknown,
+    User,
+    System,
+    Developer,
+    Background,
+};
+
 struct ProcessPerformanceInfo
 {
     // Process id
@@ -36,6 +46,7 @@ struct ProcessPerformanceInfo
     std::wstring path;
     std::optional<std::wstring> packageFullName;
     std::optional<std::wstring> aumid;
+    ProcessCategory category{};
     FILETIME createTime{};
     FILETIME exitTime{};
 
@@ -55,6 +66,124 @@ struct ProcessPerformanceInfo
     float maxPercent{};
     uint32_t samplesAboveThreshold{};
 };
+
+// Process Categories
+std::vector<std::wstring> c_user = {
+    L"chrome.exe",
+    L"msedge.exe",
+    L"OUTLOOK.exe",
+    L"EXCEL.exe",
+    L"WINWORD.exe",
+    L"POWERPOINT.exe",
+    L"OfficeClickToRun.exe",
+    L"ShellExperienceHost.exe",
+    L"StartMenuExperienceHost.exe",
+    L"smartscreen.exe",
+    L"sihost.exe",
+    L"SystemSettings.exe",
+    L"electron.exe",
+    L"CrmSandbox.exe",
+    L"ms-teams.exe",
+    L"teams.exe"
+};
+std::vector<std::wstring> c_system = {
+    L"System",
+    L"Registry",
+    L"Secure System",
+    L"wininit.exe",
+    L"lsass.exe"
+};
+std::vector<std::wstring> c_developer = {
+    L"cmd.exe",
+    L"conhost.exe",
+    L"console.exe",
+    L"powershell.exe",
+    L"cl.exe",
+    L"link.exe",
+    L"devenv.exe",
+    L"python.exe",
+    L"build.exe",
+    L"msbuild.exe",
+    L"windbg.exe",
+    L"windbgx.exe",
+    L"EngHost.exe",
+    L"DbgX.Shell.exe",
+    L"GVFS.Mount.exe",
+    L"GVFS.Service.exe",
+    L"GVFS.ServiceUI.exe",
+    L"Microsoft.Engineering.FileVirtualization.Daemon",
+    L"vscode.exe",
+    L"code.exe",
+    L"cpptools.exe",
+    L"notepad.exe",
+    L"notepad++.exe",
+    L"Wex.Services.exe",
+    L"Taskmgr.exe",
+    L"wpa.exe",
+    L"wpr.exe",
+    L"CalculatorApp.exe",
+    L"npm.exe",
+    L"winget.exe",
+    L"chocolatey.exe",
+    L"pip.exe",
+    L"reSearch.exe"
+};
+std::vector<std::wstring> c_vms = {
+    L"vmmem",
+    L"vmwp.exe",  // actual process name for 'vmmem'
+    L"vmcompute.exe",
+    L"vmconnect.exe",
+    L"vmwp.exe",
+    L"vmms.exe"
+};
+std::vector<std::wstring> c_background = {
+    L"services.exe",
+    L"svchost.exe",
+    L"OneDrive.exe",
+    L"MsMpEng.exe",
+    L"MsSense.exe",
+    L"NdrSetup.exe",
+    L"NisSrv.exe",
+    L"SenseCE.exe",
+    L"SenseNdr.exe",
+    L"SenseNdrX.exe",
+    L"SenseTVM.exe",
+    L"SearchIndexer.exe",
+    L"winlogon.exe",
+};
+
+ProcessCategory GetCategory(DWORD pid, std::wstring_view processName)
+{
+    auto search = [&](std::wstring_view processName, const std::vector<std::wstring>& list) {
+        auto it = std::find_if(list.begin(), list.end(), [&](const auto& elem) {
+            return wil::compare_string_ordinal(processName, elem, true) == 0;
+            });
+        auto found = it != list.end();
+        return found;
+    };
+
+    if (search(processName.data(), c_user))
+    {
+        return ProcessCategory::User;
+    }
+    if (search(processName.data(), c_system))
+    {
+        return ProcessCategory::System;
+    }
+    if (search(processName.data(), c_developer))
+    {
+        return ProcessCategory::Developer;
+    }
+    if (search(processName.data(), c_vms))
+    {
+        return ProcessCategory::Developer;
+    }
+    if (search(processName.data(), c_background))
+    {
+        return ProcessCategory::Background;
+    }
+    return ProcessCategory::Unknown;
+}
 
 template <size_t N>
 void copystr(wchar_t(&dst)[N], const std::optional<std::wstring>& src)
@@ -177,6 +306,7 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
     info.path = path.parent_path().wstring();
     info.packageFullName = packageFullName;
     info.aumid = aumid;
+    info.category = GetCategory(info.pid, info.name);
     info.createTime = createTime;
 
     // Start times
@@ -412,6 +542,7 @@ struct MonitorThread
             copystr(summary.packageFullName, info.packageFullName);
             copystr(summary.aumid, info.aumid);
             copystr(summary.path, info.path);
+            summary.category = static_cast<uint32_t>(info.category);
             summary.createTime = info.createTime;
             summary.exitTime = info.exitTime;
 

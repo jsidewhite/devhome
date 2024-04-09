@@ -39,9 +39,9 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public AdvancedCollectionView ProcessDatasAd { get; private set; }
 
-    private DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType ConvertProcessType(DevHome.QuietBackgroundProcesses.ProcessType inputType)
+    private DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessCategory ConvertProcessType(DevHome.QuietBackgroundProcesses.ProcessCategory inputType)
     {
-        return (DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessType)inputType;
+        return (DevHome.QuietBackgroundProcesses.UI.ProcessData.ProcessCategory)inputType;
     }
 
     public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
@@ -118,7 +118,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                         PackageFullName = row.PackageFullName,
                         Aumid = row.Aumid,
                         Path = row.Path,
-                        Type = ConvertProcessType(row.Type),
+                        Category = ConvertProcessType(row.Category),
                         CreateTime = row.CreateTime,
                         ExitTime = row.ExitTime,
                         Samples = row.SampleCount,
@@ -150,7 +150,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                 {
                     return
                         process.Name.Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
-                        || process.Type.ToString().Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
+                        || process.Category.ToString().Contains(filterExpression, StringComparison.OrdinalIgnoreCase)
                         || process.TimeAboveThreshold.Minutes.ToString(CultureInfo.InvariantCulture).Contains(filterExpression, StringComparison.OrdinalIgnoreCase);
                 }
 
@@ -203,12 +203,12 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         using (StreamWriter writer = new StreamWriter(file))
         {
             // Write the .csv header
-            writer.WriteLine("Pid,Name,Samples,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,TimeAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Path,Type,CreateTime,ExitTime");
+            writer.WriteLine("Pid,Name,Samples,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,TimeAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Path,Category,CreateTime,ExitTime");
 
             // Write each item from the list to the file
             foreach (var data in this._processDatas)
             {
-                string row = $"{data.Pid},{data.Name},{data.Samples},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.TimeAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Path},{data.Type},{data.CreateTime},{data.ExitTime}";
+                string row = $"{data.Pid},{data.Name},{data.Samples},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.TimeAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Path},{data.Category},{data.CreateTime},{data.ExitTime}";
                 writer.WriteLine(row);
             }
         }

@@ -10,7 +10,7 @@ namespace DevHome.QuietBackgroundProcesses.UI;
 
 public class ProcessData
 {
-    public enum ProcessType
+    public enum ProcessCategory
     {
         Unknown,
         User,
@@ -37,7 +37,7 @@ public class ProcessData
 
     public string Path { get; set; }
 
-    public ProcessType Type { get; set; }
+    public ProcessCategory Category { get; set; }
 
     public DateTimeOffset CreateTime { get; set; }
 
