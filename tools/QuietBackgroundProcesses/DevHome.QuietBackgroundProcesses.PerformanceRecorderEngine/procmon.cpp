@@ -32,8 +32,8 @@ struct ProcessPerformanceInfo
     // Process info
     std::wstring processName;
     std::wstring processPath;
-    std::wstring packageFullName;
-    std::wstring aumid;
+    std::optional<std::wstring> packageFullName;
+    std::optional<std::wstring> aumid;
     FILETIME createTime{};
 
     // CPU times
@@ -108,20 +108,26 @@ std::span<DWORD> GetPids(DWORD (&pidArray)[size])
     return { &pidArray[0], needed / sizeof(DWORD) };
 }
 
-std::wstring GetPackageFullNameFromTokenHelper(HANDLE token)
+std::optional<std::wstring> TryGetPackageFullNameFromTokenHelper(HANDLE token)
 {
     wchar_t packageFullName[PACKAGE_FULL_NAME_MAX_LENGTH + 1]{};
     uint32_t packageFullNameLength = ARRAYSIZE(packageFullName);
-    THROW_IF_WIN32_ERROR(GetPackageFullNameFromToken(token, &packageFullNameLength, packageFullName));
-    return { packageFullName };
+    if (GetPackageFullNameFromToken(token, &packageFullNameLength, packageFullName))
+    {
+        return std::nullopt;
+    }
+    return std::wstring { packageFullName };
 }
 
-std::wstring GetAppUserModelIdFromTokenHelper(HANDLE token)
+std::optional<std::wstring> TryGetAppUserModelIdFromTokenHelper(HANDLE token)
 {
     wchar_t aumid[APPLICATION_USER_MODEL_ID_MAX_LENGTH]{};
     uint32_t aumidLength = ARRAYSIZE(aumid);
-    THROW_IF_WIN32_ERROR(GetApplicationUserModelIdFromToken(token, &aumidLength, aumid));
-    return { aumid };
+    if (GetApplicationUserModelIdFromToken(token, &aumidLength, aumid) != ERROR_SUCCESS)
+    {
+        return std::nullopt;
+    }
+    return std::wstring { aumid };
 }
 
 ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
@@ -140,16 +146,22 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
     FILETIME createTime, exitTime, kernelTime, userTime;
     THROW_IF_WIN32_BOOL_FALSE(GetProcessTimes(process.get(), &createTime, &exitTime, &kernelTime, &userTime));
 
+    std::optional<std::wstring> packageFullName;
+    std::optional<std::wstring> aumid;
     wil::unique_handle processToken;
-    THROW_IF_WIN32_BOOL_FALSE(OpenProcessToken(process.get(), TOKEN_QUERY, &processToken));
+    if (OpenProcessToken(process.get(), TOKEN_QUERY, &processToken))
+    {
+        packageFullName = TryGetPackageFullNameFromTokenHelper(processToken.get());
+        aumid = TryGetAppUserModelIdFromTokenHelper(processToken.get());
+    }
 
     auto info = ProcessPerformanceInfo{};
     info.process = std::move(process);
     info.pid = processId;
     info.processName = path.filename().wstring();
     info.processPath = path.parent_path().wstring();
-    info.packageFullName = GetPackageFullNameFromTokenHelper(processToken.get());
-    info.aumid = GetAppUserModelIdFromTokenHelper(processToken.get());
+    info.packageFullName = packageFullName;
+    info.aumid = aumid;
     info.createTime = createTime;
 
     // Start times
@@ -335,9 +347,9 @@ struct MonitorThread
     }
 
     template <size_t N>
-    void copystr(wchar_t(& dst)[N], const std::wstring& src)
+    void copystr(wchar_t(& dst)[N], const std::optional<std::wstring>& src)
     {
-        wcscpy_s(dst, N, src.substr(0, N - 1).c_str());
+        wcscpy_s(dst, N, src.value_or(L"<unk>").substr(0, N - 1).c_str());
     }
 
     std::vector<ProcessPerformanceSummary> GetProcessPerformanceSummaries()
