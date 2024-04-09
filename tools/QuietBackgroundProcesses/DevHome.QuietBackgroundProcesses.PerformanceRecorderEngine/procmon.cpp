@@ -167,6 +167,8 @@ std::set<std::wstring> c_background = {
     L"svchost.exe",
     L"SCNotification.exe",
     L"SecurityHealthyService.exe",
+    L"DevHome.QuietBackgroundProcesses.Server.exe",
+    L"DevHome.QuietBackgroundProcesses.ElevatedServer.exe",
     L"OneDrive.exe",
     L"MsMpEng.exe",
     L"MsSense.exe",

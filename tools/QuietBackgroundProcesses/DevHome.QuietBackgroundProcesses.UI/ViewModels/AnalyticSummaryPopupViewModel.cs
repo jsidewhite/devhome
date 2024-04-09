@@ -177,7 +177,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
         }
         else if (selectedValue == "Type")
         {
-            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Type", SortDirection.Ascending));
+            ProcessDatasAd.SortDescriptions.Add(new SortDescription("Category", SortDirection.Descending));
         }
         else if (selectedValue == "CPU above threshold")
         {
