@@ -11,7 +11,9 @@
 #include <span>
 #include <string>
 #include <thread>
+#include <vector>
 
+#include <wil/resource.h>
 #include <wil/token_helpers.h>
 #include <wil/win32_helpers.h>
 
@@ -52,6 +54,12 @@ struct ProcessPerformanceInfo
     float maxPercent{};
     uint32_t samplesAboveThreshold{};
 };
+
+template <size_t N>
+void copystr(wchar_t(&dst)[N], const std::optional<std::wstring>& src)
+{
+    wcscpy_s(dst, N, src.value_or(L"").substr(0, N - 1).c_str());
+}
 
 template<typename T>
 wil::unique_cotaskmem_array_ptr<T> make_unique_cotaskmem_array_ptr(size_t numOfElements)
@@ -130,18 +138,33 @@ std::optional<std::wstring> TryGetAppUserModelIdFromTokenHelper(HANDLE token)
     return std::wstring { aumid };
 }
 
+std::optional<std::wstring> TryGetProcessName(HANDLE processHandle)
+{
+    static wchar_t s_buffer[MAX_PATH * 3];
+    if (GetModuleFileNameExW(processHandle, nullptr, s_buffer, _countof(s_buffer)) > 0)
+    {
+        return s_buffer;
+    }
+    return std::nullopt;
+}
+
 ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
 {
     auto process = wil::unique_process_handle{ OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processId) };
     THROW_LAST_ERROR_IF(!process);
 
+    /*
     wil::unique_cotaskmem_string processName;
-    if (FAILED(wil::GetModuleFileNameExW(process.get(), NULL, processName)))
+    //if (FAILED(wil::GetModuleFileNameExW(process.get(), NULL, processName)))
+    WCHAR buffer[MAX_PATH];
+    if (GetModuleFileNameExW(process.get(), nullptr, buffer, MAX_PATH) != ERROR_SUCCESS)
     {
         processName = wil::make_cotaskmem_string(L"<unknown>");
     }
+    */
+    auto processPathString = TryGetProcessName(process.get());
 
-    auto path = std::filesystem::path(processName.get());
+    auto path = std::filesystem::path(processPathString.value_or(L""));
 
     FILETIME createTime, exitTime, kernelTime, userTime;
     THROW_IF_WIN32_BOOL_FALSE(GetProcessTimes(process.get(), &createTime, &exitTime, &kernelTime, &userTime));
@@ -224,7 +247,8 @@ struct MonitorThread
     std::mutex m_dataMutex;
 
     // Tracking all our process infos
-    std::map<ULONG, ProcessPerformanceInfo> m_infos;
+    std::map<ULONG, ProcessPerformanceInfo> m_runningProcesses;
+    std::vector<ProcessPerformanceInfo> m_terminatedProcesses;
 
     MonitorThread(std::chrono::milliseconds periodMs)
     {
@@ -251,70 +275,85 @@ struct MonitorThread
 
                     std::chrono::microseconds totalMicroseconds{};
 
-                    DWORD pidArray[1024];
+
+                    // Check for new processes to track
+                    DWORD pidArray[2048];
                     auto pids = GetPids(pidArray);
 
+                    auto lock = std::scoped_lock(m_dataMutex);
+                    for (auto& pid : pids)
                     {
-                        auto lock = std::scoped_lock(m_dataMutex);
-
-                        for (auto& pid : pids)
+                        // Ignore process "0" - the 'SYSTEM 'System' process
+                        if (pid == 0)
                         {
-                            try
+                            continue;
+                        }
+
+                        // Make a new entry
+                        if (!m_runningProcesses.contains(pid))
+                        {
+                            m_runningProcesses[pid] = MakeProcessPerformanceInfo(pid);
+                        }
+                    }
+
+                    // Update counts for each tracked process
+                    for (auto it = m_runningProcesses.begin(); it != m_runningProcesses.end(); )
+                    {
+                        try
+                        {
+                            auto pid = it->first;
+
+                            // Get entry
+                            auto& info = it->second;
+
+                            // Update entry
+                            if (!UpdateProcessPerformanceInfo(info))
                             {
-                                // Ignore process "0" - the 'SYSTEM 'System' process
-                                if (pid == 0)
-                                {
-                                    continue;
-                                }
+                                // The process terminated
 
-                                // Make a new entry
-                                if (m_infos.find(pid) == m_infos.end())
-                                {
-                                    auto info = MakeProcessPerformanceInfo(pid);
-                                    m_infos[pid] = std::move(info);
-                                    continue;
-                                }
+                                // Destroy the process handle
+                                info.process.reset();
 
-                                // Get entry
-                                auto& info = m_infos[pid];
-                                if (!UpdateProcessPerformanceInfo(info))
-                                {
-                                    // m_infos.erase(pid);
-                                }
+                                // Move from the map to the terminated list
+                                m_terminatedProcesses.push_back(std::move(info));
+                                it = m_runningProcesses.erase(it);
+                                continue;
+                            }
 
-                                // Collect cpuTime for process
-                                auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
-                                cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
+                            // Collect cpuTime for process
+                            auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
+                            cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
 
-                                float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
-                                auto variance = (float)std::pow(percent, 2.0f);
-                                auto sigma4 = (float)std::pow(percent, 4.0f);
+                            float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
+                            auto variance = (float)std::pow(percent, 2.0f);
+                            auto sigma4 = (float)std::pow(percent, 4.0f);
 
 #if 1
-                                //todo:jw
-                                if (percent > 1.00f)
-                                {
-                                    std::cout << "PID percent: " << pid << " = " << percent << " %" << std::endl;
-                                }
+                            //todo:jw
+                            if (percent > 1.00f)
+                            {
+                                std::cout << "PID percent: " << pid << " = " << percent << " %" << std::endl;
+                            }
 #endif
 
-                                info.sampleCount++;
-                                info.percentCumulative += percent;
-                                info.varianceCumulative += variance;
-                                info.sigma4Cumulative += sigma4;
-                                if (percent > info.maxPercent)
-                                {
-                                    info.maxPercent = percent;
-                                }
-                                if (percent > CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE)
-                                {
-                                    info.samplesAboveThreshold++;
-                                }
-
-                                totalMicroseconds += cpuTime;
+                            info.sampleCount++;
+                            info.percentCumulative += percent;
+                            info.varianceCumulative += variance;
+                            info.sigma4Cumulative += sigma4;
+                            if (percent > info.maxPercent)
+                            {
+                                info.maxPercent = percent;
                             }
-                            CATCH_LOG();
+                            if (percent > CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE)
+                            {
+                                info.samplesAboveThreshold++;
+                            }
+
+                            totalMicroseconds += cpuTime;
                         }
+                        CATCH_LOG();
+
+                        ++it;
                     }
 
 #if 1
@@ -346,18 +385,12 @@ struct MonitorThread
         }
     }
 
-    template <size_t N>
-    void copystr(wchar_t(& dst)[N], const std::optional<std::wstring>& src)
-    {
-        wcscpy_s(dst, N, src.value_or(L"").substr(0, N - 1).c_str());
-    }
-
     std::vector<ProcessPerformanceSummary> GetProcessPerformanceSummaries()
     {
         auto lock = std::scoped_lock(m_dataMutex);
 
         std::vector<ProcessPerformanceSummary> summaries;
-        for (auto const& [key, info] : m_infos)
+        auto MakeSummary = [](const ProcessPerformanceInfo& info)
         {
             auto summary = ProcessPerformanceSummary{};
             auto totalUserTime = CpuTimeDuration(info.startUserTime, info.currentUserTime);
@@ -384,8 +417,19 @@ struct MonitorThread
             {
                 summary.sampleCount = 0;
             }
+            return summary;
+        };
 
-            summaries.push_back(summary);
+        // Add summaries for running processes
+        for (auto const& [key, info] : m_runningProcesses)
+        {
+            summaries.push_back(MakeSummary(info));
+        }
+
+        // Add summaries for terminated processes
+        for (auto const& info : m_terminatedProcesses)
+        {
+            summaries.push_back(MakeSummary(info));
         }
         return summaries;
     }
