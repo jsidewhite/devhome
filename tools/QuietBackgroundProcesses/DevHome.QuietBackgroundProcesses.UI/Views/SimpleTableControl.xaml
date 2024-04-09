@@ -81,7 +81,7 @@
 
                         <Border Grid.Column="2" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 0">
                             <TextBlock VerticalAlignment="Center" Margin="20 0 0 0" HorizontalAlignment="Left" HorizontalTextAlignment="Left" >
-                                <Run Text="{x:Bind x:String.Format('{0:0.##}', TimeAboveThresholdInMinutes)}" /> min
+                                <Run Text="{x:Bind x:String.Format('{0:0.#}', TimeAboveThresholdInMinutes)}" /> min
                             </TextBlock>
                         </Border>
 

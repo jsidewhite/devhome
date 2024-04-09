@@ -286,15 +286,15 @@ struct MonitorThread
                                 auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
                                 cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
 
-                                float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
-                                auto variance = (float)std::pow(percent * 100.0, 2.0f);
-                                auto sigma4 = (float)std::pow(percent * 100.0, 4.0f);
+                                float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
+                                auto variance = (float)std::pow(percent, 2.0f);
+                                auto sigma4 = (float)std::pow(percent, 4.0f);
 
 #if 1
                                 //todo:jw
-                                if (percent > 0.01f)
+                                if (percent > 1.00f)
                                 {
-                                    std::cout << "PID percent: " << pid << " = " << (100.0 * percent) << " %" << std::endl;
+                                    std::cout << "PID percent: " << pid << " = " << percent << " %" << std::endl;
                                 }
 #endif
 
@@ -319,8 +319,8 @@ struct MonitorThread
 
 #if 1
                     //todo:jw
-                    float percent = (float)totalMicroseconds.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus;
-                    std::cout << "Total percent: " << (100.0 * percent) << " %" << std::endl;
+                    float percent = (float)totalMicroseconds.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
+                    std::cout << "Total percent: " << percent << " %" << std::endl;
 #endif
 
                     previousSnapshotTime = currentTime;
@@ -349,7 +349,7 @@ struct MonitorThread
     template <size_t N>
     void copystr(wchar_t(& dst)[N], const std::optional<std::wstring>& src)
     {
-        wcscpy_s(dst, N, src.value_or(L"<unk>").substr(0, N - 1).c_str());
+        wcscpy_s(dst, N, src.value_or(L"").substr(0, N - 1).c_str());
     }
 
     std::vector<ProcessPerformanceSummary> GetProcessPerformanceSummaries()
