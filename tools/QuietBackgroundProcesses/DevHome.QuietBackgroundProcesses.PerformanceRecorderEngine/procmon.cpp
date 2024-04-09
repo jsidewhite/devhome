@@ -284,21 +284,26 @@ struct MonitorThread
                         // Make a new entry
                         if (!m_runningProcesses.contains(pid))
                         {
-                            m_runningProcesses[pid] = MakeProcessPerformanceInfo(pid);
+                            try
+                            {
+                                m_runningProcesses[pid] = MakeProcessPerformanceInfo(pid);
+                            }
+                            CATCH_LOG();
                         }
                     }
 
                     // Update counts for each tracked process
                     for (auto it = m_runningProcesses.begin(); it != m_runningProcesses.end(); )
                     {
+                        
+                        auto pid = it->first;
+
+                        // Get entry
+                        auto& info = it->second;
+
+                        // Update entry
                         try
                         {
-                            auto pid = it->first;
-
-                            // Get entry
-                            auto& info = it->second;
-
-                            // Update entry
                             if (!UpdateProcessPerformanceInfo(info))
                             {
                                 // The process terminated
@@ -311,39 +316,43 @@ struct MonitorThread
                                 it = m_runningProcesses.erase(it);
                                 continue;
                             }
+                        }
+                        catch (...)
+                        {
+                            ++it;
+                            continue;
+                        }
 
-                            // Collect cpuTime for process
-                            auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
-                            cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
+                        // Collect cpuTime for process
+                        auto cpuTime = CpuTimeDuration(info.previousUserTime, info.currentUserTime);
+                        cpuTime += CpuTimeDuration(info.previousKernelTime, info.currentKernelTime);
 
-                            float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
-                            auto variance = (float)std::pow(percent, 2.0f);
-                            auto sigma4 = (float)std::pow(percent, 4.0f);
+                        float percent = (float)cpuTime.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
+                        auto variance = (float)std::pow(percent, 2.0f);
+                        auto sigma4 = (float)std::pow(percent, 4.0f);
 
 #if 1
-                            //todo:jw
-                            if (percent > 1.00f)
-                            {
-                                std::cout << "PID percent: " << pid << " = " << percent << " %" << std::endl;
-                            }
+                        //todo:jw
+                        if (percent > 1.00f)
+                        {
+                            std::cout << "PID percent: " << pid << " = " << percent << " %" << std::endl;
+                        }
 #endif
 
-                            info.sampleCount++;
-                            info.percentCumulative += percent;
-                            info.varianceCumulative += variance;
-                            info.sigma4Cumulative += sigma4;
-                            if (percent > info.maxPercent)
-                            {
-                                info.maxPercent = percent;
-                            }
-                            if (percent > CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE)
-                            {
-                                info.samplesAboveThreshold++;
-                            }
-
-                            totalMicroseconds += cpuTime;
+                        info.sampleCount++;
+                        info.percentCumulative += percent;
+                        info.varianceCumulative += variance;
+                        info.sigma4Cumulative += sigma4;
+                        if (percent > info.maxPercent)
+                        {
+                            info.maxPercent = percent;
                         }
-                        CATCH_LOG();
+                        if (percent > CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE)
+                        {
+                            info.samplesAboveThreshold++;
+                        }
+
+                        totalMicroseconds += cpuTime;
 
                         ++it;
                     }
