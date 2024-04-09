@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <set>
 #include <span>
 #include <string>
 #include <string_view>
@@ -68,14 +69,17 @@ struct ProcessPerformanceInfo
 };
 
 // Process Categories
-std::vector<std::wstring> c_user = {
+std::set<std::wstring> c_user = {
     L"chrome.exe",
-    L"msedge.exe",
     L"OUTLOOK.exe",
     L"EXCEL.exe",
+    L"explorer.exe",
     L"WINWORD.exe",
     L"POWERPOINT.exe",
     L"OfficeClickToRun.exe",
+    L"Microsoft.SharePoint.exe",
+    L"msedge.exe",
+    L"msedgewebview2.exe",
     L"ShellExperienceHost.exe",
     L"StartMenuExperienceHost.exe",
     L"smartscreen.exe",
@@ -84,23 +88,40 @@ std::vector<std::wstring> c_user = {
     L"electron.exe",
     L"CrmSandbox.exe",
     L"ms-teams.exe",
+    L"TextInputHost.exe",
+    L"UserOOBEBroker.exe",
+    L"WebViewHost.exe",
+    L"Widgets.exe",
+    L"WidgetService.exe",
+    L"XboxGameBarWidgets.exe",
     L"teams.exe"
 };
-std::vector<std::wstring> c_system = {
+std::set<std::wstring> c_system = {
     L"System",
     L"Registry",
     L"Secure System",
+    L"audiodg.exe",
+    L"ctfmon.exe",
+    L"LogonUI.exe",
+    L"MpDefenderCoreService.exe",
+    L"MpDlpService.exe",
+    L"ShellHost.exe",
+    L"smss.exe",
+    L"spoolsv.exe",
     L"wininit.exe",
     L"lsass.exe"
 };
-std::vector<std::wstring> c_developer = {
+std::set<std::wstring> c_developer = {
     L"cmd.exe",
     L"conhost.exe",
     L"console.exe",
+    L"OpenConsole.exe",
     L"powershell.exe",
     L"cl.exe",
     L"link.exe",
     L"devenv.exe",
+    L"DevHome.exe",
+    L"DevHomeGitHubExtension.exe",
     L"python.exe",
     L"build.exe",
     L"msbuild.exe",
@@ -111,7 +132,6 @@ std::vector<std::wstring> c_developer = {
     L"GVFS.Mount.exe",
     L"GVFS.Service.exe",
     L"GVFS.ServiceUI.exe",
-    L"Microsoft.Engineering.FileVirtualization.Daemon",
     L"vscode.exe",
     L"code.exe",
     L"cpptools.exe",
@@ -126,9 +146,15 @@ std::vector<std::wstring> c_developer = {
     L"winget.exe",
     L"chocolatey.exe",
     L"pip.exe",
+    L"vshost.exe",
+    L"VSSVC.exe",
+    L"VBCSCompiler.exe",
+    L"vcpkgsrv.exe",
+    L"WindowsTerminal.exe",
+    L"WindowsPackageManagerServer.exe",
     L"reSearch.exe"
 };
-std::vector<std::wstring> c_vms = {
+std::set<std::wstring> c_vms = {
     L"vmmem",
     L"vmwp.exe",  // actual process name for 'vmmem'
     L"vmcompute.exe",
@@ -136,25 +162,31 @@ std::vector<std::wstring> c_vms = {
     L"vmwp.exe",
     L"vmms.exe"
 };
-std::vector<std::wstring> c_background = {
+std::set<std::wstring> c_background = {
     L"services.exe",
     L"svchost.exe",
+    L"SCNotification.exe",
+    L"SecurityHealthyService.exe",
     L"OneDrive.exe",
     L"MsMpEng.exe",
     L"MsSense.exe",
     L"NdrSetup.exe",
     L"NisSrv.exe",
+    L"RuntimeBroker.exe",
+    L"rundll32.exe",
+    L"SearchHost.exe",
     L"SenseCE.exe",
     L"SenseNdr.exe",
     L"SenseNdrX.exe",
     L"SenseTVM.exe",
     L"SearchIndexer.exe",
+    L"taskhostw.exe",
     L"winlogon.exe",
 };
 
 ProcessCategory GetCategory(DWORD pid, std::wstring_view processName)
 {
-    auto search = [&](std::wstring_view processName, const std::vector<std::wstring>& list) {
+    auto search = [&](std::wstring_view processName, const auto& list) {
         auto it = std::find_if(list.begin(), list.end(), [&](const auto& elem) {
             return wil::compare_string_ordinal(processName, elem, true) == 0;
             });
@@ -162,6 +194,10 @@ ProcessCategory GetCategory(DWORD pid, std::wstring_view processName)
         return found;
     };
 
+    if (pid == 4)
+    {
+        return ProcessCategory::System;
+    }
     if (search(processName.data(), c_user))
     {
         return ProcessCategory::User;
