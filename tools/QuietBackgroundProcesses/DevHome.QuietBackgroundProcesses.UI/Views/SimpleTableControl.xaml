@@ -76,7 +76,7 @@
                         </Border>
 
                         <Border Grid.Column="1" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 1, 0">
-                            <TextBlock Text="{x:Bind Type}" VerticalAlignment="Center" Margin="20 0 0 0" HorizontalAlignment="Left" HorizontalTextAlignment="Left" />
+                            <TextBlock Text="{x:Bind Category}" VerticalAlignment="Center" Margin="20 0 0 0" HorizontalAlignment="Left" HorizontalTextAlignment="Left" />
                         </Border>
 
                         <Border Grid.Column="2" Style="{StaticResource BorderStyle}" BorderThickness="0, 0, 0, 0">
