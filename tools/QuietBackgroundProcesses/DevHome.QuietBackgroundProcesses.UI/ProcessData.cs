@@ -24,6 +24,7 @@ public class ProcessData
         Name = string.Empty;
         PackageFullName = string.Empty;
         Aumid = string.Empty;
+        Path = string.Empty;
     }
 
     public long Pid { get; set; }
@@ -34,7 +35,13 @@ public class ProcessData
 
     public string Aumid { get; set; }
 
+    public string Path { get; set; }
+
     public ProcessType Type { get; set; }
+
+    public DateTimeOffset CreateTime { get; set; }
+
+    public DateTimeOffset ExitTime { get; set; }
 
     public ulong Samples { get; set; }
 

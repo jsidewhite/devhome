@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import "inspectable.idl";
+import "windows.foundation.idl";
 
 namespace DevHome.QuietBackgroundProcesses
 {
@@ -22,7 +23,10 @@ namespace DevHome.QuietBackgroundProcesses
         String Name { get; };
         String PackageFullName { get; };
         String Aumid { get; };
+        String Path { get; };
         ProcessType Type { get; };
+        Windows.Foundation.DateTime CreateTime { get; };
+        Windows.Foundation.DateTime ExitTime { get; };
 
         UInt64 SampleCount { get; };
         Single PercentCumulative { get; };

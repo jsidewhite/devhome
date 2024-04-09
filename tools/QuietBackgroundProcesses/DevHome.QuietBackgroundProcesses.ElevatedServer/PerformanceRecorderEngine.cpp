@@ -53,7 +53,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         try
         {
             Microsoft::WRL::Wrappers::HString str;
-            str.Set(m_summary.processName);
+            str.Set(m_summary.name);
             *value = str.Detach();
             return S_OK;
         }
@@ -79,10 +79,38 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         }
         CATCH_RETURN()
 
+        STDMETHODIMP get_Path(HSTRING* value) noexcept override
+        try
+        {
+            Microsoft::WRL::Wrappers::HString str;
+            str.Set(m_summary.path);
+            *value = str.Detach();
+            return S_OK;
+        }
+        CATCH_RETURN()
+
         STDMETHODIMP get_Type(ABI::DevHome::QuietBackgroundProcesses::ProcessType* value) noexcept override
         try
         {
             *value = ProcessType_User;
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_CreateTime(struct ABI::Windows::Foundation::DateTime* value) noexcept override
+        try
+        {
+            INT64 time = m_summary.createTime.dwLowDateTime + ((UINT64)m_summary.createTime.dwHighDateTime << 32);
+            *value = ABI::Windows::Foundation::DateTime{ time };
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP get_ExitTime(struct ABI::Windows::Foundation::DateTime* value) noexcept override
+        try
+        {
+            INT64 time = m_summary.exitTime.dwLowDateTime + ((UINT64)m_summary.exitTime.dwHighDateTime << 32);
+            *value = ABI::Windows::Foundation::DateTime{ time };
             return S_OK;
         }
         CATCH_RETURN()
