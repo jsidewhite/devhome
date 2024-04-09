@@ -32,11 +32,12 @@ struct ProcessPerformanceInfo
     ULONG pid{};
 
     // Process info
-    std::wstring processName;
-    std::wstring processPath;
+    std::wstring name;
+    std::wstring path;
     std::optional<std::wstring> packageFullName;
     std::optional<std::wstring> aumid;
     FILETIME createTime{};
+    FILETIME exitTime{};
 
     // CPU times
     FILETIME startUserTime{};
@@ -140,7 +141,7 @@ std::optional<std::wstring> TryGetAppUserModelIdFromTokenHelper(HANDLE token)
 
 std::optional<std::wstring> TryGetProcessName(HANDLE processHandle)
 {
-    static wchar_t s_buffer[MAX_PATH * 3];
+    static wchar_t s_buffer[MAX_PATH * 2];
     if (GetModuleFileNameExW(processHandle, nullptr, s_buffer, _countof(s_buffer)) > 0)
     {
         return s_buffer;
@@ -153,15 +154,6 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
     auto process = wil::unique_process_handle{ OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processId) };
     THROW_LAST_ERROR_IF(!process);
 
-    /*
-    wil::unique_cotaskmem_string processName;
-    //if (FAILED(wil::GetModuleFileNameExW(process.get(), NULL, processName)))
-    WCHAR buffer[MAX_PATH];
-    if (GetModuleFileNameExW(process.get(), nullptr, buffer, MAX_PATH) != ERROR_SUCCESS)
-    {
-        processName = wil::make_cotaskmem_string(L"<unknown>");
-    }
-    */
     auto processPathString = TryGetProcessName(process.get());
 
     auto path = std::filesystem::path(processPathString.value_or(L""));
@@ -181,8 +173,8 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
     auto info = ProcessPerformanceInfo{};
     info.process = std::move(process);
     info.pid = processId;
-    info.processName = path.filename().wstring();
-    info.processPath = path.parent_path().wstring();
+    info.name = path.filename().wstring();
+    info.path = path.parent_path().wstring();
     info.packageFullName = packageFullName;
     info.aumid = aumid;
     info.createTime = createTime;
@@ -206,6 +198,7 @@ bool UpdateProcessPerformanceInfo(ProcessPerformanceInfo& info)
 
     if (exitTime.dwHighDateTime != 0 || exitTime.dwLowDateTime != 0)
     {
+        info.exitTime = info.exitTime;
         return false;
     }
 
@@ -213,7 +206,6 @@ bool UpdateProcessPerformanceInfo(ProcessPerformanceInfo& info)
     info.currentUserTime = userTime;
     info.previousKernelTime = info.currentKernelTime;
     info.currentKernelTime = kernelTime;
-
     return true;
 }
 
@@ -398,9 +390,12 @@ struct MonitorThread
 
             // Process info
             summary.pid = info.pid;
-            copystr(summary.processName, info.processName);
+            copystr(summary.name, info.name);
             copystr(summary.packageFullName, info.packageFullName);
             copystr(summary.aumid, info.aumid);
+            copystr(summary.path, info.path);
+            summary.createTime = info.createTime;
+            summary.exitTime = info.exitTime;
 
             // Sampling
             summary.sampleCount = info.sampleCount;
