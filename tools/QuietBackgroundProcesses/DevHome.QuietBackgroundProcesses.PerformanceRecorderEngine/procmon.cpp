@@ -267,7 +267,6 @@ struct MonitorThread
 
                     std::chrono::microseconds totalMicroseconds{};
 
-
                     // Check for new processes to track
                     DWORD pidArray[2048];
                     auto pids = GetPids(pidArray);
@@ -295,7 +294,6 @@ struct MonitorThread
                     // Update counts for each tracked process
                     for (auto it = m_runningProcesses.begin(); it != m_runningProcesses.end(); )
                     {
-                        
                         auto pid = it->first;
 
                         // Get entry
@@ -399,7 +397,18 @@ struct MonitorThread
 
             // Process info
             summary.pid = info.pid;
-            copystr(summary.name, info.name);
+            if (summary.pid == 4)
+            {
+                copystr(summary.name, L"[System]");
+            }
+            else if (info.name.empty())
+            {
+                copystr(summary.name, L"[unk]");
+            }
+            else
+            {
+                copystr(summary.name, info.name);
+            }
             copystr(summary.packageFullName, info.packageFullName);
             copystr(summary.aumid, info.aumid);
             copystr(summary.path, info.path);
