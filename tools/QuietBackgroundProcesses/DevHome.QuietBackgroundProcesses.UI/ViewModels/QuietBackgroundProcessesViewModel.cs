@@ -19,8 +19,8 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
     private readonly TimeSpan _zero = new(0, 0, 0);
     private readonly TimeSpan _oneSecond = new(0, 0, 1);
-    private DevHome.QuietBackgroundProcesses.QuietBackgroundProcessesSession? _session;
-    private DevHome.QuietBackgroundProcesses.ProcessPerformanceTable? _table;
+    private QuietBackgroundProcessesSession? _session;
+    private ProcessPerformanceTable? _table;
 
     [ObservableProperty]
     private bool _isFeaturePresent;
@@ -67,7 +67,6 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
 
         IsFeaturePresent = QuietBackgroundProcessesSessionManager.IsFeaturePresent();
         IsAnalyticSummaryAvailable = _table != null;
-        IsAnalyticSummaryAvailable = true;
 
         _dispatcherTimer = new DispatcherTimer();
 
@@ -111,16 +110,17 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             try
             {
-                // Launch the server, which then elevates itself, showing a UAC prompt
                 TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+
+                // Launch the server, which then elevates itself, showing a UAC prompt
                 var timeLeftInSeconds = GetSession().Start();
                 SetQuietSessionRunningState(true, timeLeftInSeconds);
             }
             catch (Exception ex)
             {
-                SessionStateText = GetStatusString("SessionError");
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_StartError", LogLevel.Measure, new QuietBackgroundProcessesEvent());
 
-                // todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+                SessionStateText = GetStatusString("SessionError");
                 _log.Error("QuietBackgroundProcessesSession::Start failed", ex);
             }
         }
@@ -129,6 +129,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             try
             {
                 TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Stop", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+
                 _table = GetSession().Stop();
                 IsAnalyticSummaryAvailable = _table != null;
                 SetQuietSessionRunningState(false);
@@ -136,9 +137,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             }
             catch (Exception ex)
             {
-                SessionStateText = GetStatusString("UnableToCancelSession");
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_StopError", LogLevel.Measure, new QuietBackgroundProcessesEvent());
 
-                // todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
+                SessionStateText = GetStatusString("UnableToCancelSession");
                 _log.Error("QuietBackgroundProcessesSession::Stop failed", ex);
             }
         }
@@ -228,8 +229,6 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             SessionStateText = _secondsLeft.ToString(); // CultureInfo.InvariantCulture
         }
     }
-
-    public string? ProcessPerformanceTable2 { get; set; }
 
     public ProcessPerformanceTable? GetProcessPerformanceTable()
     {
