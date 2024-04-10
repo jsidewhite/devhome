@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
+using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 
 namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
@@ -104,6 +105,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             try
             {
                 // Launch the server, which then elevates itself, showing a UAC prompt
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
                 var timeLeftInSeconds = GetSession().Start();
                 SetQuietSessionRunningState(true, timeLeftInSeconds);
             }
@@ -111,12 +113,14 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             {
                 SessionStateText = GetStatusString("SessionError");
                 Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Start failed", ex);
+                //todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
             }
         }
         else
         {
             try
             {
+                TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Stop", LogLevel.Measure, new QuietBackgroundProcessesEvent());
                 _table = GetSession().Stop();
                 IsAnalyticSummaryAvailable = _table != null;
                 SetQuietSessionRunningState(false);
@@ -126,6 +130,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             {
                 SessionStateText = GetStatusString("UnableToCancelSession");
                 Log.Logger()?.ReportError("QuietBackgroundProcessesSession::Stop failed", ex);
+                //todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
             }
         }
     }
