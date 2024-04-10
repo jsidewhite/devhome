@@ -100,6 +100,18 @@
   </data>
 
   <!-- Analytic Summary -->
+  <data name="AnalyticSummary_Title.Text" xml:space="preserve">
+    <value>Analytic Summary</value>
+    <comment>Title of the analytic summary page</comment>
+  </data>
+  <data name="AnalyticSummary_Description.Text" xml:space="preserve">
+    <value>Analytic summary description...</value>
+    <comment>Desciption of the analytic summary page</comment>
+  </data>
+  <data name="AnalyticSummary_SortBy_Label.Text" xml:space="preserve">
+    <value>Sort by</value>
+    <comment>Label for the combo box for sorting</comment>
+  </data>
   <data name="ComboBox_SortBy_Process.Content" xml:space="preserve">
     <value>Process</value>
     <comment>Sortby dropdown option</comment>
@@ -111,6 +123,10 @@
   <data name="ComboBox_SortBy_CpuAboveThreshold.Content" xml:space="preserve">
     <value>CPU above threshold</value>
     <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="AnalyticSummary_FilterProcesses_PlaceholderText.PlaceholderText" xml:space="preserve">
+    <value>Search for a process</value>
+    <comment>Label for analytic summary save report button</comment>
   </data>
   <data name="AnalyticSummary_SaveReportButton.Text" xml:space="preserve">
     <value>Save report</value>

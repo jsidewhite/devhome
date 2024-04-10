@@ -6,9 +6,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DevHome.QuietBackgroundProcesses.UI.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     Style="{StaticResource DefaultContentDialogStyle}">
@@ -28,31 +25,26 @@
     </ContentDialog.Resources>
 
     <!-- Title and Close button -->
-    <Grid x:Name="AddWidgetTitleBar22" Height="600">
+    <Grid Height="600">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="AddWidgetTitleBar" Padding="15">
-            <TextBlock x:Uid="AddWidgetsTitle" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Left" Margin="16,10,0,0" Text="Analytic Summary"/>
-            <TextBlock x:Uid="AddWidgetsTitle2" HorizontalAlignment="Left" Margin="16,10,0,0">
-            <Run Text="Analytic summary description..." />
-            <Hyperlink NavigateUri="https://aka.ms/dsc.yaml">
-                <Run Text="open .json file" />
-            </Hyperlink>
-            </TextBlock>
-            
-            <!-- Filters -->
-            <Grid x:Name="AfsedddWidgetTitleBar" Margin="15 40 15 5">
+        <StackPanel Padding="15">
+            <TextBlock x:Uid="AnalyticSummary_Title" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Left" Margin="16,10,0,0" />
+            <TextBlock x:Uid="AnalyticSummary_Description" HorizontalAlignment="Left" Margin="16,10,0,0" />
+
+            <!-- Filters & sorting -->
+            <Grid Margin="15 40 15 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Margin="5 5 5 5" Text="Sort by" />
+                <TextBlock Grid.Column="0" x:Uid="AnalyticSummary_SortBy_Label" Margin="5 5 5 5" />
 
                 <ComboBox
                     Grid.Column="1"
@@ -72,7 +64,7 @@
                     </i:Interaction.Behaviors>
                 </ComboBox>
 
-                <TextBox Grid.Column="2" x:Name="FilterTextBox" TextChanged="FilterTextBox_TextChanged" Margin="50 0 0 0" PlaceholderText="Search for a process" />
+                <TextBox Grid.Column="2" x:Uid="AnalyticSummary_FilterProcesses_PlaceholderText" x:Name="FilterTextBox" TextChanged="FilterTextBox_TextChanged" Margin="50 0 0 0" />
             </Grid>
         </StackPanel>
 
