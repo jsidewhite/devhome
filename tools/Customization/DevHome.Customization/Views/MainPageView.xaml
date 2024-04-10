@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:views="using:DevHome.Customization.Views">
+    xmlns:quietviews="using:DevHome.QuietBackgroundProcesses.UI.Views">
 
     <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
         <!--  Primary settings group (untitled)  -->
@@ -15,7 +15,6 @@
             Command="{x:Bind ViewModel.NavigateToDeveloperFileExplorerPageCommand}"
             HeaderIcon="{ui:FontIcon Glyph=&#xEC50;}"
             IsClickEnabled="True" />
-
         <!--  Dev Drive Insights  -->
         <controls:SettingsCard
             x:Uid="DevDriveInsightsCard"
@@ -29,8 +28,8 @@
         </controls:SettingsCard>
 
         <!--  Quiet Background Processes  -->
-        <views:QuietBackgroundProcessesView />
-
+        <quietviews:QuietBackgroundProcessesView />
+        
         <!--  More Windows settings  -->
         <StackPanel>
             <TextBlock x:Uid="MoreWindowsSettingsSectionHeader" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
