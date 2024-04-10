@@ -52,10 +52,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <ComboBox Grid.Column="0" Margin="5 0 5 0" SelectionChanged="ColorComboBox_SelectionChanged2" PlaceholderText="View" >
-                    <x:String>Table</x:String>
-                    <x:String>Pie chart</x:String>
-                </ComboBox>
+                <TextBlock Grid.Column="0" Margin="5 5 5 5" Text="Sort by" />
 
                 <ComboBox
                     Grid.Column="1"
