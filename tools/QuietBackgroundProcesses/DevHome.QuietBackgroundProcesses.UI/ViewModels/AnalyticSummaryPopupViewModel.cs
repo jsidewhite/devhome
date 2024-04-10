@@ -17,6 +17,7 @@ using DevHome.Common.Extensions;
 using DevHome.Common.Helpers;
 using DevHome.Common.Services;
 using DevHome.Common.TelemetryEvents.DeveloperId;
+using DevHome.Common.Windows.FileDialog;
 using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -34,6 +35,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 {
     private readonly List<ProcessData> _processDatas = new();
     private readonly List<DevHome.QuietBackgroundProcesses.ProcessRow> _processDatas2 = new();
+    private readonly WindowEx _mainWindow;
 
     public int SelectedComputeSystemSortComboBoxIndex { get; set; }
 
@@ -50,6 +52,8 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     public AnalyticSummaryPopupViewModel(QuietBackgroundProcesses.ProcessPerformanceTable? performanceTable)
     {
         TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_AnalyticSummary_View", LogLevel.Info, new QuietBackgroundProcessesEvent());
+
+        _mainWindow = Application.Current.GetService<WindowEx>();
 
         ProcessRowSortOptions22 = new ObservableCollection<string>
         {
@@ -192,6 +196,29 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public void PickConfigurationFileAsync()
     {
+        using var fileDialog = new WindowSaveFileDialog();
+        fileDialog.AddFileType("CSV files", ".csv");
+
+        var filePath = fileDialog.Show(_mainWindow);
+        if (filePath == null)
+        {
+            return;
+        }
+
+        // Save the report to a .csv
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            // Write the .csv header
+            writer.WriteLine("Pid,Name,Samples,Percent,StandardDeviation,Sigma4Deviation,MaxPercent,TimeAboveThreshold,TotalCpuTimeInMicroseconds,PackageFullName,Aumid,Path,Category,CreateTime,ExitTime");
+
+            // Write each item from the list to the file
+            foreach (var data in this._processDatas)
+            {
+                string row = $"{data.Pid},{data.Name},{data.Samples},{data.Percent},{data.StandardDeviation},{data.Sigma4Deviation},{data.MaxPercent},{data.TimeAboveThreshold},{data.TotalCpuTimeInMicroseconds},{data.PackageFullName},{data.Aumid},{data.Path},{data.Category},{data.CreateTime},{data.ExitTime}";
+                writer.WriteLine(row);
+            }
+        }
+
         /*
         // Get the application root window.
         var mainWindow = Application.Current.GetService<WindowEx>();
