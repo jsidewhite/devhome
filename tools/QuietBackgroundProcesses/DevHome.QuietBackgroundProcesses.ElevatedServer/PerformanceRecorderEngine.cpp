@@ -24,6 +24,29 @@
 #include "procmon.h"
 
 
+struct com_ptr_deleter
+{
+    template<typename T>
+    void operator()(_Pre_opt_valid_ _Frees_ptr_opt_ T p) const
+    {
+        if (p)
+        {
+            p.reset();
+        }
+    }
+};
+
+template<typename T, typename ArrayDeleter = wil::process_heap_deleter>
+using unique_comptr_array = wil::unique_any_array_ptr<typename wil::com_ptr_nothrow<T>, ArrayDeleter, com_ptr_deleter>;
+
+template<typename T>
+unique_comptr_array<T> make_unique_comptr_array(size_t numOfElements)
+{
+    auto list = unique_comptr_array<T>(reinterpret_cast<wil::com_ptr_nothrow<T>*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, numOfElements * sizeof(wil::com_ptr_nothrow<T>))), numOfElements);
+    THROW_IF_NULL_ALLOC(list.get());
+    return list;
+}
+
 namespace ABI::DevHome::QuietBackgroundProcesses
 {
     class ProcessRow :
@@ -174,7 +197,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
     private:
         ProcessPerformanceSummary m_summary;
     };
-
 }
 
 namespace ABI::DevHome::QuietBackgroundProcesses
@@ -197,52 +219,26 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_Rows(unsigned int* valueLength, ABI::DevHome::QuietBackgroundProcesses::IProcessRow*** value) noexcept override
         try
         {
-            if (m_context)
+            wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
+            THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
+
+            // Add rows
+            auto list = make_unique_comptr_array<IProcessRow>(summaries.size());
+            for (uint32_t i = 0; i < summaries.size(); i++)
             {
-                m_rows.clear();
-
-                size_t summaryCount;
-                ProcessPerformanceSummary* pSummaries;
-                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &pSummaries, &summaryCount));
-
-                // add rows
-                {
-                    //wil::com_ptr<ProcessRow> obj;
-                    //THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, L"sdsdfs", ProcessType_User, 1.0));
-                    //rows.push_back(std::move(obj));
-                }
-
-                for (uint32_t i = 0; i < summaryCount; i++)
-                {
-                    auto& summary = pSummaries[i];
-                    //std::wcout << L"i=" << i << L" pid=" << summary.pid << L" name=" << str << std::endl;
-                    //std::wcout << L"i="<< str << std::endl;
-                    //std::wcout << L"i=" << i << L" str=" << std::endl;
-
-                    wil::com_ptr<ProcessRow> obj;
-                    //auto y = (1 + summary.percentCumulative) + 
-                    THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&obj, summary));
-                    m_rows.push_back(std::move(obj));
-                }
-
-                // m_context.reset();
+                auto& summary = summaries[i];
+                wil::com_ptr<ProcessRow> row;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&row, summary));
+                list[i] = row.detach();
             }
-
-            //todo smart pointers
-            auto list = wil::unique_cotaskmem_array_ptr<IProcessRow*>{ static_cast<IProcessRow**>(CoTaskMemAlloc(m_rows.size() * sizeof(IProcessRow*))), m_rows.size() };
-            for (int i = 0; i < m_rows.size(); i++)
-            {
-                list[i] = m_rows[i].detach();
-            }
-            *valueLength = static_cast<unsigned int>(m_rows.size());
-            *value = list.release();
+            *valueLength = static_cast<unsigned int>(summaries.size());
+            *value = (ABI::DevHome::QuietBackgroundProcesses::IProcessRow**)list.release();
             return S_OK;
         }
         CATCH_RETURN()
 
     private:
         unique_process_utilization_monitoring_thread m_context;
-        std::vector<wil::com_ptr<ProcessRow>> m_rows;
     };
 }
 
