@@ -88,7 +88,7 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
         if (dropDown != null)
         {
-            Log.Logger()?.ReportInfo(dropDown.Content.ToString() ?? "unk");
+            // Log.Logger()?.ReportInfo(dropDown.Content.ToString() ?? "unk");
         }
     }
 
@@ -97,7 +97,7 @@ public sealed partial class AnalyticSummaryPopup : ContentDialog
         var dropDown = sender as Microsoft.UI.Xaml.Controls.DropDownButton;
         if (dropDown != null)
         {
-            Log.Logger()?.ReportInfo(dropDown.Content.ToString() ?? "unk");
+            // Log.Logger()?.ReportInfo(dropDown.Content.ToString() ?? "unk");
         }
     }
 

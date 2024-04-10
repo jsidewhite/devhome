@@ -21,10 +21,9 @@
   <ItemGroup>
     <None Remove="SimpleTableControl.xaml" />
     <None Remove="Views\AnalyticSummaryPopup.xaml" />
-    <None Remove="Views\QuietBackgroundProcessesPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI.Collections" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Collections" Version="8.1.240328-rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />

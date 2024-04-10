@@ -192,6 +192,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
 
     public void PickConfigurationFileAsync()
     {
+        /*
         // Get the application root window.
         var mainWindow = Application.Current.GetService<WindowEx>();
 
@@ -217,6 +218,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
                 writer.WriteLine(row);
             }
         }
+        */
     }
 
     [RelayCommand]

@@ -119,8 +119,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             catch (Exception ex)
             {
                 SessionStateText = GetStatusString("SessionError");
+
+                // todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
                 _log.Error("QuietBackgroundProcessesSession::Start failed", ex);
-                //todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
             }
         }
         else
@@ -136,8 +137,9 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             catch (Exception ex)
             {
                 SessionStateText = GetStatusString("UnableToCancelSession");
+
+                // todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
                 _log.Error("QuietBackgroundProcessesSession::Stop failed", ex);
-                //todo:jw TelemetryFactory.Get<ITelemetry>().Log("QuietBackgroundProcesses_Action_Start", LogLevel.Measure, new QuietBackgroundProcessesEvent());
             }
         }
     }
