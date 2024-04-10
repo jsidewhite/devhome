@@ -21,7 +21,7 @@
 
 #include "TimedQuietSession.h"
 #include "DevHome.QuietBackgroundProcesses.h"
-#include "procmon.h"
+#include "PerformanceRecorderEngine.h"
 
 
 struct com_ptr_deleter

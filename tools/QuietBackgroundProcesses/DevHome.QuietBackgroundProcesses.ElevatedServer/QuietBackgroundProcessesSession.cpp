@@ -19,7 +19,7 @@
 #include "TimedQuietSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.h"
-#include "PerformanceRecorderEngine.h"
+#include "PerformanceRecorderEngineWinrt.h"
 
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 

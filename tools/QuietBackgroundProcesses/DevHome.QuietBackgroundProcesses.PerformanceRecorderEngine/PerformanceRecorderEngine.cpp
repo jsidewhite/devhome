@@ -23,7 +23,7 @@
 #include <appmodel.h>
 #include <psapi.h>
 
-#include "procmon.h"
+#include "PerformanceRecorderEngine.h"
 
 // 2 percent is the threshold for a process to be considered as a high CPU consumer
 #define CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE 0.02f

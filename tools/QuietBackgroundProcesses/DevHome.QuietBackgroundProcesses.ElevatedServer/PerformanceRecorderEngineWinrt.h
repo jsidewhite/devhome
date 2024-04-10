@@ -3,26 +3,11 @@
 
 #pragma once
 
-#include <chrono>
-#include <memory>
-#include <mutex>
-
 #include <wrl/client.h>
 #include <wrl/implements.h>
-#include <wrl/module.h>
-
-#include <wil/resource.h>
-#include <wil/result_macros.h>
-#include <wil/win32_helpers.h>
-#include <wil/winrt.h>
-
-#include "TimedQuietSession.h"
-
-#include <Windows.Foundation.h>
-#include <Windows.Foundation.Collections.h>
 
 #include "DevHome.QuietBackgroundProcesses.h"
-#include "procmon.h"
+#include "PerformanceRecorderEngine.h"
 
 namespace ABI::DevHome::QuietBackgroundProcesses
 {

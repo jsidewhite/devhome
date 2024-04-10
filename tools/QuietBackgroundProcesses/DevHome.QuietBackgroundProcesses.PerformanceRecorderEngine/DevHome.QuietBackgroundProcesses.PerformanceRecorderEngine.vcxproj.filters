@@ -12,11 +12,11 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="procmon.cpp" />
+    <ClCompile Include="PerformanceRecorderEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="procmon.h">
+    <ClInclude Include="PerformanceRecorderEngine.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>
