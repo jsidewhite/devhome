@@ -25,7 +25,8 @@
 
 #include "procmon.h"
 
-#define CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE 0.015f
+// 2 percent is the threshold for a process to be considered as a high CPU consumer
+#define CPU_TIME_ABOVE_THRESHOLD_STRIKE_VALUE 0.02f
 
 enum class ProcessCategory
 {
@@ -192,7 +193,7 @@ ProcessCategory GetCategory(DWORD pid, std::wstring_view processName)
         auto it = std::find_if(list.begin(), list.end(), [&](const auto& elem) {
             return wil::compare_string_ordinal(processName, elem, true) == 0;
             });
-        auto found = it != list.end();
+        auto found = (it != list.end());
         return found;
     };
 
@@ -422,16 +423,12 @@ struct MonitorThread
             {
                 auto numCpus = GetVirtualNumCpus();
 
-                auto previousSnapshotTime = std::chrono::steady_clock::now();
-
                 while (true)
                 {
                     if (m_cancellationMechanism.m_cancelled)
                     {
                         break;
                     }
-
-                    auto currentTime = std::chrono::steady_clock::now();
 
                     std::chrono::microseconds totalMicroseconds{};
 
@@ -497,14 +494,6 @@ struct MonitorThread
                         auto variance = (float)std::pow(percent, 2.0f);
                         auto sigma4 = (float)std::pow(percent, 4.0f);
 
-#if 1
-                        //todo:jw
-                        if (percent > 1.00f)
-                        {
-                            std::cout << "PID percent: " << pid << " = " << percent << " %" << std::endl;
-                        }
-#endif
-
                         info.sampleCount++;
                         info.percentCumulative += percent;
                         info.varianceCumulative += variance;
@@ -522,14 +511,6 @@ struct MonitorThread
 
                         ++it;
                     }
-
-#if 1
-                    //todo:jw
-                    float percent = (float)totalMicroseconds.count() / std::chrono::duration_cast<std::chrono::microseconds>(periodMs).count() / (float)numCpus * 100.0f;
-                    std::cout << "Total percent: " << percent << " %" << std::endl;
-#endif
-
-                    previousSnapshotTime = currentTime;
 
                     // Wait for interval period or user cancellation
                     if (m_cancellationMechanism.wait_for_cancel(periodMs))

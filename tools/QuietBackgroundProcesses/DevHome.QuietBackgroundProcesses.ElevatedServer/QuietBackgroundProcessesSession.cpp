@@ -78,6 +78,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         try
         {
             auto lock = std::scoped_lock(g_mutex);
+            *result = nullptr;
 
             if (g_performanceRecorderEngine)
             {
