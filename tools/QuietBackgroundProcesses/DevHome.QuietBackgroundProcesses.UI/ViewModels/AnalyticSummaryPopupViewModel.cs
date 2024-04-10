@@ -27,7 +27,7 @@ public partial class AnalyticSummaryPopupViewModel : ObservableObject
     private readonly List<DevHome.QuietBackgroundProcesses.ProcessRow> _processDatas2 = new();
     private readonly WindowEx _mainWindow;
 
-    public int SelectedComputeSystemSortComboBoxIndex { get; set; }
+    public int SortComboBoxIndex { get; set; }
 
     public AdvancedCollectionView ProcessDatasAd { get; private set; }
 

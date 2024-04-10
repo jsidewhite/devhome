@@ -57,39 +57,35 @@
                     <x:String>Pie chart</x:String>
                 </ComboBox>
 
-                <ComboBox Grid.Column="1" x:Name="ComputeSystemsSortComboBox" Margin="5 0 5 0" PlaceholderText="Sort by" SelectedValue=""
-                          
-                          SelectedIndex="{x:Bind ViewModel.SelectedComputeSystemSortComboBoxIndex, Mode=TwoWay}">
-                    <ComboBoxItem Content="Process"/>
-                    <ComboBoxItem Content="Type"/>
-                    <ComboBoxItem Content="CPU above threshold"/>
+                <ComboBox
+                    Grid.Column="1"
+                    x:Name="SortComboBox"
+                    Margin="5 0 5 0"
+                    PlaceholderText="Sort by"
+                    SelectedValue=""
+                    SelectedIndex="{x:Bind ViewModel.SortComboBoxIndex, Mode=TwoWay}">
+                    <ComboBoxItem x:Uid="ComboBox_SortBy_Process" />
+                    <ComboBoxItem x:Uid="ComboBox_SortBy_Type" />
+                    <ComboBoxItem x:Uid="ComboBox_SortBy_CpuAboveThreshold" />
                     <i:Interaction.Behaviors>
                         <ic:EventTriggerBehavior EventName="SelectionChanged">
                             <ic:InvokeCommandAction Command="{x:Bind ViewModel.SortProcessesComboBoxChangedCommand, Mode=OneWay}"
-                                    CommandParameter="{x:Bind ((ComboBoxItem)ComputeSystemsSortComboBox.SelectedItem).Content, Mode=OneWay}" />
+                                    CommandParameter="{x:Bind ((ComboBoxItem)SortComboBox.SelectedItem).Content, Mode=OneWay}" />
                         </ic:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </ComboBox>
 
                 <TextBox Grid.Column="2" x:Name="FilterTextBox" TextChanged="FilterTextBox_TextChanged" Margin="50 0 0 0" PlaceholderText="Search for a process" />
             </Grid>
-            
-            <!--<commonviews:CloseButton Command="{x:Bind CancelButtonClickCommand}" />-->
         </StackPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Padding="10 0 10 0">
             <StackPanel Padding="15 0 15 15">
-                <StackPanel x:Name="AddWidgeffftTitleBar">
-                    <!--<commonviews:CloseButton Command="{x:Bind CancelButtonClickCommand}" />-->
-                </StackPanel>
-
                 <local:SimpleTableControl x:Name="processListControl" ItemsSource="{x:Bind ViewModel.ProcessDatasAd}" />
-
             </StackPanel>
-
         </ScrollViewer>
 
-        <Grid x:Name="AddWidgetTitleBar22fwfe" Grid.Row="2" Background="{StaticResource SmokeFillColorDefaultBrush}">
+        <Grid Grid.Row="2" Background="{StaticResource SmokeFillColorDefaultBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -97,7 +93,7 @@
 
             <Button
                 x:Name="SaveButton"
-                x:Uid="PinButton"
+                x:Uid="SaveButton"
                 Width="Auto"
                 Command="{x:Bind ViewModel.SaveReportButtonClickedCommand}"
                 Style="{ThemeResource AccentButtonStyle}"
@@ -106,13 +102,13 @@
                 HorizontalContentAlignment="Center"
                 Margin="20,20,5,35"
                 MinHeight="32" MinWidth="118">
-                <TextBlock FontSize="14" Text="Save report" />
+                <TextBlock x:Uid="AnalyticSummary_SaveReportButton" FontSize="14" />
             </Button>
 
             <Button
                 x:Name="CloseButton"
-                Grid.Column="1"
                 x:Uid="CloseButton"
+                Grid.Column="1"
                 Width="Auto"
                 Click="CloseButton_Click"
                 VerticalAlignment="Bottom"
@@ -120,7 +116,7 @@
                 HorizontalContentAlignment="Center"
                 Margin="5,20,20,35"
                 MinHeight="32" MinWidth="118">
-                <TextBlock FontSize="14" Text="Close" />
+                <TextBlock x:Uid="AnalyticSummary_CloseButton" FontSize="14" />
             </Button>
         </Grid>
     </Grid>

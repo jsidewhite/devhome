@@ -99,6 +99,28 @@
     <comment>Label for the doc links</comment>
   </data>
 
+  <!-- Analytic Summary -->
+  <data name="ComboBox_SortBy_Process.Content" xml:space="preserve">
+    <value>Process</value>
+    <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="ComboBox_SortBy_Type.Content" xml:space="preserve">
+    <value>Type</value>
+    <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="ComboBox_SortBy_CpuAboveThreshold.Content" xml:space="preserve">
+    <value>CPU above threshold</value>
+    <comment>Sortby dropdown option</comment>
+  </data>
+  <data name="AnalyticSummary_SaveReportButton.Text" xml:space="preserve">
+    <value>Save report</value>
+    <comment>Label for analytic summary save report button</comment>
+  </data>
+  <data name="AnalyticSummary_CloseButton.Text" xml:space="preserve">
+    <value>Close</value>
+    <comment>Label for analytic summary close button</comment>
+  </data>
+
   <!-- Status Messages -->
   <data name="QuietBackgroundProcesses_Status_FeatureNotSupported" xml:space="preserve">
     <value>Feature not supported on this version of Windows</value>
