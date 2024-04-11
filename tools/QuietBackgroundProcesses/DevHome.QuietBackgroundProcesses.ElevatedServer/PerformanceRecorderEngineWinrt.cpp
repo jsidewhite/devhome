@@ -229,7 +229,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                 auto& summary = summaries[i];
                 wil::com_ptr<ProcessRow> row;
                 THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&row, summary));
-                list[i] = row.detach();
+                list[i] = std::move(row);
             }
             *valueLength = static_cast<unsigned int>(summaries.size());
             *value = (ABI::DevHome::QuietBackgroundProcesses::IProcessRow**)list.release();
