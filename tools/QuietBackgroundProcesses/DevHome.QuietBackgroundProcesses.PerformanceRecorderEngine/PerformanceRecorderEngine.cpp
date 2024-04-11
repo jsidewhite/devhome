@@ -320,7 +320,11 @@ std::optional<std::wstring> TryGetProcessName(HANDLE processHandle)
 ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
 {
     auto process = wil::unique_process_handle{ OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processId) };
-    THROW_LAST_ERROR_IF(!process);
+    if (!process)
+    {
+        // We can't open csrss.exe, so we'll just skip processes we can't open
+        return {};
+    }
 
     auto processPathString = TryGetProcessName(process.get());
 
@@ -463,6 +467,13 @@ struct MonitorThread
 
                         // Get entry
                         auto& info = it->second;
+
+                        if (!info.process)
+                        {
+                            // The process couldn't be opened, so we'll skip this entry
+                            ++it;
+                            continue;
+                        }
 
                         // Update entry
                         try
