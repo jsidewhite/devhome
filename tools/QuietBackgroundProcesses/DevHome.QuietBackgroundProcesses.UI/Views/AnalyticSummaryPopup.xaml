@@ -33,8 +33,15 @@
         </Grid.RowDefinitions>
 
         <StackPanel Padding="15">
-            <TextBlock x:Uid="AnalyticSummary_Title" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Left" Margin="16,10,0,0" />
-            <TextBlock x:Uid="AnalyticSummary_Description" HorizontalAlignment="Left" Margin="16,10,0,0" />
+            <TextBlock
+                x:Uid="AnalyticSummary_Title"
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                HorizontalAlignment="Left"
+                Margin="16,10,0,0" />
+            <TextBlock
+                x:Uid="AnalyticSummary_Description"
+                HorizontalAlignment="Left"
+                Margin="16,10,0,0" />
 
             <!-- Filters & sorting -->
             <Grid Margin="15 40 15 5">
@@ -64,7 +71,12 @@
                     </i:Interaction.Behaviors>
                 </ComboBox>
 
-                <TextBox Grid.Column="2" x:Uid="AnalyticSummary_FilterProcesses_PlaceholderText" x:Name="FilterTextBox" TextChanged="FilterTextBox_TextChanged" Margin="50 0 0 0" />
+                <TextBox
+                    Grid.Column="2"
+                    x:Uid="AnalyticSummary_FilterProcesses_PlaceholderText"
+                    x:Name="FilterTextBox"
+                    TextChanged="FilterTextBox_TextChanged"
+                    Margin="50 0 0 0" />
             </Grid>
         </StackPanel>
 

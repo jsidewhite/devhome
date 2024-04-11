@@ -15,9 +15,6 @@ using Microsoft.UI.Xaml;
 using Serilog;
 using WinUIEx;
 
-using static DevHome.QuietBackgroundProcesses.UI.ProcessData;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-
 namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
 
 public partial class AnalyticSummaryPopupViewModel : ObservableObject
