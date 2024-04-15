@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="telemetry\MicrosoftTelemetry.h" />
     <ClInclude Include="TimedQuietSession.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietState.h" />

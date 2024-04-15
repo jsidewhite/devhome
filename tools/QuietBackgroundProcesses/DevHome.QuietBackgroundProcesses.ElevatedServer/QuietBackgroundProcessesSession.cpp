@@ -15,10 +15,36 @@
 #include <wil/result_macros.h>
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
+#include <wil/Tracelogging.h>
 
 #include "TimedQuietSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.h"
+
+TRACELOGGING_DEFINE_PROVIDER(
+    g_hTelemetryProvider,
+    TELEMETRY_PROVIDER_NAME,
+    (0x21e0ae07, 0x56a7, 0x55b5, 0x12, 0xf9, 0x01, 0x1e, 0x6b, 0xc0, 0x8c, 0xca),
+    TraceLoggingOptionMicrosoftTelemetry());
+
+class SnapFlyoutTelemetry : public wil::TraceLoggingProvider
+{
+    IMPLEMENT_TRACELOGGING_CLASS_WITH_MICROSOFT_TELEMETRY(SnapFlyoutTelemetry,
+                                                          "Microsoft.Windows.Shell.ExplorerExtensions.SnapFlyout",
+                                                          /* dc731193-9640-46e7-a49c-6eccd03d94c2*/
+                                                          (0xdc731193, 0x9640, 0x46e7, 0xa4, 0x9c, 0x6e, 0xcc, 0xd0, 0x3d, 0x94, 0xc2));
+
+public:
+    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM2(SnapZoneActivated, PDT_ProductAndServicePerformance | PDT_ProductAndServiceUsage, PCWSTR, zoneName, PCWSTR, layoutName);
+
+    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM1(SnapSuggestionActivated, PDT_ProductAndServicePerformance | PDT_ProductAndServiceUsage, PCWSTR, layoutName);
+
+    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM1(SnapFlyoutShown, PDT_ProductAndServicePerformance | PDT_ProductAndServiceUsage, bool, invokedbyHotkey);
+
+    DEFINE_TRACELOGGING_EVENT_STRING(TraceMessage, Message);
+
+    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM1(UnexpectedVisibilityState, PDT_ProductAndServicePerformance, unsigned, state);
+};
 
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 
