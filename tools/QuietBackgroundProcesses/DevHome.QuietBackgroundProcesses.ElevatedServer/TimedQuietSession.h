@@ -114,7 +114,7 @@ struct TimedQuietSession
     TimedQuietSession(const TimedQuietSession&) = delete;
     TimedQuietSession& operator=(const TimedQuietSession&) = delete;
 
-    int64_t TimeLeftInSeconds()
+    std::chrono::seconds TimeLeftInSeconds()
     {
         auto lock = std::scoped_lock(m_mutex);
         return m_timer->TimeLeftInSeconds();
@@ -152,7 +152,7 @@ private:
         // Continue activity on current thread
         auto activity = m_activity.TransferToCurrentThread();
 
-        auto totalQuietWindowTime = m_intendedDurationInSeconds - std::chrono::seconds(m_timer->TimeLeftInSeconds());
+        auto totalQuietWindowTime = m_intendedDurationInSeconds - m_timer->TimeLeftInSeconds();
 
         // Turn off quiet mode
         m_quietState.reset();
