@@ -201,10 +201,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
             THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
 
-            // Write the performance .csv data to disk
-            std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
-            LOG_IF_FAILED(WritePerformanceCsvDataToDisk(data));
-
             // Add rows
             auto list = make_unique_comptr_array<IProcessRow>(summaries.size());
             for (uint32_t i = 0; i < summaries.size(); i++)
@@ -262,6 +258,19 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                 wil::com_ptr<ProcessPerformanceTable> performanceTable;
                 THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context)));
                 *result = performanceTable.detach();
+            }
+            else
+            {
+                // No one (no client) is currnetly interested in the performance data, so write it to disk
+                wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
+                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
+
+                // Write the performance .csv data to disk
+                std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
+                LOG_IF_FAILED(WritePerformanceCsvDataToDisk(data));
+
+                // Destroy the performance engine instance
+                m_context.reset();
             }
 
             return S_OK;
