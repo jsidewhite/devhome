@@ -81,7 +81,20 @@ try
 
     // Add rows
     //std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
-    writeVectorToFile(data, "c:\\t\\performance.csv");
+    writeVectorToFile(data, "c:\\t\\performance.bin");
+
+    return S_OK;
+}
+CATCH_RETURN()
+
+// Read the performance .csv data from disk
+HRESULT ReadPerformanceCsvDataFromDisk(std::vector<ProcessPerformanceSummary>& data)
+try
+{
+    using namespace ABI::DevHome::QuietBackgroundProcesses;
+
+    // Add rows
+    readVectorFromFile(data, "c:\\t\\performance.bin");
 
     return S_OK;
 }

@@ -189,15 +189,36 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_ProcessPerformanceTable, BaseTrust);
 
     public:
-        STDMETHODIMP RuntimeClassInitialize(unique_process_utilization_monitoring_thread context) noexcept
+        STDMETHODIMP RuntimeClassInitialize(unique_process_utilization_monitoring_thread context, bool fromDisk) noexcept
         {
             m_context = std::move(context);
+            m_fromDisk = fromDisk;
             return S_OK;
         }
 
         STDMETHODIMP get_Rows(unsigned int* valueLength, ABI::DevHome::QuietBackgroundProcesses::IProcessRow*** value) noexcept override
         try
         {
+            if (m_fromDisk)
+            {
+                // Read performance data from disk
+                std::vector<ProcessPerformanceSummary> data;
+                THROW_IF_FAILED(ReadPerformanceCsvDataFromDisk(data));
+            
+                // Add rows
+                auto list = make_unique_comptr_array<IProcessRow>(data.size());
+                for (uint32_t i = 0; i < data.size(); i++)
+                {
+                    auto& summary = data[i];
+                    wil::com_ptr<ProcessRow> row;
+                    THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&row, summary));
+                    list[i] = std::move(row);
+                }
+                *valueLength = static_cast<unsigned int>(data.size());
+                *value = (ABI::DevHome::QuietBackgroundProcesses::IProcessRow**)list.release();
+                return S_OK;
+            }
+
             wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
             THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
 
@@ -218,6 +239,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     private:
         unique_process_utilization_monitoring_thread m_context;
+        bool m_fromDisk{};
     };
 }
 
@@ -256,7 +278,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (result)
             {
                 wil::com_ptr<ProcessPerformanceTable> performanceTable;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context)));
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context), false));
                 *result = performanceTable.detach();
             }
             else
@@ -281,7 +303,36 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         unique_process_utilization_monitoring_thread m_context;
     };
 
-    ActivatableClass(PerformanceRecorderEngine);
+    class PerformanceRecorderEngineStatics WrlFinal :
+        public Microsoft::WRL::AgileActivationFactory<
+            Microsoft::WRL::Implements<IPerformanceRecorderEngineStatics>>
+    {
+        InspectableClassStatic(RuntimeClass_DevHome_QuietBackgroundProcesses_PerformanceRecorderEngine, BaseTrust);
+
+    public:
+        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
+        {
+            // Disallow activation - must use GetSingleton()
+            return E_NOTIMPL;
+        }
+
+        // IPerformanceRecorderEngineStatics
+        STDMETHODIMP TryGetLastPerformanceRecording(_COM_Outptr_ ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
+        try
+        {
+            // Read performance data from disk
+            //std::vector<ProcessPerformanceSummary> data;
+            //LOG_IF_FAILED(ReadPerformanceCsvDataFromDisk(data));
+            wil::com_ptr<ProcessPerformanceTable> performanceTable;
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, nullptr, true));
+            *result = performanceTable.detach();
+            
+            return S_OK;
+        }
+        CATCH_RETURN()
+    };
+
+    ActivatableClassWithFactory(PerformanceRecorderEngine, PerformanceRecorderEngineStatics);
 }
 
 wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine()

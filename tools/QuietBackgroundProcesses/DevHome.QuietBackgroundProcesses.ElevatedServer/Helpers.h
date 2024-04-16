@@ -37,3 +37,4 @@ wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine>
 // Write the performance .csv data to disk
 //HRESULT WritePerformanceCsvDataToDisk(ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine* engine);
 HRESULT WritePerformanceCsvDataToDisk(const std::span<ProcessPerformanceSummary>& data);
+HRESULT ReadPerformanceCsvDataFromDisk(std::vector<ProcessPerformanceSummary>& data);
