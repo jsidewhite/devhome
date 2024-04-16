@@ -261,7 +261,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             }
             else
             {
-                // No one (no client) is currnetly interested in the performance data, so write it to disk
+                // No one (no client) is currently asking for the performance data (presumably Dev Home is closed) so write it to disk
                 wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
                 THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
 
