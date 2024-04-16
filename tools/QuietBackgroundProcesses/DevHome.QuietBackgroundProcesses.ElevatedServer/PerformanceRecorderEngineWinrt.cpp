@@ -199,16 +199,17 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP get_Rows(unsigned int* valueLength, ABI::DevHome::QuietBackgroundProcesses::IProcessRow*** value) noexcept override
         try
         {
-            std::span<ProcessPerformanceSummary> data;
+            std::span<ProcessPerformanceSummary> span;
+            wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summariesCoarray;
+            std::vector<ProcessPerformanceSummary> summariesVector;
 
             if (m_context)
             {
                 // We have a live context, read performance data from it
-                wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
-                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
+                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summariesCoarray.addressof(), summariesCoarray.size_address()));
 
                 // Make span from cotaskmem_array
-                data = std::span<ProcessPerformanceSummary>{ summaries.get(), summaries.size() };
+                span = std::span<ProcessPerformanceSummary>{ summariesCoarray.get(), summariesCoarray.size() };
             }
             else
             {
@@ -217,20 +218,20 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                 THROW_HR_IF(E_FAIL, !std::filesystem::exists(performanceDataFile));
 
                 // Make span from vector
-                auto summaries = ReadPerformanceDataFromDisk(performanceDataFile.c_str());
-                data = std::span<ProcessPerformanceSummary>{ summaries };
+                summariesVector = ReadPerformanceDataFromDisk(performanceDataFile.c_str());
+                span = std::span<ProcessPerformanceSummary>{ summariesVector };
             }
 
             // Create IProcessRow entries
-            auto list = make_unique_comptr_array<IProcessRow>(data.size());
-            for (uint32_t i = 0; i < data.size(); i++)
+            auto list = make_unique_comptr_array<IProcessRow>(span.size());
+            for (uint32_t i = 0; i < span.size(); i++)
             {
-                auto& summary = data[i];
+                auto& summary = span[i];
                 wil::com_ptr<ProcessRow> row;
                 THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&row, summary));
                 list[i] = std::move(row);
             }
-            *valueLength = static_cast<unsigned int>(data.size());
+            *valueLength = static_cast<unsigned int>(span.size());
             *value = (ABI::DevHome::QuietBackgroundProcesses::IProcessRow**)list.release();
             return S_OK;
         }

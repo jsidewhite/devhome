@@ -133,11 +133,16 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
             var seconds = timeLeftInSeconds ?? GetTimeRemaining();
             StartCountdownTimer(seconds);
             QuietButtonText = GetString("QuietBackgroundProcesses_QuietButton_Stop");
+            IsAnalyticSummaryAvailable = false;
         }
         else
         {
             _dispatcherTimer?.Stop();
             QuietButtonText = GetString("QuietBackgroundProcesses_QuietButton_Start");
+            if (!IsAnalyticSummaryAvailable)
+            {
+                IsAnalyticSummaryAvailable = QuietBackgroundProcessesSessionManager.HasLastPerformanceRecording();
+            }
         }
 
         QuietButtonChecked = !running;
