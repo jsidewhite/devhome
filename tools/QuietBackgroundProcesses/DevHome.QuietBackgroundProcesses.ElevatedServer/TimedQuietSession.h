@@ -20,6 +20,7 @@
 
 #include "Timer.h"
 #include "QuietState.h"
+#include "Helpers.h"
 
 using ElevatedServerReference = wrl_server_process_ref;
 
@@ -90,9 +91,9 @@ struct TimedQuietSession
         m_quietState = QuietState::TurnOn();
 
         // Start performance recorder
-        //THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ABI::DevHome::QuietBackgroundProcesses::PerformanceRecorderEngine>(&m_performanceRecorderEngine));
         ABI::Windows::Foundation::TimeSpan samplingPeriod;
         samplingPeriod.Duration = 1000 * 10000; // 1 second
+        m_performanceRecorderEngine = MakePerformanceRecorderEngine();
         THROW_IF_FAILED(m_performanceRecorderEngine->Start(samplingPeriod));
     }
 

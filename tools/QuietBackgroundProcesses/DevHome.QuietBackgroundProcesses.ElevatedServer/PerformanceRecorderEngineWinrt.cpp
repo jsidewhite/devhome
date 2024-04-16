@@ -291,3 +291,11 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     ActivatableClass(PerformanceRecorderEngine);
 }
+
+wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine()
+{
+    using namespace ABI::DevHome::QuietBackgroundProcesses;
+    wil::com_ptr<PerformanceRecorderEngine> result;
+    THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<PerformanceRecorderEngine>(&result));
+    return result;
+}
