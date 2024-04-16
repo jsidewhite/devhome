@@ -88,6 +88,12 @@ struct TimedQuietSession
 
         // Turn on quiet mode
         m_quietState = QuietState::TurnOn();
+
+        // Start performance recorder
+        //THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ABI::DevHome::QuietBackgroundProcesses::PerformanceRecorderEngine>(&m_performanceRecorderEngine));
+        ABI::Windows::Foundation::TimeSpan samplingPeriod;
+        samplingPeriod.Duration = 1000 * 10000; // 1 second
+        THROW_IF_FAILED(m_performanceRecorderEngine->Start(samplingPeriod));
     }
 
     TimedQuietSession(TimedQuietSession&& other) noexcept = default;
@@ -108,11 +114,11 @@ struct TimedQuietSession
         return (bool)m_quietState;
     }
 
-    void Cancel()
+    void Cancel(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result)
     {
         auto lock = std::scoped_lock(m_mutex);
 
-        Deactivate();
+        Deactivate(result);
         m_timer->Cancel();
 
         // Destruct timer on another thread because it's destructor is blocking
@@ -124,10 +130,14 @@ struct TimedQuietSession
     }
 
 private:
-    void Deactivate()
+    void Deactivate(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result = nullptr)
     {
         // Turn off quiet mode
         m_quietState.reset();
+
+        // Stop the performance recorder and write the .csv to disk
+        LOG_IF_FAILED(m_performanceRecorderEngine->Stop(result));
+        m_performanceRecorderEngine.reset();
 
         // Release lifetime handles to this elevated server and unelevated client server
         m_unelevatedServer.reset();
@@ -139,5 +149,6 @@ private:
 
     QuietState::unique_quietwindowclose_call m_quietState{ false };
     std::unique_ptr<Timer> m_timer;
+    wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> m_performanceRecorderEngine;
     std::mutex m_mutex;
 };
