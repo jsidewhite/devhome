@@ -6,6 +6,7 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <span>
 
 #include <wrl/client.h>
 #include <wrl/implements.h>
@@ -199,6 +200,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
             THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
+
+            // Write the performance .csv data to disk
+            std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
+            LOG_IF_FAILED(WritePerformanceCsvDataToDisk(data));
 
             // Add rows
             auto list = make_unique_comptr_array<IProcessRow>(summaries.size());

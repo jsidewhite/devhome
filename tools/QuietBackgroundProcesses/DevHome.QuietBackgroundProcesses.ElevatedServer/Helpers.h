@@ -3,8 +3,10 @@
 
 #pragma once
 
+#include <span>
 #include <wil/resource.h>
 #include "DevHome.QuietBackgroundProcesses.h"
+#include "PerformanceRecorderEngine.h"
 
 struct com_ptr_deleter
 {
@@ -33,4 +35,5 @@ unique_comptr_array<T> make_unique_comptr_array(size_t numOfElements)
 wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine();
 
 // Write the performance .csv data to disk
-HRESULT WritePerformanceCsvDataToDisk(ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine* engine);
+//HRESULT WritePerformanceCsvDataToDisk(ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine* engine);
+HRESULT WritePerformanceCsvDataToDisk(const std::span<ProcessPerformanceSummary>& data);

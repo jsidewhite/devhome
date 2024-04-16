@@ -137,10 +137,10 @@ private:
         m_quietState.reset();
 
         // Stop the performance recorder
-        LOG_IF_FAILED(m_performanceRecorderEngine->Stop(result));
-
-        // Write the performance .csv data to disk
-        LOG_IF_FAILED(WritePerformanceCsvDataToDisk(m_performanceRecorderEngine.get()));
+        if (m_performanceRecorderEngine)
+        {
+            LOG_IF_FAILED(m_performanceRecorderEngine->Stop(result));
+        }
 
         // Disable performance recorder
         m_performanceRecorderEngine.reset();
