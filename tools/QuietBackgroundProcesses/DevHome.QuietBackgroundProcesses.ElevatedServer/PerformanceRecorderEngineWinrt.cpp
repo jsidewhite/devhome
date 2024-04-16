@@ -202,8 +202,10 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (m_fromDisk)
             {
                 // Read performance data from disk
-                std::vector<ProcessPerformanceSummary> data;
-                THROW_IF_FAILED(ReadPerformanceCsvDataFromDisk(data));
+                auto performanceDataFile = GetTemporaryPerformanceDataPath();
+                THROW_HR_IF(E_FAIL, !std::filesystem::exists(performanceDataFile));
+
+                auto data = ReadPerformanceDataFromDisk(performanceDataFile.c_str());
             
                 // Add rows
                 auto list = make_unique_comptr_array<IProcessRow>(data.size());
@@ -289,7 +291,12 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
                 // Write the performance .csv data to disk
                 std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
-                LOG_IF_FAILED(WritePerformanceCsvDataToDisk(data));
+                try
+                {
+                    auto performanceDataFile = GetTemporaryPerformanceDataPath();
+                    WritePerformanceDataToDisk(performanceDataFile.c_str(), data);
+                }
+                CATCH_LOG();
 
                 // Destroy the performance engine instance
                 m_context.reset();

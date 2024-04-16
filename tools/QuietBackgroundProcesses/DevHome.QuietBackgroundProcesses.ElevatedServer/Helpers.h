@@ -3,8 +3,12 @@
 
 #pragma once
 
+#include <filesystem>
 #include <span>
+
+#include <wil/com.h>
 #include <wil/resource.h>
+
 #include "DevHome.QuietBackgroundProcesses.h"
 #include "PerformanceRecorderEngine.h"
 
@@ -34,7 +38,9 @@ unique_comptr_array<T> make_unique_comptr_array(size_t numOfElements)
 // Create a performance recorder engine
 wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine();
 
-// Write the performance .csv data to disk
-//HRESULT WritePerformanceCsvDataToDisk(ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine* engine);
-HRESULT WritePerformanceCsvDataToDisk(const std::span<ProcessPerformanceSummary>& data);
-HRESULT ReadPerformanceCsvDataFromDisk(std::vector<ProcessPerformanceSummary>& data);
+// Get temporary path for performance data
+std::filesystem::path GetTemporaryPerformanceDataPath();
+
+// Read/write the performance data to/from disk
+void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data);
+std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);

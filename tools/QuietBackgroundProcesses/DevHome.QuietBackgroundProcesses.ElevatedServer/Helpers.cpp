@@ -8,19 +8,19 @@
 #include <span>
 #include <string>
 
-#include <wrl/client.h>
-#include <wrl/implements.h>
-#include <wil/com.h>
-#include <wil/resource.h>
-
-#include "DevHome.QuietBackgroundProcesses.h"
 #include "PerformanceRecorderEngine.h"
 #include "Helpers.h"
 
-// Write vector to disk
-void writeVectorToFile(const std::span<ProcessPerformanceSummary>& data, const std::string& filename)
+// Get temporary path for performance data
+std::filesystem::path GetTemporaryPerformanceDataPath()
 {
-    std::ofstream file(filename, std::ios::binary);
+    auto tempDirectory = std::filesystem::temp_directory_path();
+    return std::filesystem::path(tempDirectory) / L"DevHome.QuietMode.PerformanceData.dat";
+}
+
+void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data)
+{
+    std::ofstream file(path, std::ios::binary);
     if (!file.is_open())
     {
         // Handle error
@@ -35,15 +35,12 @@ void writeVectorToFile(const std::span<ProcessPerformanceSummary>& data, const s
     file.close();
 }
 
-// Read vector from disk
-void readVectorFromFile(std::vector<ProcessPerformanceSummary>& data, const std::string& filename)
+std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path)
 {
-    std::ifstream file(filename, std::ios::binary);
-    if (!file.is_open())
-    {
-        // Handle error
-        return;
-    }
+    std::vector<ProcessPerformanceSummary> data;
+
+    std::ifstream file(path, std::ios::binary);
+    THROW_WIN32_IF(ERROR_SHARING_VIOLATION, !file.is_open());
 
     ProcessPerformanceSummary item;
     while (file.read(reinterpret_cast<char*>(&item), sizeof(ProcessPerformanceSummary)))
@@ -52,50 +49,5 @@ void readVectorFromFile(std::vector<ProcessPerformanceSummary>& data, const std:
     }
 
     file.close();
+    return data;
 }
-
-/*
-// Write the performance .csv data to disk
-HRESULT WritePerformanceCsvDataToDisk(ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine* engine)
-try
-{
-    using namespace ABI::DevHome::QuietBackgroundProcesses;
-
-    wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
-    THROW_IF_FAILED(GetMonitoringProcessUtilization(engine, summaries.addressof(), summaries.size_address()));
-
-    // Add rows
-    std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
-    writeVectorToFile(data, "c:\\t\\performance.csv");
-
-    return S_OK;
-}
-CATCH_RETURN()
-*/
-
-// Write the performance .csv data to disk
-HRESULT WritePerformanceCsvDataToDisk(const std::span<ProcessPerformanceSummary>& data)
-try
-{
-    using namespace ABI::DevHome::QuietBackgroundProcesses;
-
-    // Add rows
-    //std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
-    writeVectorToFile(data, "c:\\t\\performance.bin");
-
-    return S_OK;
-}
-CATCH_RETURN()
-
-// Read the performance .csv data from disk
-HRESULT ReadPerformanceCsvDataFromDisk(std::vector<ProcessPerformanceSummary>& data)
-try
-{
-    using namespace ABI::DevHome::QuietBackgroundProcesses;
-
-    // Add rows
-    readVectorFromFile(data, "c:\\t\\performance.bin");
-
-    return S_OK;
-}
-CATCH_RETURN()
