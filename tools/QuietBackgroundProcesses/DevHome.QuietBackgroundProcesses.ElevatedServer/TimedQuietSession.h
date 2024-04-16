@@ -136,8 +136,13 @@ private:
         // Turn off quiet mode
         m_quietState.reset();
 
-        // Stop the performance recorder and write the .csv to disk
+        // Stop the performance recorder
         LOG_IF_FAILED(m_performanceRecorderEngine->Stop(result));
+
+        // Write the performance .csv data to disk
+        LOG_IF_FAILED(WritePerformanceCsvDataToDisk(m_performanceRecorderEngine.get()));
+
+        // Disable performance recorder
         m_performanceRecorderEngine.reset();
 
         // Release lifetime handles to this elevated server and unelevated client server
