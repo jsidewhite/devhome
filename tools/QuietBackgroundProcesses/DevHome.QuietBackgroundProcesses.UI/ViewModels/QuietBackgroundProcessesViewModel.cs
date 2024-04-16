@@ -281,7 +281,15 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     {
         if (_table == null)
         {
-            _table = QuietBackgroundProcessesSessionManager.TryGetLastPerformanceRecording();
+            try
+            {
+                _table = QuietBackgroundProcessesSessionManager.TryGetLastPerformanceRecording();
+            }
+            catch (Exception ex)
+            {
+                SessionStateText = GetStatusString("SessionError");
+                _log.Error(ex, "QuietBackgroundProcessesSessionManager.TryGetLastPerformanceRecording failed");
+            }
         }
 
         return _table;

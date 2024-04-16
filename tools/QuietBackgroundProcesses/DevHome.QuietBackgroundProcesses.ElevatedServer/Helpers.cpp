@@ -11,13 +11,6 @@
 #include "PerformanceRecorderEngine.h"
 #include "Helpers.h"
 
-// Get temporary path for performance data
-std::filesystem::path GetTemporaryPerformanceDataPath()
-{
-    auto tempDirectory = std::filesystem::temp_directory_path();
-    return std::filesystem::path(tempDirectory) / L"DevHome.QuietMode.PerformanceData.dat";
-}
-
 void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data)
 {
     std::ofstream file(path, std::ios::binary);

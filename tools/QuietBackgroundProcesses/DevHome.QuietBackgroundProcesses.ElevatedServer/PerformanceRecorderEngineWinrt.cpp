@@ -20,6 +20,7 @@
 #include <Windows.Foundation.h>
 #include <Windows.Foundation.Collections.h>
 
+#include "Common.h"
 #include "TimedQuietSession.h"
 #include "DevHome.QuietBackgroundProcesses.h"
 #include "PerformanceRecorderEngine.h"
@@ -189,51 +190,47 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_ProcessPerformanceTable, BaseTrust);
 
     public:
-        STDMETHODIMP RuntimeClassInitialize(unique_process_utilization_monitoring_thread context, bool fromDisk) noexcept
+        STDMETHODIMP RuntimeClassInitialize(unique_process_utilization_monitoring_thread context) noexcept
         {
             m_context = std::move(context);
-            m_fromDisk = fromDisk;
             return S_OK;
         }
 
         STDMETHODIMP get_Rows(unsigned int* valueLength, ABI::DevHome::QuietBackgroundProcesses::IProcessRow*** value) noexcept override
         try
         {
-            if (m_fromDisk)
+            std::span<ProcessPerformanceSummary> data;
+
+            if (m_context)
             {
-                // Read performance data from disk
+                // We have a live context, read performance data from it
+                wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
+                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
+
+                // Make span from cotaskmem_array
+                data = std::span<ProcessPerformanceSummary>{ summaries.get(), summaries.size() };
+            }
+            else
+            {
+                // We don't have a live context. Let's try to read performance data from disk.
                 auto performanceDataFile = GetTemporaryPerformanceDataPath();
                 THROW_HR_IF(E_FAIL, !std::filesystem::exists(performanceDataFile));
 
-                auto data = ReadPerformanceDataFromDisk(performanceDataFile.c_str());
-            
-                // Add rows
-                auto list = make_unique_comptr_array<IProcessRow>(data.size());
-                for (uint32_t i = 0; i < data.size(); i++)
-                {
-                    auto& summary = data[i];
-                    wil::com_ptr<ProcessRow> row;
-                    THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&row, summary));
-                    list[i] = std::move(row);
-                }
-                *valueLength = static_cast<unsigned int>(data.size());
-                *value = (ABI::DevHome::QuietBackgroundProcesses::IProcessRow**)list.release();
-                return S_OK;
+                // Make span from vector
+                auto summaries = ReadPerformanceDataFromDisk(performanceDataFile.c_str());
+                data = std::span<ProcessPerformanceSummary>{ summaries };
             }
 
-            wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
-            THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
-
-            // Add rows
-            auto list = make_unique_comptr_array<IProcessRow>(summaries.size());
-            for (uint32_t i = 0; i < summaries.size(); i++)
+            // Create IProcessRow entries
+            auto list = make_unique_comptr_array<IProcessRow>(data.size());
+            for (uint32_t i = 0; i < data.size(); i++)
             {
-                auto& summary = summaries[i];
+                auto& summary = data[i];
                 wil::com_ptr<ProcessRow> row;
                 THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessRow>(&row, summary));
                 list[i] = std::move(row);
             }
-            *valueLength = static_cast<unsigned int>(summaries.size());
+            *valueLength = static_cast<unsigned int>(data.size());
             *value = (ABI::DevHome::QuietBackgroundProcesses::IProcessRow**)list.release();
             return S_OK;
         }
@@ -241,7 +238,6 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
     private:
         unique_process_utilization_monitoring_thread m_context;
-        bool m_fromDisk{};
     };
 }
 
@@ -280,7 +276,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (result)
             {
                 wil::com_ptr<ProcessPerformanceTable> performanceTable;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context), false));
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context)));
                 *result = performanceTable.detach();
             }
             else
@@ -327,11 +323,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP TryGetLastPerformanceRecording(_COM_Outptr_ ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
         try
         {
-            // Read performance data from disk
-            //std::vector<ProcessPerformanceSummary> data;
-            //LOG_IF_FAILED(ReadPerformanceCsvDataFromDisk(data));
+            // Reconstruct a perform table from disk (passing nullptr for context)
             wil::com_ptr<ProcessPerformanceTable> performanceTable;
-            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, nullptr, true));
+            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, nullptr));
             *result = performanceTable.detach();
             
             return S_OK;

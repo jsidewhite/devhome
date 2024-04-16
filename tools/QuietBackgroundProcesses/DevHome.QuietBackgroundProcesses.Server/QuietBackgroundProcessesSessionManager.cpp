@@ -12,6 +12,8 @@
 #include <wrl/module.h>
 #include <wil/winrt.h>
 
+#include <Common.h>
+
 #include <QuietBackgroundProcesses.h>
 
 #include "DevHome.QuietBackgroundProcesses.h"
@@ -84,8 +86,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP TryGetLastPerformanceRecording(_COM_Outptr_ ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
         try
         {
-            auto x = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngineStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_PerformanceRecorderEngine);
-            THROW_IF_FAILED(x->TryGetLastPerformanceRecording(result));
+            auto factory = wil::GetActivationFactory<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngineStatics>(RuntimeClass_DevHome_QuietBackgroundProcesses_PerformanceRecorderEngine);
+            THROW_IF_FAILED(factory->TryGetLastPerformanceRecording(result));
 
             return S_OK;
         }
@@ -94,7 +96,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         STDMETHODIMP HasLastPerformanceRecording(boolean* result) noexcept override
         try
         {
-            *result = std::filesystem::exists("c:\\t\\performance.bin");
+            *result = std::filesystem::exists(GetTemporaryPerformanceDataPath());
             return S_OK;
         }
         CATCH_RETURN()

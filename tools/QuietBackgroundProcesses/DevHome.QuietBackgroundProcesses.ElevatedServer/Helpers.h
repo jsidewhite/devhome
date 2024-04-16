@@ -38,9 +38,6 @@ unique_comptr_array<T> make_unique_comptr_array(size_t numOfElements)
 // Create a performance recorder engine
 wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine();
 
-// Get temporary path for performance data
-std::filesystem::path GetTemporaryPerformanceDataPath();
-
 // Read/write the performance data to/from disk
 void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data);
 std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);
