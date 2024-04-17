@@ -12,6 +12,7 @@ using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Windows.Foundation.Diagnostics;
+using WinRTServer;
 using WinUIEx;
 
 namespace DevHome.QuietBackgroundProcesses.UI.ViewModels;
@@ -50,5 +51,7 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
         {
             SessionStateText = "!IsFeaturePresent";
         }
+
+        SessionStateText = CalcClass.Add(12, 34).ToString(new CultureInfo("en-US"));
     }
 }

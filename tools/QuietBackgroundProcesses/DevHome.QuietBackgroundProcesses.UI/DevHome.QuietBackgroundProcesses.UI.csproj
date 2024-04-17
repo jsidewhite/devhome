@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
     <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
+    <ProjectReference Include="..\WinRTServer\WinRTServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
