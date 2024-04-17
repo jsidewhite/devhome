@@ -22,17 +22,4 @@ public sealed partial class QuietBackgroundProcessesView : UserControl
 
         ViewModel = Application.Current.GetService<QuietBackgroundProcessesViewModel>();
     }
-
-    private async void UserControl_Loaded(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.LoadViewModelContentAsync();
-    }
-
-    private async void ShowAnalyticSummaryButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        var analyticSummaryPopup = new AnalyticSummaryPopup(ViewModel.GetProcessPerformanceTable());
-        analyticSummaryPopup.XamlRoot = this.Content.XamlRoot;
-        analyticSummaryPopup.RequestedTheme = this.ActualTheme;
-        await analyticSummaryPopup.ShowAsync();
-    }
 }

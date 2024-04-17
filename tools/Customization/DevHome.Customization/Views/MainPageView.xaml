@@ -13,49 +13,9 @@
     </UserControl.Resources>
 
     <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-        <!--  Primary settings group (untitled)  -->
-        <StackPanel>
-            <!-- File Explorer Settings -->
-            <controls:SettingsCard
-                x:Uid="FileExplorerCard"
-                AutomationProperties.AccessibilityView="Control"
-                AutomationProperties.AutomationId="NavigateFileExplorerCardButton"
-                Command="{x:Bind ViewModel.NavigateToFileExplorerPageCommand}"
-                HeaderIcon="{ui:FontIcon Glyph=&#xEC50;}"
-                IsClickEnabled="True"
-                Margin="{ThemeResource SettingsCardMargin}"/>
+        
+        <!--  Quiet Background Processes  -->
+        <quietviews:QuietBackgroundProcessesView />
 
-        <!--  Dev Drive Insights  -->
-        <controls:SettingsCard
-            x:Uid="DevDriveInsightsCard"
-            AutomationProperties.AccessibilityView="Control"
-            AutomationProperties.AutomationId="NavigateDevDriveInsightsCardButton"
-            Command="{x:Bind ViewModel.NavigateToDevDriveInsightsPageCommand}"
-            Visibility="{Binding AnyDevDrivesPresent, Converter={StaticResource BoolToVisibilityConverter}}"
-            IsClickEnabled="True"
-            Margin="{ThemeResource SettingsCardMargin}">
-            <controls:SettingsCard.HeaderIcon>
-                <FontIcon Glyph="&#xE3AF;" FontFamily="{ThemeResource AmcFluentIcons}"/>
-            </controls:SettingsCard.HeaderIcon>
-        </controls:SettingsCard>
-
-            <!--  Quiet Background Processes  -->
-            <quietviews:QuietBackgroundProcessesView />
-        </StackPanel>
-
-        <!--  More Windows settings  -->
-        <StackPanel>
-            <TextBlock x:Uid="MoreWindowsSettingsSectionHeader" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
-            <TextBlock x:Uid="MoreWindowsSettingsSectionDescription" Style="{StaticResource SettingsSectionCaptionTextBlockStyle}" />
-            <controls:SettingsCard
-                x:Uid="WindowsDeveloperCard"
-                ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
-                AutomationProperties.AccessibilityView="Control"
-                AutomationProperties.AutomationId="LaunchWindowsDeveloperSettingsButton"
-                Command="{x:Bind ViewModel.LaunchWindowsDeveloperSettingsCommand}"
-                HeaderIcon="{ui:FontIcon Glyph=&#xEC7A;}"
-                IsClickEnabled="True" 
-                Margin="{ThemeResource SettingsCardMargin}"/>
-        </StackPanel>
     </StackPanel>
 </UserControl>
