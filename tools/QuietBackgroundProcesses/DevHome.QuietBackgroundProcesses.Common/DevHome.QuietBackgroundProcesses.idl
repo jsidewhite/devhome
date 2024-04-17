@@ -70,9 +70,6 @@ namespace DevHome.QuietBackgroundProcesses
     runtimeclass QuietBackgroundProcessesSessionManager {
         QuietBackgroundProcessesSessionManager();
         static Boolean IsFeaturePresent();
-        static QuietBackgroundProcessesSession GetSession();
-        static QuietBackgroundProcessesSession TryGetSession();
-        static Boolean HasLastPerformanceRecording();
-        static ProcessPerformanceTable TryGetLastPerformanceRecording();
+        static UInt32 GetInt{ get; };
     }
 }

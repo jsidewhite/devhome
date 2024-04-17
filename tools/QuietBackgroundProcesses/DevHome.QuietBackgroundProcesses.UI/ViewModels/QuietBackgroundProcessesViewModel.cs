@@ -42,13 +42,13 @@ public partial class QuietBackgroundProcessesViewModel : ObservableObject
     [RelayCommand]
     public void QuietButtonClicked()
     {
-        if (QuietButtonChecked)
+        if (IsFeaturePresent)
         {
-            SessionStateText = "QuietButtonChecked";
+            SessionStateText = QuietBackgroundProcessesSessionManager.GetInt.ToString(new CultureInfo("en-US"));
         }
         else
         {
-            SessionStateText = "!QuietButtonChecked";
+            SessionStateText = "!IsFeaturePresent";
         }
     }
 }
