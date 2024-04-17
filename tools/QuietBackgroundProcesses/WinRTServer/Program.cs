@@ -11,8 +11,37 @@ class Program
     // only used for out-of-process WinRT server
 
     // public static void Main(System.Collections.ObjectModel.ReadOnlyCollection<string> args)
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
+        unsafe
+        {
+            var hr = PInvoke.RoInitialize(PInvoke.RO_INIT_TYPE.RO_INIT_MULTITHREADED);
+            if (hr < 0)
+            {
+                Console.WriteLine("Failed to initialize the WinRT runtime.");
+                return hr;
+            }
+
+            if (PInvoke.WindowsCreateString("WinRTServer.TestClass", (uint)"WinRTServer.TestClass".Length, out var classId1) != 0)
+            {
+                Console.WriteLine("Failed to create string.");
+            }
+
+            if (PInvoke.WindowsCreateString("WinRTServer.CalcClass", (uint)"WinRTServer.CalcClass".Length, out var classId2) != 0)
+            {
+                Console.WriteLine("Failed to create string.");
+            }
+
+            if (PInvoke.RoRegisterActivationFactories([classId1, classId2], [InternalModule.GetActivationFactory, InternalModule.GetActivationFactory], out var cookie) != 0)
+            {
+                Console.WriteLine("Failed to register activation factories.");
+            }
+
+            Console.WriteLine("Server is ready. Press any key to exit the server.");
+            Console.ReadLine();
+        }
+
+        return 0;
     }
 }
 
