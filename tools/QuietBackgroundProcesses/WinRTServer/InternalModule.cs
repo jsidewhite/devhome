@@ -1,9 +1,12 @@
-﻿using System.Runtime.InteropServices;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Runtime.InteropServices;
 using WinRT;
 
 namespace WinRTServer;
 
-unsafe class InternalModule
+internal unsafe sealed class InternalModule
 {
     public static int GetActivationFactory(void* activatableClassId, void** factory)
     {

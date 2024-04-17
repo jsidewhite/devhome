@@ -1,38 +1,50 @@
-﻿using System.Runtime.InteropServices;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Runtime.InteropServices;
 using WinRTServer;
 
-class Program
+namespace WinRTServer
 {
-    // only used for out-of-process WinRT server
-    static void Main(string[] args)
+    public sealed class Program
     {
-        unsafe
+        // only used for out-of-process WinRT server
+
+        // public static void Main(string[] args)
+        public static void Main(System.Collections.ObjectModel.ReadOnlyCollection<string> args)
         {
-            PInvoke.RoInitialize(PInvoke.RO_INIT_TYPE.RO_INIT_MULTITHREADED);
-
-            if (PInvoke.WindowsCreateString("WinRTServer.TestClass", (uint)"WinRTServer.TestClass".Length, out var classId1) != 0)
+            unsafe
             {
-                Console.WriteLine("Failed to create string.");
-            }
+                var hr = PInvoke.RoInitialize(PInvoke.RO_INIT_TYPE.RO_INIT_MULTITHREADED);
+                if (hr < 0)
+                {
+                    Console.WriteLine("Failed to initialize the WinRT runtime.");
+                    return;
+                }
 
-            if (PInvoke.WindowsCreateString("WinRTServer.CalcClass", (uint)"WinRTServer.CalcClass".Length, out var classId2) != 0)
-            {
-                Console.WriteLine("Failed to create string.");
-            }
+                if (PInvoke.WindowsCreateString("WinRTServer.TestClass", (uint)"WinRTServer.TestClass".Length, out var classId1) != 0)
+                {
+                    Console.WriteLine("Failed to create string.");
+                }
 
-            if (PInvoke.RoRegisterActivationFactories([classId1, classId2], [InternalModule.GetActivationFactory, InternalModule.GetActivationFactory], out var cookie) != 0)
-            {
-                Console.WriteLine("Failed to register activation factories.");
-            }
+                if (PInvoke.WindowsCreateString("WinRTServer.CalcClass", (uint)"WinRTServer.CalcClass".Length, out var classId2) != 0)
+                {
+                    Console.WriteLine("Failed to create string.");
+                }
 
-            Console.WriteLine("Server is ready. Press any key to exit the server.");
-            Console.ReadLine();
+                if (PInvoke.RoRegisterActivationFactories([classId1, classId2], [InternalModule.GetActivationFactory, InternalModule.GetActivationFactory], out var cookie) != 0)
+                {
+                    Console.WriteLine("Failed to register activation factories.");
+                }
+
+                Console.WriteLine("Server is ready. Press any key to exit the server.");
+                Console.ReadLine();
+            }
         }
     }
 }
 
-
-internal partial class PInvoke
+internal sealed partial class PInvoke
 {
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal unsafe delegate int PfnActivationFactoryCallback(void* classId, void** activationFactory);
@@ -43,7 +55,11 @@ internal partial class PInvoke
         {
             fixed (void* activatableClassIdsLocal = activatableClassIds)
             {
-                if (activatableClassIds.Length != activationFactoryCallbacks.Length) throw new ArgumentException();
+                if (activatableClassIds.Length != activationFactoryCallbacks.Length)
+                {
+                    throw new ArgumentException("Failed really hard");
+                }
+
                 int result = RoRegisterActivationFactories(activatableClassIdsLocal, activationFactoryCallbacks, (uint)activationFactoryCallbacks.Length, cookieLocal);
                 return result;
             }
