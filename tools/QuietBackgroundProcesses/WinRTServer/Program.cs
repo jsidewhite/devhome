@@ -4,47 +4,19 @@
 using System.Runtime.InteropServices;
 using WinRTServer;
 
-namespace WinRTServer
+#pragma warning disable CA1852 // Rethrow to preserve stack details
+#pragma warning disable SA1400 // Rethrow to preserve stack details
+class Program
 {
-    public sealed class Program
+    // only used for out-of-process WinRT server
+
+    // public static void Main(System.Collections.ObjectModel.ReadOnlyCollection<string> args)
+    static void Main(string[] args)
     {
-        // only used for out-of-process WinRT server
-
-        // public static void Main(string[] args)
-        public static void Main(System.Collections.ObjectModel.ReadOnlyCollection<string> args)
-        {
-            unsafe
-            {
-                var hr = PInvoke.RoInitialize(PInvoke.RO_INIT_TYPE.RO_INIT_MULTITHREADED);
-                if (hr < 0)
-                {
-                    Console.WriteLine("Failed to initialize the WinRT runtime.");
-                    return;
-                }
-
-                if (PInvoke.WindowsCreateString("WinRTServer.TestClass", (uint)"WinRTServer.TestClass".Length, out var classId1) != 0)
-                {
-                    Console.WriteLine("Failed to create string.");
-                }
-
-                if (PInvoke.WindowsCreateString("WinRTServer.CalcClass", (uint)"WinRTServer.CalcClass".Length, out var classId2) != 0)
-                {
-                    Console.WriteLine("Failed to create string.");
-                }
-
-                if (PInvoke.RoRegisterActivationFactories([classId1, classId2], [InternalModule.GetActivationFactory, InternalModule.GetActivationFactory], out var cookie) != 0)
-                {
-                    Console.WriteLine("Failed to register activation factories.");
-                }
-
-                Console.WriteLine("Server is ready. Press any key to exit the server.");
-                Console.ReadLine();
-            }
-        }
     }
 }
 
-internal sealed partial class PInvoke
+internal partial class PInvoke
 {
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal unsafe delegate int PfnActivationFactoryCallback(void* classId, void** activationFactory);
@@ -57,7 +29,7 @@ internal sealed partial class PInvoke
             {
                 if (activatableClassIds.Length != activationFactoryCallbacks.Length)
                 {
-                    throw new ArgumentException("Failed really hard");
+                    throw new ArgumentException("sdf");
                 }
 
                 int result = RoRegisterActivationFactories(activatableClassIdsLocal, activationFactoryCallbacks, (uint)activationFactoryCallbacks.Length, cookieLocal);
@@ -107,3 +79,7 @@ internal sealed partial class PInvoke
         RO_INIT_MULTITHREADED = 1,
     }
 }
+
+
+#pragma warning restore SA1400 // Rethrow to preserve stack details
+#pragma warning restore CA1852 // Rethrow to preserve stack details
