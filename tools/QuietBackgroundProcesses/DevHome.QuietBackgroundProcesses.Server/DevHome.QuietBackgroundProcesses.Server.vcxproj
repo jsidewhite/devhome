@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.props" Condition="Exists('..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.props')" />
   <PropertyGroup Label="Globals">
     <Language>C++</Language>
   </PropertyGroup>
@@ -164,6 +165,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
+    <Import Project="..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -171,5 +173,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
     <Error Condition="!Exists('..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.CsWinRT.2.0.4\build\Microsoft.Windows.CsWinRT.targets'))" />
   </Target>
 </Project>
