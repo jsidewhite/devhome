@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="DevHome.Elevation.UI.Views.ElevationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctControls="using:CommunityToolkit.WinUI.Controls">
+
+    <StackPanel Orientation="Vertical">
+        
+            <!-- Quiet session setting area -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="{x:Bind ViewModel.SessionStateText, Mode=OneWay}"
+                    Margin="{StaticResource MediumLeftRightMargin}"
+                    VerticalAlignment="Center"
+                    TextTrimming="CharacterEllipsis" />
+
+                <!-- Start/Stop button -->
+                <ToggleButton
+                    Content="Button Text"
+                    IsEnabled="{x:Bind ViewModel.IsFeaturePresent, Mode=OneWay}"
+                    IsChecked="{x:Bind ViewModel.QuietButtonChecked, Mode=TwoWay}"
+                    Command="{x:Bind ViewModel.QuietButtonClickedCommand}" />
+            </StackPanel>
+
+    </StackPanel>
+</UserControl>
