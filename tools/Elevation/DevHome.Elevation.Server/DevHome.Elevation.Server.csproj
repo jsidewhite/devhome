@@ -39,13 +39,12 @@
     <SelfContained Condition="'$(OutputType)'!='Library'">true</SelfContained>
     <CsWinRTWindowsMetadata>10.0.22621.0</CsWinRTWindowsMetadata>
     <CsWinRTEnableLogging>true</CsWinRTEnableLogging>
-    <StartupObject>WinRTServer.Program</StartupObject>
     -->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.4" />
-    <None Include="bin/$(Platform)/$(Configuration)/$(TargetFramework)/win-$(Platform)/WinRTServer.winmd">
+    <None Include="bin/$(Platform)/$(Configuration)/$(TargetFramework)/win-$(Platform)/DevHome.Elevation.Server.winmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Link>%(Filename).winmd</Link>
       <Visible>false</Visible>

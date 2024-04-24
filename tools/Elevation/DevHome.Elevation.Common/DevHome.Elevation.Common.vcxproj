@@ -11,7 +11,7 @@
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
-    <ProjectGuid>{4B370E2F-FB1D-4887-90BF-3B72517485CE}</ProjectGuid>
+    <ProjectGuid>{320FF3FF-C183-42D2-98CE-97CDF48EA54E}</ProjectGuid>
     <ProjectName>DevHome.Elevation.Common</ProjectName>
     <RootNamespace>DevHome.Elevation</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>

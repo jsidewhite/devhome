@@ -23,7 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
     <ProjectReference Include="..\DevHome.Elevation.ElevatedServer.Projection\DevHome.Elevation.ElevatedServer.Projection.csproj" />
-    <ProjectReference Include="..\WinRTServer\WinRTServer.csproj" />
+    <ProjectReference Include="..\DevHome.Elevation.Server\DevHome.Elevation.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>

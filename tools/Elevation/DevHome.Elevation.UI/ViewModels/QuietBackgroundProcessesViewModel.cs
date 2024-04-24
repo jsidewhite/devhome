@@ -8,11 +8,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
 using DevHome.Common.Services;
+using DevHome.Elevation.Server;
 using DevHome.Telemetry;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Windows.Foundation.Diagnostics;
-using WinRTServer;
 using WinUIEx;
 
 namespace DevHome.Elevation.UI.ViewModels;
