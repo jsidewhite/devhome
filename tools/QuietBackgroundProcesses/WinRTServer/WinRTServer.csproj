@@ -34,9 +34,12 @@
 
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CsWinRTComponent>true</CsWinRTComponent>
-    <!--
-    <SelfContained Condition="'$(OutputType)'=='Library'">false</SelfContained>
+
+    
     <SelfContained Condition="'$(OutputType)'!='Library'">true</SelfContained>
+    <!--
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <SelfContained Condition="'$(OutputType)'=='Library'">false</SelfContained>
     <CsWinRTWindowsMetadata>10.0.22621.0</CsWinRTWindowsMetadata>
     <CsWinRTEnableLogging>true</CsWinRTEnableLogging>
     <StartupObject>WinRTServer.Program</StartupObject>
