@@ -2,9 +2,26 @@
 
   <Import Project="$(SolutionDir)ToolingVersions.props" />
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWinUI>false</UseWinUI>
+    <CsWinRTEnabled>true</CsWinRTEnabled>
+    <StartupObject>WinRTServer.Program</StartupObject>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <Platforms>x86;x64;arm64</Platforms>
+    <PublishProfileFullPath Condition="'$(BuildingInsideVisualStudio)' != 'True'">$(SolutionDir)\src\Properties\PublishProfiles\win-$(Platform).pubxml</PublishProfileFullPath>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!-- Change the OutputType to 'Library' if you want to use in-process WinRT server -->
-    <OutputType>Exe</OutputType>
     <BuildRing Condition="'$(BuildRing)'==''">Dev</BuildRing>
     <ApplicationIcon Condition="'$(BuildRing)'=='Dev'">$(SolutionDir)\src\Assets\Dev\DevHome_Dev.ico</ApplicationIcon>
     <ApplicationIcon Condition="'$(BuildRing)'=='Canary'">$(SolutionDir)\src\Assets\Canary\DevHome_Canary.ico</ApplicationIcon>
@@ -17,11 +34,13 @@
 
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CsWinRTComponent>true</CsWinRTComponent>
+    <!--
     <SelfContained Condition="'$(OutputType)'=='Library'">false</SelfContained>
     <SelfContained Condition="'$(OutputType)'!='Library'">true</SelfContained>
     <CsWinRTWindowsMetadata>10.0.22621.0</CsWinRTWindowsMetadata>
     <CsWinRTEnableLogging>true</CsWinRTEnableLogging>
     <StartupObject>WinRTServer.Program</StartupObject>
+    -->
   </PropertyGroup>
 
   <ItemGroup>
