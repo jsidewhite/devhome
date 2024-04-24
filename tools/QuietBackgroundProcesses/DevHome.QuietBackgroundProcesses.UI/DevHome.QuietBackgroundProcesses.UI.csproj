@@ -7,6 +7,7 @@
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
+    <CsWinRTIncludes>WinRTServer</CsWinRTIncludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,12 +19,22 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
+    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\DevHome.Common.csproj" />
-    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection\DevHome.QuietBackgroundProcesses.ElevatedServer.Projection.csproj" />
-    <ProjectReference Include="..\WinRTServer\WinRTServer.csproj" />
+    <Manifest Include="$(ApplicationManifest)" />
+    
+    <CsWinRTInputs Include="W:\repo\devhome\tools\QuietBackgroundProcesses\WinRTServer\bin\x64\Release\net8.0-windows10.0.22621.0\WinRTServer.winmd">
+      <Name>%(Filename)</Name>
+      <IsWinMDFile>true</IsWinMDFile>
+    </CsWinRTInputs>
+    <None Include="W:\repo\devhome\tools\QuietBackgroundProcesses\WinRTServer\bin\x64\Release\net8.0-windows10.0.22621.0\WinRTServer.winmd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>%(Filename).winmd</Link>
+      <Visible>false</Visible>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
