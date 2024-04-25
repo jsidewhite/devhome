@@ -320,42 +320,22 @@ std::optional<std::wstring> TryGetProcessName(HANDLE processHandle)
     return std::nullopt;
 }
 
-HRESULT TryGetServiceNames()
+
+std::map<ULONG, std::wstring> m_runningServiceNames;
+
+std::map<ULONG, std::wstring> TryGetServiceNames()
 {
-    while (!IsDebuggerPresent())
-    {
-        Sleep(100);
-    };
-    DebugBreak();
-    HRESULT hr;
-
     SC_HANDLE m_hScmManager = OpenSCManager(NULL, NULL, SC_MANAGER_ENUMERATE_SERVICE);
-    RETURN_LAST_ERROR_IF(m_hScmManager == NULL);
+    THROW_LAST_ERROR_IF(m_hScmManager == NULL);
 
-    LPENUM_SERVICE_STATUS_PROCESS services = NULL;
+    std::unique_ptr<LPENUM_SERVICE_STATUS_PROCESS> services;
     ULONG servicesSize = 0;
     ULONG servicesCount = 0;
-    ULONG resumeIndex = 0;
     BOOL result;
     ULONG index;
+    ULONG resumeIndex = 0;
 
-    result = ::EnumServicesStatusEx(
-        m_hScmManager,
-        SC_ENUM_PROCESS_INFO,
-        SERVICE_DRIVER,
-        SERVICE_STATE_ALL,
-        NULL,
-        0,
-        &servicesSize,
-        &servicesCount,
-        &resumeIndex,
-        NULL);
-
-    if (result == FALSE && GetLastError() != ERROR_MORE_DATA)
-    {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        goto Exit;
-    }
+    THROW_LAST_ERROR_IF(!::EnumServicesStatusEx(m_hScmManager, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, NULL, 0, &servicesSize, &servicesCount, &resumeIndex, NULL));
 
     for (;;)
     {
@@ -366,50 +346,27 @@ HRESULT TryGetServiceNames()
         //
         servicesSize += servicesSize;
 
-        services = (LPENUM_SERVICE_STATUS_PROCESS) new (std::nothrow) BYTE[servicesSize];
-
-        if (services == NULL)
-        {
-            hr = HRESULT_FROM_WIN32(ERROR_NOT_ENOUGH_MEMORY);
-            goto Exit;
-        }
-
-        ZeroMemory(services, servicesSize);
+        auto services = std::unique_ptr<ENUM_SERVICE_STATUS_PROCESS>((LPENUM_SERVICE_STATUS_PROCESS) new BYTE[servicesSize]);
+        //services = (LPENUM_SERVICE_STATUS_PROCESS) new (std::nothrow) BYTE[servicesSize];
+        THROW_IF_NULL_ALLOC(services);
+        ZeroMemory(services.get(), servicesSize);
 
         //
         // Always enumerate all services starting from index 0.
         //
         resumeIndex = 0;
 
-        result = ::EnumServicesStatusEx(
-            m_hScmManager,
-            SC_ENUM_PROCESS_INFO,
-            SERVICE_DRIVER,
-            SERVICE_STATE_ALL,
-            (LPBYTE)services,
-            servicesSize,
-            &servicesSize,
-            &servicesCount,
-            &resumeIndex,
-            NULL);
-        if (result)
+        if (EnumServicesStatusEx(m_hScmManager, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, (LPBYTE)services.get(), servicesSize, &servicesSize, &servicesCount, &resumeIndex, NULL))
         {
             break;
         }
         else if (GetLastError() == ERROR_MORE_DATA)
         {
-            //
             // Increase the buffer size and try again.
-            //
+            continue;
+        }
 
-            delete[] services;
-            services = NULL;
-        }
-        else
-        {
-            hr = HRESULT_FROM_WIN32(GetLastError());
-            goto Exit;
-        }
+        THROW_LAST_ERROR();
     }
 
     //
@@ -428,16 +385,6 @@ HRESULT TryGetServiceNames()
         }
         */
     }
-
-    hr = S_OK;
-
-Exit:
-
-    if (services)
-    {
-        delete[] services;
-    }
-    return hr;
 }
 
 ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
