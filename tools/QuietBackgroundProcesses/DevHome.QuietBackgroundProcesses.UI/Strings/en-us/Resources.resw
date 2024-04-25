@@ -141,7 +141,7 @@
     <comment>Label for analytic summary close button</comment>
   </data>
 
-  <!-- Simple table control -->
+  <!-- Process performance table control -->
   <data name="ProcessPerformanceTableControl_Heading_Process.Text" xml:space="preserve">
     <value>Process</value>
     <comment>Table heading for Process column</comment>
@@ -153,6 +153,10 @@
   <data name="ProcessPerformanceTableControl_Heading_CpuAboveThreshold.Text" xml:space="preserve">
     <value>CPU above threshold</value>
     <comment>Table heading for 'CPU time above threshold' column</comment>
+  </data>
+  <data name="ProcessPerformanceTableControl_Heading_CpuAboveThreshold.ToolTipService.ToolTip" xml:space="preserve">
+    <value>The time that a process spent using the CPU at greater than 2% utilization.  i.e. `Sample period (μm) * Count of samples where [(Process CPU time spent in sample (μm) / Sample period (μm) / Logical-core count) > 0.02]`</value>
+    <comment>Sortby dropdown option</comment>
   </data>
   <data name="MinutesAbbreviation.Text" xml:space="preserve">
     <value>min</value>
