@@ -328,34 +328,16 @@ std::map<ULONG, std::wstring> TryGetServiceNames()
     SC_HANDLE m_hScmManager = OpenSCManager(NULL, NULL, SC_MANAGER_ENUMERATE_SERVICE);
     THROW_LAST_ERROR_IF(m_hScmManager == NULL);
 
-    std::unique_ptr<LPENUM_SERVICE_STATUS_PROCESS> services;
-    ULONG servicesSize = 0;
+    std::unique_ptr<ENUM_SERVICE_STATUS_PROCESS> services{};
     ULONG servicesCount = 0;
-    BOOL result;
-    ULONG index;
-    ULONG resumeIndex = 0;
-
-    THROW_LAST_ERROR_IF(!::EnumServicesStatusEx(m_hScmManager, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, NULL, 0, &servicesSize, &servicesCount, &resumeIndex, NULL));
+    ULONG servicesSize = 0;
 
     for (;;)
     {
-        //
-        // Because services can be added and removed randomly
-        // double the required size for the buffer to reduce number of trips
-        // to EnumServicestatusEx. Repeat this in a loop until the call succeeds
-        //
-        servicesSize += servicesSize;
+        // Always enumerate all services starting from index 0
+        ULONG resumeIndex = 0;
 
-        auto services = std::unique_ptr<ENUM_SERVICE_STATUS_PROCESS>((LPENUM_SERVICE_STATUS_PROCESS) new BYTE[servicesSize]);
-        //services = (LPENUM_SERVICE_STATUS_PROCESS) new (std::nothrow) BYTE[servicesSize];
-        THROW_IF_NULL_ALLOC(services);
-        ZeroMemory(services.get(), servicesSize);
-
-        //
-        // Always enumerate all services starting from index 0.
-        //
-        resumeIndex = 0;
-
+        // Get services
         if (EnumServicesStatusEx(m_hScmManager, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, (LPBYTE)services.get(), servicesSize, &servicesSize, &servicesCount, &resumeIndex, NULL))
         {
             break;
@@ -363,6 +345,10 @@ std::map<ULONG, std::wstring> TryGetServiceNames()
         else if (GetLastError() == ERROR_MORE_DATA)
         {
             // Increase the buffer size and try again.
+            servicesSize *= 2;
+            services.reset(reinterpret_cast<ENUM_SERVICE_STATUS_PROCESS*>(new BYTE[servicesSize]));
+            THROW_IF_NULL_ALLOC(services);
+            ZeroMemory(services.get(), servicesSize);
             continue;
         }
 
@@ -374,7 +360,7 @@ std::map<ULONG, std::wstring> TryGetServiceNames()
     // We keep going if one addition fails.
     //
 
-    for (index = 0; index < servicesCount; index++)
+    for (ULONG index = 0; index < servicesCount; index++)
     {
         /*
         hr = AddService(services[index].lpServiceName, services[index].ServiceStatusProcess.dwServiceType);
