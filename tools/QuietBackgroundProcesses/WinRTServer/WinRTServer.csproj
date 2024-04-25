@@ -2,22 +2,15 @@
 
   <Import Project="$(SolutionDir)ToolingVersions.props" />
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
-    <OutputType>WinExe</OutputType>
-  </PropertyGroup>
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWinUI>false</UseWinUI>
     <CsWinRTEnabled>true</CsWinRTEnabled>
     <StartupObject>WinRTServer.Program</StartupObject>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <Platforms>x86;x64;arm64</Platforms>
-    <PublishProfileFullPath Condition="'$(BuildingInsideVisualStudio)' != 'True'">$(SolutionDir)\src\Properties\PublishProfiles\win-$(Platform).pubxml</PublishProfileFullPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -46,6 +39,8 @@
     -->
   </PropertyGroup>
 
+
+
   <ItemGroup>
 
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
@@ -60,5 +55,7 @@
       <Visible>false</Visible>
     </None>
   </ItemGroup>
+
+    <Target Name="CsWinRTAuthoring_AddManagedDependencies" />
 
 </Project>

@@ -10,7 +10,7 @@
     </Extension>
 
     <Extension Category="windows.activatableClass.outOfProcessServer">
-      <OutOfProcessServer ServerName="aaa\WinRTServer" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
+      <OutOfProcessServer ServerName="WinRTServer" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>WinRTServer.exe</Path>
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="WinRTServer.TestClass" />
