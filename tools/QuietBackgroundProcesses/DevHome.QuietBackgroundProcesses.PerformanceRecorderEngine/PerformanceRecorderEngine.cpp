@@ -320,8 +320,129 @@ std::optional<std::wstring> TryGetProcessName(HANDLE processHandle)
     return std::nullopt;
 }
 
+HRESULT TryGetServiceNames()
+{
+    while (!IsDebuggerPresent())
+    {
+        Sleep(100);
+    };
+    DebugBreak();
+    HRESULT hr;
+
+    SC_HANDLE m_hScmManager = OpenSCManager(NULL, NULL, SC_MANAGER_ENUMERATE_SERVICE);
+    RETURN_LAST_ERROR_IF(m_hScmManager == NULL);
+
+    LPENUM_SERVICE_STATUS_PROCESS services = NULL;
+    ULONG servicesSize = 0;
+    ULONG servicesCount = 0;
+    ULONG resumeIndex = 0;
+    BOOL result;
+    ULONG index;
+
+    result = ::EnumServicesStatusEx(
+        m_hScmManager,
+        SC_ENUM_PROCESS_INFO,
+        SERVICE_DRIVER,
+        SERVICE_STATE_ALL,
+        NULL,
+        0,
+        &servicesSize,
+        &servicesCount,
+        &resumeIndex,
+        NULL);
+
+    if (result == FALSE && GetLastError() != ERROR_MORE_DATA)
+    {
+        hr = HRESULT_FROM_WIN32(GetLastError());
+        goto Exit;
+    }
+
+    for (;;)
+    {
+        //
+        // Because services can be added and removed randomly
+        // double the required size for the buffer to reduce number of trips
+        // to EnumServicestatusEx. Repeat this in a loop until the call succeeds
+        //
+        servicesSize += servicesSize;
+
+        services = (LPENUM_SERVICE_STATUS_PROCESS) new (std::nothrow) BYTE[servicesSize];
+
+        if (services == NULL)
+        {
+            hr = HRESULT_FROM_WIN32(ERROR_NOT_ENOUGH_MEMORY);
+            goto Exit;
+        }
+
+        ZeroMemory(services, servicesSize);
+
+        //
+        // Always enumerate all services starting from index 0.
+        //
+        resumeIndex = 0;
+
+        result = ::EnumServicesStatusEx(
+            m_hScmManager,
+            SC_ENUM_PROCESS_INFO,
+            SERVICE_DRIVER,
+            SERVICE_STATE_ALL,
+            (LPBYTE)services,
+            servicesSize,
+            &servicesSize,
+            &servicesCount,
+            &resumeIndex,
+            NULL);
+        if (result)
+        {
+            break;
+        }
+        else if (GetLastError() == ERROR_MORE_DATA)
+        {
+            //
+            // Increase the buffer size and try again.
+            //
+
+            delete[] services;
+            services = NULL;
+        }
+        else
+        {
+            hr = HRESULT_FROM_WIN32(GetLastError());
+            goto Exit;
+        }
+    }
+
+    //
+    // Add the enumerated services to the driver map.
+    // We keep going if one addition fails.
+    //
+
+    for (index = 0; index < servicesCount; index++)
+    {
+        /*
+        hr = AddService(services[index].lpServiceName, services[index].ServiceStatusProcess.dwServiceType);
+
+        if (FAILED(hr))
+        {
+            TRACE_MESSAGE(DlWarning, "0x%08x Failed to add service (%ws) to service map", hr, services[index].lpServiceName);
+        }
+        */
+    }
+
+    hr = S_OK;
+
+Exit:
+
+    if (services)
+    {
+        delete[] services;
+    }
+    return hr;
+}
+
 ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
 {
+    TryGetServiceNames();
     auto process = wil::unique_process_handle{ OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processId) };
     if (!process)
     {
