@@ -5,7 +5,7 @@ Licensed under the MIT License. See LICENSE in the project root for license info
 
 Module Name:
 
-    MicrosoftTelemetry.h
+    TraceLoggingConfig.h
 
 Abstract:
 
