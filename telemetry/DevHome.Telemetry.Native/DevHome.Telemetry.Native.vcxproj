@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\DevHomeTelemetryProvider.h" />
+    <ClInclude Include="inc\MicrosoftTelemetry.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

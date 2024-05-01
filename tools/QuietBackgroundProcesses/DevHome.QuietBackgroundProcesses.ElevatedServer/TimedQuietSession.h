@@ -16,6 +16,8 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
+#include "DevHomeTelemetryProvider.h"
+
 #include "DevHome.QuietBackgroundProcesses.h"
 
 #include "Timer.h"
@@ -81,6 +83,10 @@ struct TimedQuietSession
 {
     TimedQuietSession(std::chrono::seconds seconds)
     {
+        auto activity = DevHomeTelemetryProvider::QuietModeSession::Start(seconds.count());
+
+        m_totalSeconds = seconds;
+
         m_timer = std::make_unique<Timer>(seconds, [this]() {
             auto lock = std::scoped_lock(m_mutex);
             Deactivate();
@@ -88,6 +94,9 @@ struct TimedQuietSession
 
         // Turn on quiet mode
         m_quietState = QuietState::TurnOn();
+        
+        // Save activity for telemetry
+        m_activity = std::move(activity);
     }
 
     TimedQuietSession(TimedQuietSession&& other) noexcept = default;
@@ -112,6 +121,8 @@ struct TimedQuietSession
     {
         auto lock = std::scoped_lock(m_mutex);
 
+        auto totalQuietWindowTime = static_cast<int64_t>(m_totalSeconds.count()) - m_timer->TimeLeftInSeconds();
+
         Deactivate();
         m_timer->Cancel();
 
@@ -121,6 +132,9 @@ struct TimedQuietSession
         });
 
         destructionThread.detach();
+
+        auto f = m_activity.ContinueOnCurrentThread();
+        m_activity.Stop(S_OK, totalQuietWindowTime);
     }
 
 private:
@@ -140,4 +154,7 @@ private:
     QuietState::unique_quietwindowclose_call m_quietState{ false };
     std::unique_ptr<Timer> m_timer;
     std::mutex m_mutex;
+
+    DevHomeTelemetryProvider::QuietModeSession m_activity;
+    std::chrono::seconds m_totalSeconds{};
 };
