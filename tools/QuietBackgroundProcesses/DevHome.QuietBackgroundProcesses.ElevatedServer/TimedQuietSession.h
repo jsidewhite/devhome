@@ -86,7 +86,8 @@ struct TimedQuietSession
 {
     TimedQuietSession(std::chrono::seconds seconds)
     {
-        auto activity = DevHomeTelemetryProvider::QuietBackgroundProcessesSession::Start(seconds.count());
+        // Save activity for telemetry
+        m_activity = DevHomeTelemetryProvider::QuietBackgroundProcessesSession::Start(seconds.count());
 
         m_totalSeconds = seconds;
 
