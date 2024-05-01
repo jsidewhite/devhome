@@ -19,93 +19,12 @@
 #include <wil/winrt.h>
 #include <wil/Tracelogging.h>
 
+#include "DevHomeTelemetryNative.h"
+
 #include "TimedQuietSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.h"
 
-TRACELOGGING_DEFINE_PROVIDER(
-    g_hTelemetryProvider,
-    "Microsoft.Windows.DevHome",
-    (0x2e74ff65, 0xbbda, 0x5e80, 0x4c, 0x0a, 0xbd, 0x83, 0x20, 0xd4, 0x22, 0x3b),
-    TraceLoggingOptionMicrosoftTelemetry());
-
-class SnapFlyoutTelemetry : public wil::TraceLoggingProvider
-{
-    IMPLEMENT_TRACELOGGING_CLASS_WITH_MICROSOFT_TELEMETRY(SnapFlyoutTelemetry,
-                                                          "Microsoft.Windows.Shell.ExplorerExtensions.SnapFlyout",
-                                                          /* dc731193-9640-46e7-a49c-6eccd03d94c2*/
-                                                          (0xdc731193, 0x9640, 0x46e7, 0xa4, 0x9c, 0x6e, 0xcc, 0xd0, 0x3d, 0x94, 0xc2));
-
-public:
-    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM2(SnapZoneActivated, PDT_ProductAndServicePerformance | PDT_ProductAndServiceUsage, PCWSTR, zoneName, PCWSTR, layoutName);
-
-    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM1(SnapSuggestionActivated, PDT_ProductAndServicePerformance | PDT_ProductAndServiceUsage, PCWSTR, layoutName);
-
-    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM1(SnapFlyoutShown, PDT_ProductAndServicePerformance | PDT_ProductAndServiceUsage, bool, invokedbyHotkey);
-
-    DEFINE_TRACELOGGING_EVENT_STRING(TraceMessage, Message);
-
-    DEFINE_COMPLIANT_MEASURES_EVENT_PARAM1(UnexpectedVisibilityState, PDT_ProductAndServicePerformance, unsigned, state);
-};
-
-
-
-
-[uuid(5526aed1-f6e5-5896-cbf0-27d9f59b6be7)]
-class DesktopAppXProvider : public wil::TraceLoggingProvider
-{
-    // {5526aed1-f6e5-5896-cbf0-27d9f59b6be7}
-    IMPLEMENT_TRACELOGGING_CLASS(DesktopAppXProvider, "Microsoft.Windows.ApplicationModel.DesktopAppx", (0x5526aed1, 0xf6e5, 0x5896, 0xcb, 0xf0, 0x27, 0xd9, 0xf5, 0x9b, 0x6b, 0xe7));
-
-public:
-    BEGIN_TRACELOGGING_ACTIVITY_CLASS(AllowServicing)
-    DEFINE_ACTIVITY_START(int packageCount, BOOL terminateRunningApps)
-    {
-        TraceLoggingClassWriteStart(AllowServicing,
-                                    TraceLoggingValue(packageCount, "packageCount"),
-                                    TraceLoggingValue(terminateRunningApps, "terminateRunningApps"));
-    }
-    END_ACTIVITY_CLASS();
-
-    DEFINE_EVENT_METHOD(JitvAllowServicingError)
-    (PCWSTR * activeApps, int appCount)
-    {
-        if (activeApps != nullptr && appCount > 0)
-        {
-            for (int i = 0; i < appCount; i++)
-            {
-                TraceLoggingWrite(
-                    TraceLoggingType::Provider(),
-                    "JitvAllowServicingError",
-                    TraceLoggingValue(activeApps[i] == nullptr ? L"NULL" : activeApps[i], "App"),
-                    TraceLoggingKeyword(MICROSOFT_KEYWORD_TELEMETRY),
-                    TraceLoggingOpcode(WINEVENT_OPCODE_INFO),
-                    TraceLoggingLevel(WINEVENT_LEVEL_ERROR),
-                    TelemetryPrivacyDataTag(PDT_ProductAndServiceUsage));
-            }
-        }
-        else
-        {
-            TraceLoggingWrite(
-                TraceLoggingType::Provider(),
-                "JitvAllowServicingError",
-                TraceLoggingValue(L"Invalid Data", "App"),
-                TraceLoggingKeyword(MICROSOFT_KEYWORD_TELEMETRY),
-                TraceLoggingOpcode(WINEVENT_OPCODE_INFO),
-                TraceLoggingLevel(WINEVENT_LEVEL_ERROR),
-                TelemetryPrivacyDataTag(PDT_ProductAndServiceUsage));
-        }
-    }
-
-    BEGIN_TRACELOGGING_ACTIVITY_CLASS(ShutdownPackage)
-    DEFINE_ACTIVITY_START(PCWSTR packageFullName, bool isUninstall)
-    {
-        TraceLoggingClassWriteStart(ShutdownPackage,
-                                    TraceLoggingValue(packageFullName, "packageFullName"),
-                                    TraceLoggingValue(isUninstall, "isUninstall"));
-    }
-    END_ACTIVITY_CLASS();
-};
 
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 

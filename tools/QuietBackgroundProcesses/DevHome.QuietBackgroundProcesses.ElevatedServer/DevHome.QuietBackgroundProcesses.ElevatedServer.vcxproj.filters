@@ -17,6 +17,7 @@
     <ClInclude Include="telemetry\MicrosoftTelemetry.h">
       <Filter>telemetry</Filter>
     </ClInclude>
+    <ClInclude Include="DevHomeTelemetryNative.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
