@@ -19,14 +19,16 @@ public:
     BEGIN_TRACELOGGING_ACTIVITY_CLASS(QuietBackgroundProcessesSession);
     DEFINE_ACTIVITY_START(uint64_t expectedDuration)
     {
-        TraceLoggingClassWriteStart(QuietModeSession,
-                                    TraceLoggingValue(expectedDuration, "ExpectedDuration"));
+        TraceLoggingClassWriteStart(
+            QuietModeSession,
+            TraceLoggingValue(expectedDuration, "ExpectedDuration"));
     }
     DEFINE_ACTIVITY_STOP(HRESULT hr, uint64_t actualDuration)
     {
-        TraceLoggingClassWriteStop(QuietBackgroundProcessesSession,
-                                   TraceLoggingValue(hr, "Hresult"),
-                                   TraceLoggingValue(actualDuration, "ActualDuration"));
+        TraceLoggingClassWriteStop(
+            QuietBackgroundProcessesSession,
+            TraceLoggingValue(hr, "Hresult"),
+            TraceLoggingValue(actualDuration, "ActualDuration"));
     }
     END_ACTIVITY_CLASS();
 };
