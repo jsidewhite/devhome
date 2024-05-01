@@ -3,7 +3,8 @@
 
 #include <pch.h>
 
-#include <TraceLoggingProvider.h>
+//#include <TraceLoggingProvider.h>
+//#include <MicrosoftTelemetry.h>
 
 #include <wil/Tracelogging.h>
 
@@ -14,9 +15,9 @@ TRACELOGGING_DEFINE_PROVIDER(
     TraceLoggingOptionMicrosoftTelemetry());
 
 [uuid(2e74ff65-bbda-5e80-4c0a-bd8320d4223b)]
-class DesktopAppXProvider : public wil::TraceLoggingProvider
+class DevHomeTelemetryProvider : public wil::TraceLoggingProvider
 {
-    IMPLEMENT_TRACELOGGING_CLASS(DesktopAppXProvider, "Microsoft.Windows.ApplicationModel.DesktopAppx", (0x2e74ff65, 0xbbda, 0x5e80, 0x4c, 0x0a, 0xbd, 0x83, 0x20, 0xd4, 0x22, 0x3b));
+    IMPLEMENT_TRACELOGGING_CLASS(DesktopAppXProvider, "Microsoft.Windows.DevHome", (0x2e74ff65, 0xbbda, 0x5e80, 0x4c, 0x0a, 0xbd, 0x83, 0x20, 0xd4, 0x22, 0x3b));
 
 public:
     BEGIN_TRACELOGGING_ACTIVITY_CLASS(AllowServicing)

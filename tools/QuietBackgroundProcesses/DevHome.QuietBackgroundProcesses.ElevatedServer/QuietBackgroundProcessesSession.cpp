@@ -19,7 +19,7 @@
 #include <wil/winrt.h>
 #include <wil/Tracelogging.h>
 
-#include "DevHomeTelemetryNative.h"
+#include "DevHomeTelemetryProvider.h"
 
 #include "TimedQuietSession.h"
 
