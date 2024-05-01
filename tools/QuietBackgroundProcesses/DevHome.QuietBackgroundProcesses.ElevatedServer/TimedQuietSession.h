@@ -104,9 +104,6 @@ struct TimedQuietSession
         samplingPeriod.Duration = 1000 * 10000; // 1 second
         m_performanceRecorderEngine = MakePerformanceRecorderEngine();
         THROW_IF_FAILED(m_performanceRecorderEngine->Start(samplingPeriod));
-        
-        // Save activity for telemetry
-        m_activity = std::move(activity);
     }
 
     TimedQuietSession(TimedQuietSession&& other) noexcept = default;
