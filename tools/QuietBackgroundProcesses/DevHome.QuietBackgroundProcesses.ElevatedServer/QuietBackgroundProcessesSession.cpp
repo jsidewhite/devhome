@@ -7,8 +7,6 @@
 #include <memory>
 #include <mutex>
 
-#include <TraceLoggingProvider.h>
-
 #include <wrl/client.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
@@ -17,12 +15,10 @@
 #include <wil/result_macros.h>
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
-#include <wil/Tracelogging.h>
 
 #include "TimedQuietSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.h"
-
 
 constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
 
