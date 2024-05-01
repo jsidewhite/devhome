@@ -5,7 +5,6 @@
   </PropertyGroup>
   <Import Project="$(SolutionDir)ToolingVersions.props" />
   <Import Project="$(SolutionDir)Directory.CppBuild.props" />
-  <Import Project="$(SolutionDir)telemetry\DevHome.Telemetry.Native\DevHome.Telemetry.Native.targets" />
   <Import Project="..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props" Condition="Exists('..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props')" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
@@ -171,6 +170,7 @@
       <Project>{af5a7fa0-e3e8-44c8-8830-31dd08f583e8}</Project>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="$(SolutionDir)telemetry\DevHome.Telemetry.Native\DevHome.Telemetry.Native.targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />

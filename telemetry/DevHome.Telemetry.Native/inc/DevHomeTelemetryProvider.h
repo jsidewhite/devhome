@@ -7,6 +7,7 @@
 #include <TraceLoggingProvider.h>
 #include <MicrosoftTelemetry.h>
 
+#define __WIL_TRACELOGGING_CONFIG_H
 #include <wil/Tracelogging.h>
 
 // [uuid(2e74ff65-bbda-5e80-4c0a-bd8320d4223b)]
