@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DevHomeTelemetryNative.h" />
     <ClInclude Include="telemetry\MicrosoftTelemetry.h" />
     <ClInclude Include="TimedQuietSession.h" />
     <ClInclude Include="pch.h" />
@@ -163,6 +164,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
+    <Import Project="..\..\..\packages\Microsoft.Telemetry.Inbox.Native.10.0.27556.1000-240212-1832.rs-fun-deploy-dev5-kysabo\build\native\Microsoft.Telemetry.Inbox.Native.targets" Condition="Exists('..\..\..\packages\Microsoft.Telemetry.Inbox.Native.10.0.27556.1000-240212-1832.rs-fun-deploy-dev5-kysabo\build\native\Microsoft.Telemetry.Inbox.Native.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -170,5 +172,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240122.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
     <Error Condition="!Exists('..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.Telemetry.Inbox.Native.10.0.27556.1000-240212-1832.rs-fun-deploy-dev5-kysabo\build\native\Microsoft.Telemetry.Inbox.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Telemetry.Inbox.Native.10.0.27556.1000-240212-1832.rs-fun-deploy-dev5-kysabo\build\native\Microsoft.Telemetry.Inbox.Native.targets'))" />
   </Target>
 </Project>
