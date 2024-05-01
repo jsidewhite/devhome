@@ -5,6 +5,7 @@
   </PropertyGroup>
   <Import Project="$(SolutionDir)ToolingVersions.props" />
   <Import Project="$(SolutionDir)Directory.CppBuild.props" />
+  <Import Project="$(SolutionDir)telemetry\DevHome.Telemetry.Native\DevHome.Telemetry.Native.targets" />
   <Import Project="..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props" Condition="Exists('..\..\..\packages\Microsoft.Internal.Windows.DevHome.Helpers.1.0.20240311-x1907\build\native\Microsoft.Internal.Windows.DevHome.Helpers.props')" />
   <PropertyGroup Label="Globals">
     <CppWinRTOptimized>true</CppWinRTOptimized>
