@@ -19,8 +19,6 @@
 #include <wil/winrt.h>
 #include <wil/Tracelogging.h>
 
-#include "DevHomeTelemetryProvider.h"
-
 #include "TimedQuietSession.h"
 
 #include "DevHome.QuietBackgroundProcesses.h"

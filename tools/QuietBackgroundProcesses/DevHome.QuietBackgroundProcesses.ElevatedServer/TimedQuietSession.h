@@ -16,6 +16,8 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
+#include "DevHomeTelemetryProvider.h"
+
 #include "DevHome.QuietBackgroundProcesses.h"
 
 #include "Timer.h"
@@ -84,6 +86,10 @@ struct TimedQuietSession
 {
     TimedQuietSession(std::chrono::seconds seconds)
     {
+        auto activity = DevHomeTelemetryProvider::QuietModeSession::Start(seconds.count());
+
+        m_totalSeconds = seconds;
+
         m_timer = std::make_unique<Timer>(seconds, [this]() {
             auto lock = std::scoped_lock(m_mutex);
             Deactivate();
@@ -97,6 +103,9 @@ struct TimedQuietSession
         samplingPeriod.Duration = 1000 * 10000; // 1 second
         m_performanceRecorderEngine = MakePerformanceRecorderEngine();
         THROW_IF_FAILED(m_performanceRecorderEngine->Start(samplingPeriod));
+        
+        // Save activity for telemetry
+        m_activity = std::move(activity);
     }
 
     TimedQuietSession(TimedQuietSession&& other) noexcept = default;
@@ -121,6 +130,8 @@ struct TimedQuietSession
     {
         auto lock = std::scoped_lock(m_mutex);
 
+        auto totalQuietWindowTime = static_cast<int64_t>(m_totalSeconds.count()) - m_timer->TimeLeftInSeconds();
+
         Deactivate(result);
         m_timer->Cancel();
 
@@ -130,6 +141,9 @@ struct TimedQuietSession
         });
 
         destructionThread.detach();
+
+        auto f = m_activity.ContinueOnCurrentThread();
+        m_activity.Stop(S_OK, totalQuietWindowTime);
     }
 
 private:
@@ -159,5 +173,8 @@ private:
     std::unique_ptr<Timer> m_timer;
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> m_performanceRecorderEngine;
     std::mutex m_mutex;
+
+    DevHomeTelemetryProvider::QuietModeSession m_activity;
+    std::chrono::seconds m_totalSeconds{};
 };
 #pragma warning(pop)
