@@ -24,11 +24,11 @@ public:
             QuietBackgroundProcesses_Session,
             TraceLoggingValue(expectedDuration, "ExpectedDuration"));
     }
-    DEFINE_ACTIVITY_STOP(HRESULT hr, uint64_t actualDuration)
+    DEFINE_ACTIVITY_STOP(bool manuallyStopped, uint64_t actualDuration)
     {
         TraceLoggingClassWriteStop(
             QuietBackgroundProcesses_Session,
-            TraceLoggingValue(hr, "Hresult"),
+            TraceLoggingValue(manuallyStopped, "ManuallyStopped"),
             TraceLoggingValue(actualDuration, "ActualDuration"));
     }
     END_ACTIVITY_CLASS();

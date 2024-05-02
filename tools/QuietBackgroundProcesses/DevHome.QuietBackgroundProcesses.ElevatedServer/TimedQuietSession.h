@@ -87,13 +87,13 @@ struct TimedQuietSession
     TimedQuietSession(std::chrono::seconds seconds)
     {
         // Save activity for telemetry
-        auto activity = DevHomeTelemetryProvider::QuietBackgroundProcessesSession::Start(seconds.count());
+        auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_Session::Start(seconds.count());
 
         m_totalSeconds = seconds;
 
         m_timer = std::make_unique<Timer>(seconds, [this]() {
             auto lock = std::scoped_lock(m_mutex);
-            Deactivate();
+            Deactivate(false);
         });
 
         // Turn on quiet mode
@@ -128,14 +128,9 @@ struct TimedQuietSession
 
     void Cancel(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result)
     {
-        // Continue activity on current thread
-        auto activity = m_activity.TransferToCurrentThread();
-
         auto lock = std::scoped_lock(m_mutex);
-        
-        auto totalQuietWindowTime = static_cast<int64_t>(m_totalSeconds.count()) - m_timer->TimeLeftInSeconds();
 
-        Deactivate(result);
+        Deactivate(true, result);
         m_timer->Cancel();
 
         // Destruct timer on another thread because it's destructor is blocking
@@ -144,14 +139,16 @@ struct TimedQuietSession
         });
 
         destructionThread.detach();
-
-        // Stop activity
-        activity.Stop(S_OK, totalQuietWindowTime);
     }
 
 private:
-    void Deactivate(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result = nullptr)
+    void Deactivate(bool manuallyStopped, ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result = nullptr)
     {
+        // Continue activity on current thread
+        auto activity = m_activity.TransferToCurrentThread();
+
+        auto totalQuietWindowTime = static_cast<int64_t>(m_totalSeconds.count()) - m_timer->TimeLeftInSeconds();
+
         // Turn off quiet mode
         m_quietState.reset();
 
@@ -167,6 +164,9 @@ private:
         // Release lifetime handles to this elevated server and unelevated client server
         m_unelevatedServer.reset();
         m_elevatedServer.reset();
+
+        // Stop activity
+        activity.Stop(manuallyStopped, totalQuietWindowTime);
     }
 
     UnelevatedServerReference m_unelevatedServer;   // Manager server
@@ -177,7 +177,7 @@ private:
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> m_performanceRecorderEngine;
     std::mutex m_mutex;
 
-    DevHomeTelemetryProvider::QuietBackgroundProcessesSession m_activity;
+    DevHomeTelemetryProvider::QuietBackgroundProcesses_Session m_activity;
     std::chrono::seconds m_totalSeconds{};
 };
 #pragma warning(pop)
