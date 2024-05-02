@@ -17,17 +17,17 @@ class DevHomeTelemetryProvider : public wil::TraceLoggingProvider
 
 public:
 
-    BEGIN_TRACELOGGING_ACTIVITY_CLASS(QuietBackgroundProcesses_Session);
+    BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(QuietBackgroundProcesses_ElevatedServer_Session, PDT_ProductAndServicePerformance, WINEVENT_LEVEL_CRITICAL);
     DEFINE_ACTIVITY_START(uint64_t expectedDuration)
     {
         TraceLoggingClassWriteStart(
-            QuietBackgroundProcesses_Session,
+            QuietBackgroundProcesses_ElevatedServer_Session,
             TraceLoggingValue(expectedDuration, "ExpectedDuration"));
     }
     DEFINE_ACTIVITY_STOP(bool manuallyStopped, uint64_t actualDuration)
     {
         TraceLoggingClassWriteStop(
-            QuietBackgroundProcesses_Session,
+            QuietBackgroundProcesses_ElevatedServer_Session,
             TraceLoggingValue(manuallyStopped, "ManuallyStopped"),
             TraceLoggingValue(actualDuration, "ActualDuration"));
     }

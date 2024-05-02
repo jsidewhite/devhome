@@ -87,7 +87,7 @@ struct TimedQuietSession
     TimedQuietSession(std::chrono::seconds seconds)
     {
         // Save activity for telemetry
-        auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_Session::Start(seconds.count());
+        auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_ElevatedServer_Session::Start(seconds.count());
 
         m_totalSeconds = seconds;
 
@@ -177,7 +177,7 @@ private:
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> m_performanceRecorderEngine;
     std::mutex m_mutex;
 
-    DevHomeTelemetryProvider::QuietBackgroundProcesses_Session m_activity;
+    DevHomeTelemetryProvider::QuietBackgroundProcesses_ElevatedServer_Session m_activity;
     std::chrono::seconds m_totalSeconds{};
 };
 #pragma warning(pop)
