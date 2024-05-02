@@ -87,7 +87,7 @@ struct TimedQuietSession
     TimedQuietSession(std::chrono::seconds seconds)
     {
         // Save activity for telemetry
-        m_activity = DevHomeTelemetryProvider::QuietBackgroundProcessesSession::Start(seconds.count());
+        auto activity = DevHomeTelemetryProvider::QuietBackgroundProcessesSession::Start(seconds.count());
 
         m_totalSeconds = seconds;
 
@@ -104,6 +104,8 @@ struct TimedQuietSession
         samplingPeriod.Duration = 1000 * 10000; // 1 second
         m_performanceRecorderEngine = MakePerformanceRecorderEngine();
         THROW_IF_FAILED(m_performanceRecorderEngine->Start(samplingPeriod));
+
+        m_activity = activity.TransferToMember();
     }
 
     TimedQuietSession(TimedQuietSession&& other) noexcept = default;
@@ -126,10 +128,11 @@ struct TimedQuietSession
 
     void Cancel(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result)
     {
+        // Continue activity on current thread
+        auto activity = m_activity.TransferToCurrentThread();
+
         auto lock = std::scoped_lock(m_mutex);
         
-        // Continue activity on current thread
-        auto continuation = m_activity.ContinueOnCurrentThread();
         auto totalQuietWindowTime = static_cast<int64_t>(m_totalSeconds.count()) - m_timer->TimeLeftInSeconds();
 
         Deactivate(result);
@@ -143,7 +146,7 @@ struct TimedQuietSession
         destructionThread.detach();
 
         // Stop activity
-        m_activity.Stop(S_OK, totalQuietWindowTime);
+        activity.Stop(S_OK, totalQuietWindowTime);
     }
 
 private:
