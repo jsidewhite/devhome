@@ -337,16 +337,22 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
 
     auto path = std::filesystem::path(processPathString.value_or(L""));
 
-    FILETIME createTime, exitTime, kernelTime, userTime;
-    THROW_IF_WIN32_BOOL_FALSE(GetProcessTimes(process.get(), &createTime, &exitTime, &kernelTime, &userTime));
+    FILETIME createTime{}, exitTime{}, kernelTime{}, userTime{};
+    if (process)
+    {
+        THROW_IF_WIN32_BOOL_FALSE(GetProcessTimes(process.get(), &createTime, &exitTime, &kernelTime, &userTime));
+    }
 
     std::optional<std::wstring> packageFullName;
     std::optional<std::wstring> aumid;
     wil::unique_handle processToken;
-    if (OpenProcessToken(process.get(), TOKEN_QUERY, &processToken))
+    if (process)
     {
-        packageFullName = TryGetPackageFullNameFromTokenHelper(processToken.get());
-        aumid = TryGetAppUserModelIdFromTokenHelper(processToken.get());
+        if (OpenProcessToken(process.get(), TOKEN_QUERY, &processToken))
+        {
+            packageFullName = TryGetPackageFullNameFromTokenHelper(processToken.get());
+            aumid = TryGetAppUserModelIdFromTokenHelper(processToken.get());
+        }
     }
 
     auto info = ProcessPerformanceInfo{};
