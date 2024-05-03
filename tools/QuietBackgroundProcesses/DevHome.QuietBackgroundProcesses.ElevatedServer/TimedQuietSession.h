@@ -152,7 +152,7 @@ private:
         // Continue activity on current thread
         auto activity = m_activity.TransferToCurrentThread();
 
-        auto totalQuietWindowTime = static_cast<int64_t>(m_totalSeconds.count()) - m_timer->TimeLeftInSeconds();
+        auto totalQuietWindowTime = m_totalSeconds.count() - m_timer->TimeLeftInSeconds();
 
         // Turn off quiet mode
         m_quietState.reset();
