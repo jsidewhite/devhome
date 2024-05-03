@@ -62,7 +62,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             g_activeTimer.reset(new TimedQuietSession(duration));
 
             // Return duration for showing countdown
-            *result = g_activeTimer->TimeLeftInSeconds();
+            *result = g_activeTimer->TimeLeftInSeconds().count();
             return S_OK;
         }
         CATCH_RETURN()
@@ -102,7 +102,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             *value = 0;
             if (g_activeTimer)
             {
-                *value = g_activeTimer->TimeLeftInSeconds();
+                *value = g_activeTimer->TimeLeftInSeconds().count();
             }
             return S_OK;
         }
