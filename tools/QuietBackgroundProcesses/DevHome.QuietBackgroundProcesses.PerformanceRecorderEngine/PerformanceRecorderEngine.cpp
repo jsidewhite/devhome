@@ -331,6 +331,7 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
         auto info = ProcessPerformanceInfo{};
         info.process = nullptr;
         info.pid = processId;
+        LOG_LAST_ERROR_MSG("Failed to open process handle for PID: %d", processId);
     }
 
     auto processPathString = TryGetProcessName(process.get());
@@ -352,6 +353,11 @@ ProcessPerformanceInfo MakeProcessPerformanceInfo(DWORD processId)
         {
             packageFullName = TryGetPackageFullNameFromTokenHelper(processToken.get());
             aumid = TryGetAppUserModelIdFromTokenHelper(processToken.get());
+        }
+        else
+        {
+            PCWSTR processPath = processPathString ? processPathString.value().c_str() : L"";
+            LOG_LAST_ERROR_MSG("Failed to open process token for PID: %d (%ls)", processId, processPath);
         }
     }
 
