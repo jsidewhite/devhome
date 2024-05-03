@@ -144,6 +144,11 @@ struct TimedQuietSession
 private:
     void Deactivate(bool manuallyStopped, ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result = nullptr)
     {
+        if (m_deactivated)
+        {
+            return;
+        }
+
         // Continue activity on current thread
         auto activity = m_activity.TransferToCurrentThread();
 
@@ -167,11 +172,14 @@ private:
 
         // Stop activity
         activity.Stop(manuallyStopped, totalQuietWindowTime);
+
+        m_deactivated = true;
     }
 
     UnelevatedServerReference m_unelevatedServer;   // Manager server
     ElevatedServerReference m_elevatedServer;       // Session server (this server)
 
+    bool m_deactivated{};
     QuietState::unique_quietwindowclose_call m_quietState{ false };
     std::unique_ptr<Timer> m_timer;
     wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> m_performanceRecorderEngine;
