@@ -284,15 +284,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             THROW_IF_FAILED(StopMonitoringProcessUtilization(m_context.get()));
 
-            if (result)
+            // Write the performance data to disk (if Dev Home is closed, enables user to see the Analytic Summary later)
             {
-                wil::com_ptr<ProcessPerformanceTable> performanceTable;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context)));
-                *result = performanceTable.detach();
-            }
-            else
-            {
-                // No one (no client) is currently asking for the performance data (presumably Dev Home is closed) so write it to disk
                 wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
                 THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
 
@@ -304,10 +297,17 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                     WritePerformanceDataToDisk(performanceDataFile.c_str(), data);
                 }
                 CATCH_LOG();
-
-                // Destroy the performance engine instance
-                m_context.reset();
             }
+
+            if (result)
+            {
+                wil::com_ptr<ProcessPerformanceTable> performanceTable;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ProcessPerformanceTable>(&performanceTable, std::move(m_context)));
+                *result = performanceTable.detach();
+            }
+
+            // Destroy the performance engine instance
+            m_context.reset();
 
             return S_OK;
         }

@@ -22,6 +22,30 @@ public:
         PDT_ProductAndServicePerformance,
         WINEVENT_LEVEL_CRITICAL);
 
+    DEFINE_ACTIVITY_START(uint64_t expectedDuration)
+    {
+        TraceLoggingClassWriteStart(
+            QuietBackgroundProcesses_ElevatedServer_Session,
+            TraceLoggingValue(expectedDuration, "ExpectedDuration"));
+    }
+    DEFINE_ACTIVITY_STOP(bool manuallyStopped, uint64_t actualDuration)
+    {
+        TraceLoggingClassWriteStop(
+            QuietBackgroundProcesses_ElevatedServer_Session,
+            TraceLoggingValue(manuallyStopped, "ManuallyStopped"),
+            TraceLoggingValue(actualDuration, "ActualDuration"));
+    }
+    END_ACTIVITY_CLASS();
+
+
+
+
+
+    BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(
+        QuietBackgroundProcesses_ProcessMetrics333,
+        PDT_ProductAndServicePerformance,
+        WINEVENT_LEVEL_CRITICAL);
+
         DEFINE_ACTIVITY_START(uint64_t expectedDuration)
         {
             TraceLoggingClassWriteStart(
@@ -35,5 +59,21 @@ public:
                 TraceLoggingValue(manuallyStopped, "ManuallyStopped"),
                 TraceLoggingValue(actualDuration, "ActualDuration"));
         }
+    END_ACTIVITY_CLASS();
+
+
+
+    BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(
+        QuietBackgroundProcesses_ProcessMetrics,
+        PDT_ProductAndServicePerformance,
+        WINEVENT_LEVEL_CRITICAL);
+
+        DEFINE_ACTIVITY_START(PCWSTR containerName)
+        {
+            TraceLoggingClassWriteStart(QuietBackgroundProcesses_ProcessMetrics,
+                TraceLoggingValue(containerName, "containerName"));
+        }
+
+        DEFINE_TRACELOGGING_EVENT_PARAM2(ProcessInfo, PCWSTR, processName, UINT32, maxPercent);
     END_ACTIVITY_CLASS();
 };
