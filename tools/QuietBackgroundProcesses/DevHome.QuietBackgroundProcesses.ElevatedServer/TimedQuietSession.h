@@ -177,7 +177,7 @@ private:
                 for (unsigned int i = 0; i < valueLength; i++)
                 {
                     ABI::DevHome::QuietBackgroundProcesses::IProcessRow* row = value[i];
-                    if (result)
+                    //if (result)
                     {
                         HSTRING name;
                         THROW_IF_FAILED(row->get_Name(&name));

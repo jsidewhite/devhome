@@ -17,32 +17,9 @@ class DevHomeTelemetryProvider : public wil::TraceLoggingProvider
 
 public:
 
+    // Activity for quiet session
     BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(
         QuietBackgroundProcesses_ElevatedServer_Session,
-        PDT_ProductAndServicePerformance,
-        WINEVENT_LEVEL_CRITICAL);
-
-    DEFINE_ACTIVITY_START(uint64_t expectedDuration)
-    {
-        TraceLoggingClassWriteStart(
-            QuietBackgroundProcesses_ElevatedServer_Session,
-            TraceLoggingValue(expectedDuration, "ExpectedDuration"));
-    }
-    DEFINE_ACTIVITY_STOP(bool manuallyStopped, uint64_t actualDuration)
-    {
-        TraceLoggingClassWriteStop(
-            QuietBackgroundProcesses_ElevatedServer_Session,
-            TraceLoggingValue(manuallyStopped, "ManuallyStopped"),
-            TraceLoggingValue(actualDuration, "ActualDuration"));
-    }
-    END_ACTIVITY_CLASS();
-
-
-
-
-
-    BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(
-        QuietBackgroundProcesses_ProcessMetrics333,
         PDT_ProductAndServicePerformance,
         WINEVENT_LEVEL_CRITICAL);
 
@@ -62,7 +39,7 @@ public:
     END_ACTIVITY_CLASS();
 
 
-
+    // Activity for process metrics
     BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(
         QuietBackgroundProcesses_ProcessMetrics,
         PDT_ProductAndServicePerformance,
@@ -74,6 +51,6 @@ public:
                 TraceLoggingValue(containerName, "containerName"));
         }
 
-        DEFINE_TRACELOGGING_EVENT_PARAM2(ProcessInfo, PCWSTR, processName, UINT32, maxPercent);
+        DEFINE_TRACELOGGING_EVENT_PARAM2(ProcessInfo, PCWSTR, processName, double, maxPercent);
     END_ACTIVITY_CLASS();
 };
