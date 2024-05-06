@@ -23,6 +23,7 @@
 #include "Timer.h"
 #include "QuietState.h"
 #include "Helpers.h"
+#include "UploadPerformanceMetricsTelemetry.h"
 
 using ElevatedServerReference = wrl_server_process_ref;
 
