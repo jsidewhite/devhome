@@ -51,6 +51,11 @@ public:
                 TraceLoggingValue(containerName, "containerName"));
         }
 
-        DEFINE_TRACELOGGING_EVENT_PARAM2(ProcessInfo, PCWSTR, processName, double, maxPercent);
+        DEFINE_TRACELOGGING_EVENT_PARAM2(
+            ProcessInfo,
+            int, reason,
+            PCWSTR, processName,
+            double, maxPercent,
+            double, sigma4);
     END_ACTIVITY_CLASS();
 };
