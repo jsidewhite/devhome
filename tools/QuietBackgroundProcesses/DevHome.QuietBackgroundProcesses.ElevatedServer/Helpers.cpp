@@ -137,14 +137,27 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
 
     std::chrono::seconds samplingPeriod = 1s;
 
-    // Calculate item percentages by category
-    double percentageTotal{};
-    double totalCpuTimeInMicroseconds{};
+    // Calculate the totalCpuTimeInMicroseconds items aggregated by item.category
+    std::vector<uint64_t> totalCpuTimesByCategory(5);
+    std::vector<uint64_t> numProcesses(5);
     for (const auto& item : data)
     {
-        percentageTotal += item.percentCumulative / item.sampleCount * samplingPeriod.count();
-        totalCpuTimeInMicroseconds += item.totalCpuTimeInMicroseconds;
+        totalCpuTimesByCategory[item.category] += item.totalCpuTimeInMicroseconds;
+        numProcesses[item.category]++;
     }
+
+    // Upload category metrics
+    activity.SessionCategoryMetrics(
+        numProcesses[0],
+        numProcesses[1],
+        numProcesses[2],
+        numProcesses[3],
+        numProcesses[4],
+        totalCpuTimesByCategory[0],
+        totalCpuTimesByCategory[1],
+        totalCpuTimesByCategory[2],
+        totalCpuTimesByCategory[3],
+        totalCpuTimesByCategory[4]);
 
     std::vector<UploadItem> itemsToUpload;
     for (const auto& item : data)
@@ -172,10 +185,6 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
 
     }
 
-    // Get windows path
-    wchar_t windowsPath[MAX_PATH];
-    GetWindowsDirectory(windowsPath, ARRAYSIZE(windowsPath));
-
     // Get system32 path
     wchar_t system32Path[MAX_PATH];
     GetSystemDirectory(system32Path, ARRAYSIZE(system32Path));
@@ -185,15 +194,14 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
         activity.ProcessInfo(
             itemToUpload.reason,
             wil::compare_string_ordinal(itemToUpload.data.path, system32Path, true) == 0,
-            itemToUpload.data.name.c_str(),
-            itemToUpload.data.category.c_str(),
-            itemToUpload.data.packageFullName.c_str(),
+            itemToUpload.data.name,
+            itemToUpload.data.category,
+            itemToUpload.data.packageFullName,
 
             itemToUpload.data.sampleCount,
             itemToUpload.data.maxPercent,
             itemToUpload.data.sigma4Cumulative / itemToUpload.data.sampleCount * samplingPeriod.count(),
             itemToUpload.data.percentCumulative / itemToUpload.data.sampleCount * samplingPeriod.count(),
-            itemToUpload.data.totalCpuTimeInMicroseconds,
-            );
+            itemToUpload.data.totalCpuTimeInMicroseconds);
     }
 }

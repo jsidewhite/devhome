@@ -58,6 +58,19 @@ public:
             bool, manuallyStopped,
             int, samplingPeriod);
 
+        DEFINE_TRACELOGGING_EVENT_PARAM10(
+            SessionCategoryMetrics,
+            int, numProcesses_unknown,
+            int, numProcesses_user,
+            int, numProcesses_system,
+            int, numProcesses_developer,
+            int, numProcesses_background,
+            int, totalCpuTimesByCategory_unknown,
+            int, totalCpuTimesByCategory_user,
+            int, totalCpuTimesByCategory_system,
+            int, totalCpuTimesByCategory_developer,
+            int, totalCpuTimesByCategory_background);
+
         DEFINE_TRACELOGGING_EVENT_PARAM4(
             ComputerInfo,
             DWORD, processorCount,
@@ -65,19 +78,17 @@ public:
             PCWSTR, motherboard,
             DWORD, ram);
 
-        DEFINE_TRACELOGGING_EVENT_PARAM4(
+        DEFINE_TRACELOGGING_EVENT_PARAM10(
             ProcessInfo,
             int, reason,
             bool, isInSystem32,
             PCWSTR, processName,
-            PCWSTR, category,
+            uint32_t, category,
             PCWSTR, packageFullName,
-            
             int, sampleCount,
             double, maxPercent,
             double, sigma4,
             double, percent,
-            int, totalCpuTimeInMicroseconds
-            );
+            int, totalCpuTimeInMicroseconds);
     END_ACTIVITY_CLASS();
 };
