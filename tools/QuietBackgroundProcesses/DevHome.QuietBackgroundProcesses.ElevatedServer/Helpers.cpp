@@ -4,9 +4,10 @@
 #include <pch.h>
 
 #include <fstream>
-#include <vector>
+#include <numeric>
 #include <span>
 #include <string>
+#include <vector>
 
 #include <wil/resource.h>
 #include <wil/result_macros.h>
@@ -161,8 +162,14 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
             itemsToUpload.emplace_back(UploadReason::SearchIndexer, item);
         }
 
-        // Calculate item percentages by category
+    }
 
-
+    // Calculate item percentages by category
+    double percentageTotal{};
+    double totalCpuTimeInMicroseconds{};
+    for (const auto& item : data)
+    {
+        percentageTotal += item.percentCumulative / item.sampleCount * samplingPeriod.count();
+        totalCpuTimeInMicroseconds += item.totalCpuTimeInMicroseconds;
     }
 }
