@@ -435,8 +435,8 @@ struct MonitorThread
     std::vector<ProcessPerformanceInfo> m_terminatedProcesses;
 
     // Info
-    std::chrono::milliseconds m_samplingPeriodInMs;
-    std::chrono::microseconds m_totalMicroseconds;
+    std::chrono::milliseconds m_samplingPeriod;
+    std::chrono::microseconds m_totalCpuUsage;
 
     MonitorThread(std::chrono::milliseconds periodMs)
     {
@@ -579,15 +579,15 @@ struct MonitorThread
         }
     }
 
-    uint32_t GetSamplingPeriodInMilliseconds()
+    std::chrono::milliseconds GetSamplingPeriod()
     {
-        return static_cast<uint32_t>(m_samplingPeriodInMs.count());
+        return m_samplingPeriod;
     }
 
-    uint64_t GetTotalCpuUsageInMicroseconds()
+    std::chrono::microseconds GetTotalCpuUsage()
     {
         auto lock = std::scoped_lock(m_dataMutex);
-        return m_totalMicroseconds.count();
+        return m_totalCpuUsage;
     }
 
     std::vector<ProcessPerformanceSummary> GetProcessPerformanceSummaries()
@@ -693,14 +693,21 @@ try
 }
 CATCH_RETURN()
 
-extern "C" __declspec(dllexport) HRESULT GetMonitoringProcessUtilization(void* context, uint32_t* samplingPeriodInMs, uint64_t* totalCpuUsageInMicroseconds, ProcessPerformanceSummary** ppSummaries, size_t* summaryCount) noexcept
+extern "C" __declspec(dllexport) HRESULT GetMonitoringProcessUtilization(void* context, std::chrono::milliseconds* samplingPeriodInMs, std::chrono::microseconds* totalCpuUsageInMicroseconds, ProcessPerformanceSummary** ppSummaries, size_t* summaryCount) noexcept
 try
 {
     auto monitorThread = reinterpret_cast<MonitorThread*>(context);
     auto summaries = monitorThread->GetProcessPerformanceSummaries();
 
-    *samplingPeriodInMs = monitorThread->GetSamplingPeriodInMilliseconds();
-    *totalCpuUsageInMicroseconds = monitorThread->GetTotalCpuUsageInMicroseconds();
+    if (samplingPeriodInMs)
+    {
+        *samplingPeriodInMs = monitorThread->GetSamplingPeriod();
+    }
+
+    if (totalCpuUsageInMicroseconds)
+    {
+        *totalCpuUsageInMicroseconds = monitorThread->GetTotalCpuUsage();
+    }
 
     // Alloc summaries block
     auto ptrSummaries = make_unique_cotaskmem_array_ptr<ProcessPerformanceSummary>(summaries.size());

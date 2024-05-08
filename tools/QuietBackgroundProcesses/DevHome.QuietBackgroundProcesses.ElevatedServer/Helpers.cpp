@@ -106,7 +106,7 @@ ComputerInformation GetComputerInformation()
     return computerInfo;
 }
 
-void UploadPerformanceDataTelemetry(uint32_t samplingPeriodInMs, uint64_t totalCpuUsageInMicroseconds, const std::span<ProcessPerformanceSummary>& data)
+void UploadPerformanceDataTelemetry(std::chrono::milliseconds samplingPeriod, std::chrono::microseconds totalCpuUsage, const std::span<ProcessPerformanceSummary>& data)
 {
     using namespace std::chrono_literals;
 
@@ -125,7 +125,9 @@ void UploadPerformanceDataTelemetry(uint32_t samplingPeriodInMs, uint64_t totalC
         ProcessPerformanceSummary data;
     };
 
-    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(1, samplingPeriodInMs, true, totalCpuUsageInMicroseconds);
+    constexpr auto c_quietSessionVersion = 1;
+
+    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(c_quietSessionVersion, samplingPeriod, true, totalCpuUsage);
 
     // Upload computer information
     auto computerInformation = GetComputerInformation();
@@ -135,7 +137,7 @@ void UploadPerformanceDataTelemetry(uint32_t samplingPeriodInMs, uint64_t totalC
         computerInformation.motherboard.c_str(),
         computerInformation.ram);
 
-    std::chrono::seconds samplingPeriod = 1s;
+    // std::chrono::seconds samplingPeriod = std::chrono::milliseconds(samplingPeriodInMs) ;
 
     // Calculate the totalCpuTimeInMicroseconds items aggregated by item.category
     std::vector<uint64_t> numProcesses(5);
@@ -168,12 +170,12 @@ void UploadPerformanceDataTelemetry(uint32_t samplingPeriodInMs, uint64_t totalC
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::MaxPercent, item);
         }
-        else if (item.sigma4Cumulative / item.sampleCount * samplingPeriod.count() >= 4.0)
+        else if (item.sigma4Cumulative / item.sampleCount >= 4.0)
         {
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::Sigma4, item);
         }
-        else if (item.percentCumulative / item.sampleCount * samplingPeriod.count() >= 1.0)
+        else if (item.percentCumulative / item.sampleCount >= 1.0)
         {
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::AveragePercent, item);

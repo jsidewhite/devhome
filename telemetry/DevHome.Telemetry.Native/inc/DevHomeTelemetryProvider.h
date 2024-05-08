@@ -50,8 +50,8 @@ public:
             TraceLoggingClassWriteStart(QuietBackgroundProcesses_ProcessMetrics,
                 TraceLoggingValue(quietSessionVersion, "quietSessionVersion"),
                 TraceLoggingValue(durationInSeconds, "durationInSeconds"),
-                TraceLoggingValue(manuallyStopped, "manuallyStopped")
-                TraceLoggingValue(samplingPeriod, "samplingPeriod"),
+                TraceLoggingValue(manuallyStopped, "manuallyStopped"),
+                TraceLoggingValue(samplingPeriod, "samplingPeriod")
             );
         }
 

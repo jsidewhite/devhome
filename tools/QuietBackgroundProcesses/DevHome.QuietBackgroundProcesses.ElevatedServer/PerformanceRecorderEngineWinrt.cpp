@@ -216,7 +216,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             if (m_context)
             {
                 // We have a live context, read performance data from it
-                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summariesCoarray.addressof(), summariesCoarray.size_address()));
+
+                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), nullptr, nullptr, summariesCoarray.addressof(), summariesCoarray.size_address()));
 
                 // Make span from cotaskmem_array
                 span = std::span<ProcessPerformanceSummary>{ summariesCoarray.get(), summariesCoarray.size() };
@@ -287,9 +288,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             {
                 // Get the performance data from the monitoring engine
                 wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
-                uint32_t samplingPeriodInMs;
-                uint64_t totalCpuUsageInMicroseconds;
-                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &samplingPeriodInMs, &totalCpuUsageInMicroseconds, summaries.addressof(), summaries.size_address()));
+                std::chrono::milliseconds samplingPeriod;
+                std::chrono::microseconds totalCpuUsage;
+                THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &samplingPeriod, &totalCpuUsage, summaries.addressof(), summaries.size_address()));
                 std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
 
                 // Write the performance .csv data to disk (if Dev Home is closed, enables user to see the Analytic Summary later)
@@ -303,7 +304,7 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                 // Upload the performance data telemetry
                 try
                 {
-                    UploadPerformanceDataTelemetry(samplingPeriodInMs, totalCpuUsageInMicroseconds, data);
+                    UploadPerformanceDataTelemetry(samplingPeriod, totalCpuUsage, data);
                 }
                 CATCH_LOG();
             }
