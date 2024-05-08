@@ -41,3 +41,5 @@ wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine>
 // Read/write the performance data to/from disk
 void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data);
 std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);
+
+void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& data);

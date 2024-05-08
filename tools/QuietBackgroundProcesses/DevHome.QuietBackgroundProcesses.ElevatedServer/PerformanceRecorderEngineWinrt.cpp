@@ -284,17 +284,24 @@ namespace ABI::DevHome::QuietBackgroundProcesses
         {
             THROW_IF_FAILED(StopMonitoringProcessUtilization(m_context.get()));
 
-            // Write the performance data to disk (if Dev Home is closed, enables user to see the Analytic Summary later)
             {
+                // Get the performance data from the monitoring engine
                 wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
                 THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), summaries.addressof(), summaries.size_address()));
-
-                // Write the performance .csv data to disk
                 std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
+
+                // Write the performance .csv data to disk (if Dev Home is closed, enables user to see the Analytic Summary later)
                 try
                 {
                     auto performanceDataFile = GetTemporaryPerformanceDataPath();
                     WritePerformanceDataToDisk(performanceDataFile.c_str(), data);
+                }
+                CATCH_LOG();
+
+                // Upload the performance data telemetry
+                try
+                {
+                    UploadPerformanceDataTelemetry(data);
                 }
                 CATCH_LOG();
             }
