@@ -137,8 +137,16 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
 
     std::chrono::seconds samplingPeriod = 1s;
 
-    std::vector<UploadItem> itemsToUpload;
+    // Calculate item percentages by category
+    double percentageTotal{};
+    double totalCpuTimeInMicroseconds{};
+    for (const auto& item : data)
+    {
+        percentageTotal += item.percentCumulative / item.sampleCount * samplingPeriod.count();
+        totalCpuTimeInMicroseconds += item.totalCpuTimeInMicroseconds;
+    }
 
+    std::vector<UploadItem> itemsToUpload;
     for (const auto& item : data)
     {
         if (item.maxPercent >= 20.0)
@@ -164,12 +172,28 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
 
     }
 
-    // Calculate item percentages by category
-    double percentageTotal{};
-    double totalCpuTimeInMicroseconds{};
-    for (const auto& item : data)
+    // Get windows path
+    wchar_t windowsPath[MAX_PATH];
+    GetWindowsDirectory(windowsPath, ARRAYSIZE(windowsPath));
+
+    // Get system32 path
+    wchar_t system32Path[MAX_PATH];
+    GetSystemDirectory(system32Path, ARRAYSIZE(system32Path));
+
+    for (const auto& itemToUpload : itemsToUpload)
     {
-        percentageTotal += item.percentCumulative / item.sampleCount * samplingPeriod.count();
-        totalCpuTimeInMicroseconds += item.totalCpuTimeInMicroseconds;
+        activity.ProcessInfo(
+            itemToUpload.reason,
+            wil::compare_string_ordinal(itemToUpload.data.path, system32Path, true) == 0,
+            itemToUpload.data.name.c_str(),
+            itemToUpload.data.category.c_str(),
+            itemToUpload.data.packageFullName.c_str(),
+
+            itemToUpload.data.sampleCount,
+            itemToUpload.data.maxPercent,
+            itemToUpload.data.sigma4Cumulative / itemToUpload.data.sampleCount * samplingPeriod.count(),
+            itemToUpload.data.percentCumulative / itemToUpload.data.sampleCount * samplingPeriod.count(),
+            itemToUpload.data.totalCpuTimeInMicroseconds,
+            );
     }
 }

@@ -68,8 +68,16 @@ public:
         DEFINE_TRACELOGGING_EVENT_PARAM4(
             ProcessInfo,
             int, reason,
+            bool, isInSystem32,
             PCWSTR, processName,
+            PCWSTR, category,
+            PCWSTR, packageFullName,
+            
+            int, sampleCount,
             double, maxPercent,
-            double, sigma4);
+            double, sigma4,
+            double, percent,
+            int, totalCpuTimeInMicroseconds
+            );
     END_ACTIVITY_CLASS();
 };
