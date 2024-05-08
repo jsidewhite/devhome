@@ -47,7 +47,7 @@ public:
 
         DEFINE_ACTIVITY_START(uint32_t quietSessionVersion, uint32_t durationInSeconds, bool manuallyStopped, uint32_t samplingPeriod)
         {
-            TraceLoggingClassWriteStart(QuietBackgroundProcesses_ProcessMetrics,
+            TraceLoggingClassWriteStart(QuietBackgroundProcesses_PerformanceMetrics,
                 TraceLoggingValue(quietSessionVersion, "quietSessionVersion"),
                 TraceLoggingValue(durationInSeconds, "durationInSeconds"),
                 TraceLoggingValue(manuallyStopped, "manuallyStopped"),
@@ -56,11 +56,11 @@ public:
         }
 
         DEFINE_TRACELOGGING_EVENT_PARAM4(
-            SessionInfo,
-            int, quietSessionVersion,
-            int, durationInSeconds,
-            bool, manuallyStopped,
-            int, samplingPeriod);
+            ComputerInfo,
+            DWORD, processorCount,
+            PCWSTR, processor,
+            PCWSTR, motherboard,
+            DWORD, ram);
 
         DEFINE_TRACELOGGING_EVENT_PARAM10(
             SessionCategoryMetrics,
@@ -74,13 +74,6 @@ public:
             int, totalCpuTimesByCategory_system,
             int, totalCpuTimesByCategory_developer,
             int, totalCpuTimesByCategory_background);
-
-        DEFINE_TRACELOGGING_EVENT_PARAM4(
-            ComputerInfo,
-            DWORD, processorCount,
-            PCWSTR, processor,
-            PCWSTR, motherboard,
-            DWORD, ram);
 
         DEFINE_TRACELOGGING_EVENT_PARAM10(
             ProcessInfo,
