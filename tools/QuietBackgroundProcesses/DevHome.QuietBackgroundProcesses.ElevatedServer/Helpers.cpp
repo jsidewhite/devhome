@@ -106,7 +106,7 @@ ComputerInformation GetComputerInformation()
     return computerInfo;
 }
 
-void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& data)
+void UploadPerformanceDataTelemetry(uint32_t samplingPeriodInMs, uint64_t totalCpuUsageInMicroseconds, const std::span<ProcessPerformanceSummary>& data)
 {
     using namespace std::chrono_literals;
 
@@ -125,7 +125,7 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
         ProcessPerformanceSummary data;
     };
 
-    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(L"sdf");
+    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(1, samplingPeriodInMs, true, totalCpuUsageInMicroseconds);
 
     // Upload computer information
     auto computerInformation = GetComputerInformation();
@@ -138,12 +138,12 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
     std::chrono::seconds samplingPeriod = 1s;
 
     // Calculate the totalCpuTimeInMicroseconds items aggregated by item.category
-    std::vector<uint64_t> totalCpuTimesByCategory(5);
     std::vector<uint64_t> numProcesses(5);
+    std::vector<uint64_t> totalCpuTimesByCategory(5);
     for (const auto& item : data)
     {
-        totalCpuTimesByCategory[item.category] += item.totalCpuTimeInMicroseconds;
         numProcesses[item.category]++;
+        totalCpuTimesByCategory[item.category] += item.totalCpuTimeInMicroseconds;
     }
 
     // Upload category metrics
@@ -159,6 +159,7 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
         totalCpuTimesByCategory[3],
         totalCpuTimesByCategory[4]);
 
+    // Choose process information to upload
     std::vector<UploadItem> itemsToUpload;
     for (const auto& item : data)
     {
@@ -182,13 +183,13 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::SearchIndexer, item);
         }
-
     }
 
     // Get system32 path
     wchar_t system32Path[MAX_PATH];
     GetSystemDirectory(system32Path, ARRAYSIZE(system32Path));
 
+    // Upload process information
     for (const auto& itemToUpload : itemsToUpload)
     {
         activity.ProcessInfo(

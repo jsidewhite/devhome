@@ -434,8 +434,14 @@ struct MonitorThread
     std::map<ULONG, ProcessPerformanceInfo> m_runningProcesses;
     std::vector<ProcessPerformanceInfo> m_terminatedProcesses;
 
+    // Info
+    std::chrono::milliseconds m_samplingPeriodInMs;
+    std::chrono::microseconds m_totalMicroseconds;
+
     MonitorThread(std::chrono::milliseconds periodMs)
     {
+        m_samplingPeriodInMs = periodMs;
+
         if (periodMs.count() <= 0)
         {
             THROW_HR(E_INVALIDARG);
@@ -454,8 +460,6 @@ struct MonitorThread
                     {
                         break;
                     }
-
-                    std::chrono::microseconds totalMicroseconds{};
 
                     // Check for new processes to track
                     DWORD pidArray[2048];
@@ -549,7 +553,7 @@ struct MonitorThread
                             info.samplesAboveThreshold++;
                         }
 
-                        totalMicroseconds += cpuTime;
+                        m_totalMicroseconds += cpuTime;
 
                         ++it;
                     }
@@ -573,6 +577,17 @@ struct MonitorThread
         {
             m_thread.join();
         }
+    }
+
+    uint32_t GetSamplingPeriodInMilliseconds()
+    {
+        return static_cast<uint32_t>(m_samplingPeriodInMs.count());
+    }
+
+    uint64_t GetTotalCpuUsageInMicroseconds()
+    {
+        auto lock = std::scoped_lock(m_dataMutex);
+        return m_totalMicroseconds.count();
     }
 
     std::vector<ProcessPerformanceSummary> GetProcessPerformanceSummaries()
@@ -678,11 +693,14 @@ try
 }
 CATCH_RETURN()
 
-extern "C" __declspec(dllexport) HRESULT GetMonitoringProcessUtilization(void* context, ProcessPerformanceSummary** ppSummaries, size_t* summaryCount) noexcept
+extern "C" __declspec(dllexport) HRESULT GetMonitoringProcessUtilization(void* context, uint32_t* samplingPeriodInMs, uint64_t* totalCpuUsageInMicroseconds, ProcessPerformanceSummary** ppSummaries, size_t* summaryCount) noexcept
 try
 {
     auto monitorThread = reinterpret_cast<MonitorThread*>(context);
     auto summaries = monitorThread->GetProcessPerformanceSummaries();
+
+    *samplingPeriodInMs = monitorThread->GetSamplingPeriodInMilliseconds();
+    *totalCpuUsageInMicroseconds = monitorThread->GetTotalCpuUsageInMicroseconds();
 
     // Alloc summaries block
     auto ptrSummaries = make_unique_cotaskmem_array_ptr<ProcessPerformanceSummary>(summaries.size());

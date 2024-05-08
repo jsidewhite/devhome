@@ -45,10 +45,14 @@ public:
         PDT_ProductAndServicePerformance,
         WINEVENT_LEVEL_CRITICAL);
 
-        DEFINE_ACTIVITY_START(PCWSTR containerName)
+        DEFINE_ACTIVITY_START(uint32_t quietSessionVersion, uint32_t durationInSeconds, bool manuallyStopped, uint32_t samplingPeriod)
         {
             TraceLoggingClassWriteStart(QuietBackgroundProcesses_ProcessMetrics,
-                TraceLoggingValue(containerName, "containerName"));
+                TraceLoggingValue(quietSessionVersion, "quietSessionVersion"),
+                TraceLoggingValue(durationInSeconds, "durationInSeconds"),
+                TraceLoggingValue(manuallyStopped, "manuallyStopped")
+                TraceLoggingValue(samplingPeriod, "samplingPeriod"),
+            );
         }
 
         DEFINE_TRACELOGGING_EVENT_PARAM4(
