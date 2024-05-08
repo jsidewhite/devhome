@@ -140,7 +140,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="QuietState.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="UploadPerformanceMetricsTelemetry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Helpers.cpp" />

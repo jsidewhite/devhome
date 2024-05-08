@@ -41,7 +41,7 @@ public:
 
     // Activity for process metrics
     BEGIN_COMPLIANT_MEASURES_ACTIVITY_CLASS_WITH_LEVEL(
-        QuietBackgroundProcesses_ProcessMetrics,
+        QuietBackgroundProcesses_PerformanceMetrics,
         PDT_ProductAndServicePerformance,
         WINEVENT_LEVEL_CRITICAL);
 
@@ -51,7 +51,21 @@ public:
                 TraceLoggingValue(containerName, "containerName"));
         }
 
-        DEFINE_TRACELOGGING_EVENT_PARAM2(
+        DEFINE_TRACELOGGING_EVENT_PARAM4(
+            SessionInfo,
+            int, quietSessionVersion,
+            int, durationInSeconds,
+            bool, manuallyStopped,
+            int, samplingPeriod);
+
+        DEFINE_TRACELOGGING_EVENT_PARAM4(
+            ComputerInfo,
+            DWORD, processorCount,
+            PCWSTR, processor,
+            PCWSTR, motherboard,
+            DWORD, ram);
+
+        DEFINE_TRACELOGGING_EVENT_PARAM4(
             ProcessInfo,
             int, reason,
             PCWSTR, processName,

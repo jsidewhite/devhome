@@ -50,6 +50,61 @@ std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR p
     return data;
 }
 
+struct ComputerInformation
+{
+    DWORD processorCount;
+    std::wstring processor;
+    std::wstring motherboard;
+    DWORD ram;
+};
+
+// Get computer information
+ComputerInformation GetComputerInformation()
+{
+    ComputerInformation computerInfo;
+
+    // Get processor information
+    SYSTEM_INFO systemInfo = { 0 };
+    GetSystemInfo(&systemInfo);
+    computerInfo.processorCount = systemInfo.dwNumberOfProcessors;
+
+    // Get processor make and model using win32 apis
+    wil::unique_hkey hKey;
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        wchar_t processorName[256] = { 0 };
+        DWORD processorNameSize = sizeof(processorName);
+        if (RegQueryValueEx(hKey.get(), L"ProcessorNameString", nullptr, nullptr, reinterpret_cast<BYTE*>(processorName), &processorNameSize) == ERROR_SUCCESS)
+        {
+            computerInfo.processor = processorName;
+        }
+    }
+
+    // Get motherboard make and model using win32 apis
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\BIOS", 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        wchar_t biosName[256] = { 0 };
+        DWORD biosNameSize = sizeof(biosName);
+        if (RegQueryValueEx(hKey.get(), L"BaseBoardProduct", nullptr, nullptr, reinterpret_cast<BYTE*>(biosName), &biosNameSize) == ERROR_SUCCESS)
+        {
+            computerInfo.motherboard = biosName;
+        }
+    }
+
+    // Get ram amount using win32 apis
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\RESOURCEMAP\\System Resources\\Physical Memory", 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        DWORD ramSize = 0;
+        DWORD ramSizeSize = sizeof(ramSize);
+        if (RegQueryValueEx(hKey.get(), L".Translated", nullptr, nullptr, reinterpret_cast<BYTE*>(&ramSize), &ramSizeSize) == ERROR_SUCCESS)
+        {
+            computerInfo.ram = ramSize / 1024 / 1024;
+        }
+    }
+
+    return computerInfo;
+}
+
 void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& data)
 {
     using namespace std::chrono_literals;
@@ -68,12 +123,16 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
         UploadReason reason;
         ProcessPerformanceSummary data;
     };
-    {
-        UploadReason reason;
-        ProcessPerformanceSummary data;
-    };
 
-    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_ProcessMetrics::Start(L"sdf");
+    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(L"sdf");
+
+    // Upload computer information
+    auto computerInformation = GetComputerInformation();
+    activity.ComputerInfo(
+        computerInformation.processorCount,
+        computerInformation.processor.c_str(),
+        computerInformation.motherboard.c_str(),
+        computerInformation.ram);
 
     std::chrono::seconds samplingPeriod = 1s;
 
@@ -81,22 +140,22 @@ void UploadPerformanceDataTelemetry(const std::span<ProcessPerformanceSummary>& 
 
     for (const auto& item : data)
     {
-        if (item.maxPercent > 20.0)
+        if (item.maxPercent >= 20.0)
         {
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::MaxPercent, item);
         }
-        else if (item.sigma4Cumulative / item.sampleCount * samplingPeriod > 4)
+        else if (item.sigma4Cumulative / item.sampleCount * samplingPeriod.count() >= 4.0)
         {
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::Sigma4, item);
         }
-        else if (item.percentCumulative / item.sampleCount * samplingPeriod > 1)
+        else if (item.percentCumulative / item.sampleCount * samplingPeriod.count() >= 1.0)
         {
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::AveragePercent, item);
         }
-        else if (wil::compare_string_ordinal(item.name, L"SearchIndexer.exe") == 0)
+        else if (wil::compare_string_ordinal(item.name, L"SearchIndexer.exe", true) == 0)
         {
             // Add item to list to upload
             itemsToUpload.emplace_back(UploadReason::SearchIndexer, item);

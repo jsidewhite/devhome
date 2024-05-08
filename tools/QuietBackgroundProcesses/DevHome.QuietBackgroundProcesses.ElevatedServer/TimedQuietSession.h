@@ -23,7 +23,6 @@
 #include "Timer.h"
 #include "QuietState.h"
 #include "Helpers.h"
-#include "UploadPerformanceMetricsTelemetry.h"
 
 using ElevatedServerReference = wrl_server_process_ref;
 
@@ -161,44 +160,7 @@ private:
         // Stop the performance recorder
         if (m_performanceRecorderEngine)
         {
-            ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable* table;
-            LOG_IF_FAILED(m_performanceRecorderEngine->Stop(&table));
-
-            try
-            {
-                auto metricsActivity = DevHomeTelemetryProvider::QuietBackgroundProcesses_ProcessMetrics::Start(L"sdf");
-
-                // Iterate over table
-                unsigned int valueLength;
-                ABI::DevHome::QuietBackgroundProcesses::IProcessRow** value;
-                THROW_IF_FAILED(table->get_Rows(&valueLength, &value));
-
-                //std::span<ABI::DevHome::QuietBackgroundProcesses::IProcessRow**> span{ valueLength, value };
-                //for (auto& row : span)
-                for (unsigned int i = 0; i < valueLength; i++)
-                {
-                    ABI::DevHome::QuietBackgroundProcesses::IProcessRow* row = value[i];
-                    //if (result)
-                    {
-                        HSTRING name;
-                        THROW_IF_FAILED(row->get_Name(&name));
-
-                        PCWSTR nameStr = WindowsGetStringRawBuffer(name, nullptr);
-
-                        
-                        // Get max percent
-                        double percent;
-                        THROW_IF_FAILED(row->get_MaxPercent(&percent));
-
-                        metricsActivity.ProcessInfo(nameStr, percent);
-
-                    }
-                    // Log each row
-                    //LOG_IF_FAILED(row->Log());
-                    //row->Release();
-                }
-            }
-            CATCH_LOG();
+            LOG_IF_FAILED(m_performanceRecorderEngine->Stop(result));
         }
 
         // Disable performance recorder
