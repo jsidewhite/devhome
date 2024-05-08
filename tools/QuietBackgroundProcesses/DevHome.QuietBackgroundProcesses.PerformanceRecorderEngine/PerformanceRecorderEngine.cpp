@@ -440,7 +440,7 @@ struct MonitorThread
 
     MonitorThread(std::chrono::milliseconds periodMs)
     {
-        m_samplingPeriodInMs = periodMs;
+        m_samplingPeriod = periodMs;
 
         if (periodMs.count() <= 0)
         {
@@ -553,7 +553,7 @@ struct MonitorThread
                             info.samplesAboveThreshold++;
                         }
 
-                        m_totalMicroseconds += cpuTime;
+                        m_totalCpuUsage += cpuTime;
 
                         ++it;
                     }
