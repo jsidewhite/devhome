@@ -43,4 +43,4 @@ void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerform
 std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);
 
 // Upload the performance data to the telemetry service
-void UploadPerformanceDataTelemetry(std::chrono::milliseconds samplingPeriod, std::chrono::microseconds totalCpuUsage, const std::span<ProcessPerformanceSummary>& data);
+void UploadPerformanceDataTelemetry(bool isPlaceboSession, bool manuallyStopped, std::chrono::milliseconds samplingPeriod, std::chrono::microseconds totalCpuUsage, const std::span<ProcessPerformanceSummary>& data);

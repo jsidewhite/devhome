@@ -287,9 +287,9 @@ namespace ABI::DevHome::QuietBackgroundProcesses
 
             {
                 // Get the performance data from the monitoring engine
-                wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
                 std::chrono::milliseconds samplingPeriod;
                 std::chrono::microseconds totalCpuUsage;
+                wil::unique_cotaskmem_array_ptr<ProcessPerformanceSummary> summaries;
                 THROW_IF_FAILED(GetMonitoringProcessUtilization(m_context.get(), &samplingPeriod, &totalCpuUsage, summaries.addressof(), summaries.size_address()));
                 std::span<ProcessPerformanceSummary> data(summaries.get(), summaries.size());
 
@@ -304,7 +304,8 @@ namespace ABI::DevHome::QuietBackgroundProcesses
                 // Upload the performance data telemetry
                 try
                 {
-                    UploadPerformanceDataTelemetry(samplingPeriod, totalCpuUsage, data);
+                    bool manuallyStopped = result != nullptr;
+                    UploadPerformanceDataTelemetry(false, manuallyStopped, samplingPeriod, totalCpuUsage, data);
                 }
                 CATCH_LOG();
             }

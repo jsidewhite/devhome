@@ -106,7 +106,7 @@ ComputerInformation GetComputerInformation()
     return computerInfo;
 }
 
-void UploadPerformanceDataTelemetry(std::chrono::milliseconds samplingPeriod, std::chrono::microseconds totalCpuUsage, const std::span<ProcessPerformanceSummary>& data)
+void UploadPerformanceDataTelemetry(bool isPlaceboSession, bool manuallyStopped, std::chrono::milliseconds samplingPeriod, std::chrono::microseconds totalCpuUsage, const std::span<ProcessPerformanceSummary>& data)
 {
     using namespace std::chrono_literals;
 
@@ -127,7 +127,12 @@ void UploadPerformanceDataTelemetry(std::chrono::milliseconds samplingPeriod, st
 
     constexpr auto c_quietSessionVersion = 1;
 
-    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(c_quietSessionVersion, samplingPeriod, true, totalCpuUsage);
+    auto activity = DevHomeTelemetryProvider::QuietBackgroundProcesses_PerformanceMetrics::Start(
+        c_quietSessionVersion,
+        isPlaceboSession,
+        manuallyStopped,
+        samplingPeriod.count(),
+        totalCpuUsage.count());
 
     // Upload computer information
     auto computerInformation = GetComputerInformation();
@@ -136,8 +141,6 @@ void UploadPerformanceDataTelemetry(std::chrono::milliseconds samplingPeriod, st
         computerInformation.processor.c_str(),
         computerInformation.motherboard.c_str(),
         computerInformation.ram);
-
-    // std::chrono::seconds samplingPeriod = std::chrono::milliseconds(samplingPeriodInMs) ;
 
     // Calculate the totalCpuTimeInMicroseconds items aggregated by item.category
     std::vector<uint64_t> numProcesses(5);

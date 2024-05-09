@@ -45,13 +45,14 @@ public:
         PDT_ProductAndServicePerformance,
         WINEVENT_LEVEL_CRITICAL);
 
-        DEFINE_ACTIVITY_START(uint32_t quietSessionVersion, uint32_t durationInSeconds, bool manuallyStopped, uint32_t samplingPeriod)
+        DEFINE_ACTIVITY_START(uint32_t quietSessionVersion, bool isPlaceboSession, bool manuallyStopped, uint64_t samplingPeriodInMs, uint64_t totalCpuUsageInMicroseconds)
         {
             TraceLoggingClassWriteStart(QuietBackgroundProcesses_PerformanceMetrics,
                 TraceLoggingValue(quietSessionVersion, "quietSessionVersion"),
-                TraceLoggingValue(durationInSeconds, "durationInSeconds"),
+                TraceLoggingValue(isPlaceboSession, "isPlaceboSession"),
                 TraceLoggingValue(manuallyStopped, "manuallyStopped"),
-                TraceLoggingValue(samplingPeriod, "samplingPeriod")
+                TraceLoggingValue(samplingPeriodInMs, "samplingPeriodInMs"),
+                TraceLoggingValue(totalCpuUsageInMicroseconds, "totalCpuUsageInMicroseconds")
             );
         }
 
