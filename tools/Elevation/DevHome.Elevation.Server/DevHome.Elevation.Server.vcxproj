@@ -11,7 +11,7 @@
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
-    <ProjectGuid>{75945141-03ac-4c40-a586-16d463a0ac1b}</ProjectGuid>
+    <ProjectGuid>{7087E62F-C125-4FAF-8CE2-087D1F53AA97}</ProjectGuid>
     <ProjectName>DevHome.QuietBackgroundProcesses.ElevatedServer</ProjectName>
     <RootNamespace>DevHome.QuietBackgroundProcesses</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
