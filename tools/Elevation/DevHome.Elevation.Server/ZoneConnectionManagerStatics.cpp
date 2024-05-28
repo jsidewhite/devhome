@@ -41,6 +41,7 @@ namespace ABI::DevHome::Elevation
         public Microsoft::WRL::RuntimeClass<
             Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
             IZoneA,
+            IZoneConnection,
             Microsoft::WRL::FtmBase>
     {
         InspectableClass(RuntimeClass_DevHome_Elevation_ZoneA, BaseTrust);
@@ -103,6 +104,18 @@ namespace ABI::DevHome::Elevation
             str.Set(connectionId.c_str());
             *result = str.Detach();
 
+            return S_OK;
+        }
+        CATCH_RETURN()
+
+        STDMETHODIMP CloseConnection(HSTRING connectionId) noexcept
+        try
+        {
+            std::wstring connectionIdStr = WindowsGetStringRawBuffer(connectionId, nullptr);
+
+            // Remove from the std::map
+            std::scoped_lock<std::mutex> lock(m_mutex);
+            m_preparedConnections.erase(connectionIdStr);
             return S_OK;
         }
         CATCH_RETURN()

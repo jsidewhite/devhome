@@ -17,11 +17,12 @@ namespace DevHome.Elevation
         C,
     };
 
+    [contract(ElevationContract, 1.0), uuid(2f2222a5-1000-47ef-864e-1e46ed31bb22)]
     interface IZoneConnection
     {
-        void CloseConnection();
     };
 
+    //todo: rename to OpenChannel
     [default_interface]
     runtimeclass ZoneConnectionManager
     {
@@ -33,6 +34,7 @@ namespace DevHome.Elevation
 
         // Called from an unelevated process
         static IZoneConnection OpenConnection(String connectionId);
+        static void CloseConnection(String connectionId);
     }
 
     [contract(ElevationContract, 1.0)]
