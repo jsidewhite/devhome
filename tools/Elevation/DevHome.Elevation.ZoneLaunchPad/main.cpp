@@ -3,6 +3,7 @@
 
 #include <pch.h>
 
+#include <filesystem>
 #include <memory>
 #include <mutex>
 
@@ -19,50 +20,37 @@
 #include <objbase.h>
 #include <roregistrationapi.h>
 
+#include "DevHome.Elevation.h"
 #include "Utility.h"
-#include "TimedQuietSession.h"
-#include "QuietState.h"
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) noexcept try
 {
-    constexpr auto ELEVATED_SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";
-
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
     }
 
-    // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
-    auto serverName = ParseServerNameArgument(wargv);
+    // Parse the target Zone to be launched
+    //auto zoneName = wargv[1];
+    auto zoneName = wargv;
 
-    if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) != 0)
+    if (wil::compare_string_ordinal(zoneName, L"ZoneA", true) != 0)
     {
         THROW_HR(E_INVALIDARG);
     }
 
-    // Let's self-elevate and terminate
+    // Make sure we're already elevated instance
     if (!IsTokenElevated(GetCurrentProcessToken()))
     {
-        wil::unique_event elevatedServerRunningEvent;
-        elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, ELEVATED_SERVER_STARTED_EVENT_NAME);
-
-        // Launch elevated instance
-        SelfElevate(wargv);
-
-        // Wait for the *actual* elevated server instance to register its winrt classes with COM before shutting down
-        elevatedServerRunningEvent.wait();
-        return 0;
+        THROW_HR(E_INVALIDARG);
     }
 
     WaitForDebuggerIfPresent();
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
-    // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated synchronously.
-    SetComFastRundownAndNoEhHandle();
-
-    // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
-    QuietState::TurnOff();
+    //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);
+    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
 
     std::mutex mutex;
     bool comFinished{};

@@ -136,20 +136,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Helpers.h" />
-    <ClInclude Include="TimedQuietSession.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="QuietState.h" />
-    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PerformanceRecorderEngineWinrt.cpp" />
-    <ClCompile Include="QuietBackgroundProcessesSession.cpp" />
-    <ClCompile Include="QuietState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -9,9 +9,6 @@
 #include <wil/com.h>
 #include <wil/resource.h>
 
-#include "DevHome.QuietBackgroundProcesses.h"
-#include "PerformanceRecorderEngine.h"
-
 struct com_ptr_deleter
 {
     template<typename T>
@@ -34,13 +31,3 @@ unique_comptr_array<T> make_unique_comptr_array(size_t numOfElements)
     THROW_IF_NULL_ALLOC(list.get());
     return list;
 }
-
-// Create a performance recorder engine
-wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine();
-
-// Read/write the performance data to/from disk
-void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data);
-std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);
-
-// Upload the performance data to the telemetry service
-void UploadPerformanceDataTelemetry(std::chrono::milliseconds samplingPeriod, const std::span<ProcessPerformanceSummary>& data);
