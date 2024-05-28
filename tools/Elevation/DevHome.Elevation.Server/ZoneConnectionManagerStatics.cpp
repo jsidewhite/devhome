@@ -4,9 +4,9 @@
 #include <pch.h>
 
 #include <chrono>
+#include <map>
 #include <memory>
 #include <mutex>
-#include <set>
 
 #include <wrl/client.h>
 #include <wrl/implements.h>
@@ -43,12 +43,12 @@ namespace ABI::DevHome::Elevation
                 /* [in] */ ABI::DevHome::Elevation::Zone name,
                 /* [out, retval] */ HSTRING* result) noexcept try
         {
-            // Remember the connection in a std::set
-            std::scoped_lock<std::mutex> lock(m_mutex);
-            m_preparedConnections.emplace(pid, processCreateTime, name);
-
             // Create md5 hash of the 3 connection parameters
             std::wstring connectionId = std::to_wstring(pid) + L"_" + std::to_wstring(processCreateTime.UniversalTime) + L"_" + std::to_wstring(static_cast<int>(name));
+
+            // Remember the connection in a std::map
+            std::scoped_lock<std::mutex> lock(m_mutex);
+            m_preparedConnections[connectionId] = std::make_tuple(pid, processCreateTime, name);
 
             // return the connectionId
             Microsoft::WRL::Wrappers::HString str;
@@ -59,10 +59,36 @@ namespace ABI::DevHome::Elevation
         }
         CATCH_RETURN()
 
+        STDMETHODIMP OpenConnection(
+                /* [in] */ HSTRING connectionId,
+                /* [out, retval] */ ABI::DevHome::Elevation::IZoneConnection** result) noexcept try
+        {
+            std::wstring connectionIdStr = WindowsGetStringRawBuffer(connectionId, nullptr);
+
+            // Find the connection in the std::map
+            std::scoped_lock<std::mutex> lock(m_mutex);
+            auto it = m_preparedConnections.find(connectionIdStr);
+            if (it == m_preparedConnections.end())
+            {
+                return HRESULT_FROM_WIN32(ERROR_NOT_FOUND);
+            }
+
+            // Create a ZoneConnection object
+            wil::com_ptr<ZoneA> zoneConnection;
+            RETURN_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ZoneA>(&zoneConnection));
+
+            auto iZoneConnection = zoneConnection.query<IZoneConnection>();
+
+            // Return the ZoneConnection object
+            *result = iZoneConnection.detach();
+            return S_OK;
+        }
+        CATCH_RETURN()
+
     private:
         std::mutex m_mutex;
-        std::set<std::tuple<unsigned int, ABI::Windows::Foundation::DateTime, ABI::DevHome::Elevation::Zone>> m_preparedConnections;
+        std::map<std::wstring, std::tuple<unsigned int, ABI::Windows::Foundation::DateTime, ABI::DevHome::Elevation::Zone>> m_preparedConnections;
     };
 
-    ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
+    //ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
 }

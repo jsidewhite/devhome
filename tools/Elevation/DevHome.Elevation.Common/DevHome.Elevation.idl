@@ -6,6 +6,10 @@ import "windows.foundation.idl";
 
 namespace DevHome.Elevation
 {
+    [contractversion(1)] apicontract ElevationContract
+    {
+    }
+
     enum Zone
     {
         A,
@@ -31,11 +35,20 @@ namespace DevHome.Elevation
         static IZoneConnection OpenConnection(String connectionId);
     }
 
-    [default_interface]
+    [contract(ElevationContract, 1.0)]
+    interface IZoneA
+    {
+        String NameProperty
+        {
+            get;
+        };
+    }
+
+    
+    [contract(ElevationContract, 1.0)]
     runtimeclass ZoneA
     {
-        //interface IZoneConnection;
-
-        void DoSomething();
+        [default] interface IZoneA;
+        interface IZoneConnection;
     }
 }
