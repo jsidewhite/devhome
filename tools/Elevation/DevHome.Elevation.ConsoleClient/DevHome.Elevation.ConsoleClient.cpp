@@ -4,6 +4,10 @@
 #include <filesystem>
 #include <iostream>
 
+#include <wrl/client.h>
+#include <wrl/implements.h>
+#include <wrl/module.h>
+
 #include <wil/com.h>
 #include <wil/registry.h>
 #include <wil/resource.h>
@@ -17,7 +21,7 @@
 
 #include "DevHome.Elevation.h"
 
-int main()
+int main() try
 {
 
     // Launch elevated instance
@@ -46,8 +50,17 @@ int main()
     auto unique_rouninitialize_call = wil::RoInitialize();
     auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
 
-    zoneConnectionManager->OpenConnection(ABI::D);
+    wil::com_ptr<ABI::DevHome::Elevation::IZoneConnection> zoneConnection;
+    THROW_IF_FAILED(zoneConnectionManager->OpenConnection(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), &zoneConnection));
+
+    auto zoneA = zoneConnection.query<ABI::DevHome::Elevation::IZoneA>();
+
+    unsigned int zoneAName;
+    THROW_IF_FAILED(zoneA->GetName(&zoneAName));
 
 
-    std::cout << "Hello DevHome.Elevation.ZoneLaunchPad.exe! exit code = " << std::hex << exitCode << std::endl;
+    std::cout << "zoneAName = " << zoneAName << std::endl;
+
+    return 0;
 }
+CATCH_RETURN()

@@ -93,7 +93,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
@@ -136,12 +136,6 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +148,9 @@
     <ProjectReference Include="..\DevHome.Elevation.Common\DevHome.Elevation.Common.vcxproj">
       <Project>{e4eb0bd0-3b25-4818-b131-febe50d9dfe7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DevHome.Elevation.ConsoleClient.cpp" />
   </ItemGroup>
   <Import Project="$(SolutionDir)telemetry\DevHome.Telemetry.Native\DevHome.Telemetry.Native.targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
