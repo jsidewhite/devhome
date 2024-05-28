@@ -6,6 +6,7 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <set>
 
 #include <wrl/client.h>
 #include <wrl/implements.h>
@@ -16,104 +17,17 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
-#include "TimedQuietSession.h"
+#include "DevHome.Elevation.h"
 
-#include "DevHome.QuietBackgroundProcesses.h"
+// std::mutex g_mutex;
 
-constexpr auto DEFAULT_QUIET_DURATION = std::chrono::hours(2);
-
-std::mutex g_mutex;
-std::unique_ptr<TimedQuietSession> g_activeTimer;
-
-namespace ABI::DevHome::QuietBackgroundProcesses
+namespace ABI::DevHome::Elevation
 {
-    class QuietBackgroundProcessesSession :
-        public Microsoft::WRL::RuntimeClass<
-            Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
-            IQuietBackgroundProcessesSession,
-            Microsoft::WRL::FtmBase>
-    {
-        InspectableClass(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession, BaseTrust);
-
-    public:
-        STDMETHODIMP RuntimeClassInitialize() noexcept
-        {
-            return S_OK;
-        }
-
-        // IQuietBackgroundProcessesSession
-        STDMETHODIMP Start(__int64* result) noexcept override try
-        {
-            auto lock = std::scoped_lock(g_mutex);
-
-            // Stop and discard the previous timer
-            if (g_activeTimer)
-            {
-                g_activeTimer->Cancel(nullptr);
-            }
-
-            std::chrono::seconds duration = DEFAULT_QUIET_DURATION;
-            if (auto durationOverride = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
-            {
-                duration = std::chrono::seconds(durationOverride.value());
-            }
-
-            // Start timer
-            g_activeTimer.reset(new TimedQuietSession(duration));
-
-            // Return duration for showing countdown
-            *result = g_activeTimer->TimeLeftInSeconds();
-            return S_OK;
-        }
-        CATCH_RETURN()
-
-        STDMETHODIMP Stop(ABI::DevHome::QuietBackgroundProcesses::IProcessPerformanceTable** result) noexcept override
-        try
-        {
-            auto lock = std::scoped_lock(g_mutex);
-            *result = nullptr;
-
-            // Turn off quiet mode and cancel timer
-            if (g_activeTimer)
-            {
-                g_activeTimer->Cancel(result);
-                g_activeTimer.reset();
-            }
-
-            return S_OK;
-        }
-        CATCH_RETURN()
-
-        STDMETHODIMP get_IsActive(::boolean* value) noexcept override try
-        {
-            auto lock = std::scoped_lock(g_mutex);
-            *value = false;
-            if (g_activeTimer)
-            {
-                *value = g_activeTimer->IsActive();
-            }
-            return S_OK;
-        }
-        CATCH_RETURN()
-
-        STDMETHODIMP get_TimeLeftInSeconds(__int64* value) noexcept override try
-        {
-            auto lock = std::scoped_lock(g_mutex);
-            *value = 0;
-            if (g_activeTimer)
-            {
-                *value = g_activeTimer->TimeLeftInSeconds();
-            }
-            return S_OK;
-        }
-        CATCH_RETURN()
-    };
-
-    class QuietBackgroundProcessesSessionStatics WrlFinal :
+    class ZoneConnectionManagerStatics WrlFinal :
         public Microsoft::WRL::AgileActivationFactory<
-            Microsoft::WRL::Implements<IQuietBackgroundProcessesSessionStatics>>
+            Microsoft::WRL::Implements<IZoneConnectionManagerStatics>>
     {
-        InspectableClassStatic(RuntimeClass_DevHome_QuietBackgroundProcesses_QuietBackgroundProcessesSession, BaseTrust);
+        InspectableClassStatic(RuntimeClass_DevHome_Elevation_ZoneConnectionManager, BaseTrust);
 
     public:
         STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
@@ -122,17 +36,33 @@ namespace ABI::DevHome::QuietBackgroundProcesses
             return E_NOTIMPL;
         }
 
-        // IQuietBackgroundProcessesSessionStatics
-        STDMETHODIMP GetSingleton(_COM_Outptr_ IQuietBackgroundProcessesSession** session) noexcept override try
+        // This method must called from an elevated process
+        STDMETHODIMP PrepareConnection(
+                /* [in] */ unsigned int pid,
+                /* [in] */ ABI::Windows::Foundation::DateTime processCreateTime,
+                /* [in] */ ABI::DevHome::Elevation::Zone name,
+                /* [out, retval] */ HSTRING* result) noexcept try
         {
-            // Instanced objects are the only feasible way to manage a COM singleton without keeping a strong
-            // handle to the server - which keeps it alive.  (IWeakReference keeps a strong handle to the server!)
-            // An 'instance' can be thought of as a 'handle' to 'the singleton' backend.
-            THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<QuietBackgroundProcessesSession>(session));
+            // Remember the connection in a std::set
+            std::scoped_lock<std::mutex> lock(m_mutex);
+            m_preparedConnections.emplace(pid, processCreateTime, name);
+
+            // Create md5 hash of the 3 connection parameters
+            std::wstring connectionId = std::to_wstring(pid) + L"_" + std::to_wstring(processCreateTime.UniversalTime) + L"_" + std::to_wstring(static_cast<int>(name));
+
+            // return the connectionId
+            Microsoft::WRL::Wrappers::HString str;
+            str.Set(connectionId.c_str());
+            *result = str.Detach();
+
             return S_OK;
         }
         CATCH_RETURN()
+
+    private:
+        std::mutex m_mutex;
+        std::set<std::tuple<unsigned int, ABI::Windows::Foundation::DateTime, ABI::DevHome::Elevation::Zone>> m_preparedConnections;
     };
 
-    ActivatableClassWithFactory(QuietBackgroundProcessesSession, QuietBackgroundProcessesSessionStatics);
+    ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
 }

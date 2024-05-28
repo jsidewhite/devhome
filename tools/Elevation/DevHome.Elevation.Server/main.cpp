@@ -20,8 +20,8 @@
 #include <roregistrationapi.h>
 
 #include "Utility.h"
-#include "TimedQuietSession.h"
-#include "QuietState.h"
+//#include "TimedQuietSession.h"
+//#include "QuietState.h"
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
@@ -61,9 +61,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // Enable fast rundown of COM stubs in this process to ensure that RPCSS bookkeeping is updated synchronously.
     SetComFastRundownAndNoEhHandle();
 
-    // To be safe, force quiet mode off to begin the proceedings in case we leaked the machine state previously
-    QuietState::TurnOff();
-
     std::mutex mutex;
     bool comFinished{};
     std::condition_variable finishCondition;
@@ -100,9 +97,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     finishCondition.wait(lock, [&] {
         return comFinished;
     });
-
-    // Safety
-    QuietState::TurnOff();
 
     return 0;
 }
