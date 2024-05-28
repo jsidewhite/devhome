@@ -13,7 +13,7 @@
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{7087E62F-C125-4FAF-8CE2-087D1F53AA97}</ProjectGuid>
     <ProjectName>DevHome.Elevation.Server</ProjectName>
-    <RootNamespace>DevHome.QuietBackgroundProcesses</RootNamespace>
+    <RootNamespace>DevHome.Elevation</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
@@ -113,7 +113,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)telemetry\DevHome.Telemetry.Native\inc;$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\;$(ProjectDir)..\DevHome.QuietBackgroundProcesses.Common\$(GeneratedFilesDir)midl;$(ProjectDir)..\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)telemetry\DevHome.Telemetry.Native\inc;$(ProjectDir)..\DevHome.Elevation.Common\;$(ProjectDir)..\DevHome.Elevation.Common\$(GeneratedFilesDir)midl;$(ProjectDir)..\DevHome.Elevation.PerformanceRecorderEngine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -161,11 +161,8 @@
     <ProjectReference Include="..\..\..\telemetry\DevHome.Telemetry.Native\DevHome.Telemetry.Native.vcxproj">
       <Project>{8eb52f7d-d216-49ff-bf16-de06e4695950}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.Common\DevHome.QuietBackgroundProcesses.Common.vcxproj">
-      <Project>{4b370e2f-fb1d-4887-90bf-3b72517485ce}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine\DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine.vcxproj">
-      <Project>{af5a7fa0-e3e8-44c8-8830-31dd08f583e8}</Project>
+    <ProjectReference Include="..\DevHome.Elevation.Common\DevHome.Elevation.Common.vcxproj">
+      <Project>{e4eb0bd0-3b25-4818-b131-febe50d9dfe7}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)telemetry\DevHome.Telemetry.Native\DevHome.Telemetry.Native.targets" />
