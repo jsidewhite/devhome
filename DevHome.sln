@@ -152,11 +152,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsSandboxExtension", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elevation", "Elevation", "{B9D6798F-066B-44A7-B7E5-D099A7516062}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.QuietBackgroundProcesses.Common", "tools\Elevation\DevHome.Elevation.Common\DevHome.Elevation.Common.vcxproj", "{E4EB0BD0-3B25-4818-B131-FEBE50D9DFE7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.Elevation.Common", "tools\Elevation\DevHome.Elevation.Common\DevHome.Elevation.Common.vcxproj", "{E4EB0BD0-3B25-4818-B131-FEBE50D9DFE7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Elevation.Projection", "tools\Elevation\DevHome.Elevation.Projection\DevHome.Elevation.Projection.csproj", "{55FB8A0E-803E-4DE5-BF55-5B55E7EFDA7F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.QuietBackgroundProcesses.ElevatedServer", "tools\Elevation\DevHome.Elevation.Server\DevHome.Elevation.Server.vcxproj", "{7087E62F-C125-4FAF-8CE2-087D1F53AA97}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevHome.Elevation.Server", "tools\Elevation\DevHome.Elevation.Server\DevHome.Elevation.Server.vcxproj", "{7087E62F-C125-4FAF-8CE2-087D1F53AA97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

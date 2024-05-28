@@ -11,7 +11,7 @@
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{E4EB0BD0-3B25-4818-B131-FEBE50D9DFE7}</ProjectGuid>
-    <ProjectName>DevHome.QuietBackgroundProcesses.Common</ProjectName>
+    <ProjectName>DevHome.Elevation.Common</ProjectName>
     <RootNamespace>DevHome.QuietBackgroundProcesses</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
