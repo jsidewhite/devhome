@@ -38,10 +38,7 @@ namespace DevHome.Elevation
     [contract(ElevationContract, 1.0)]
     interface IZoneA
     {
-        String NameProperty
-        {
-            get;
-        };
+        UInt32 GetName();
     }
 
     

@@ -12,6 +12,7 @@
 #include <wrl/implements.h>
 #include <wrl/module.h>
 
+#include <wil/registry.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 #include <wil/win32_helpers.h>
@@ -20,6 +21,52 @@
 #include "DevHome.Elevation.h"
 
 // std::mutex g_mutex;
+
+inline std::optional<uint32_t> try_get_registry_value_dword(HKEY key, _In_opt_ PCWSTR subKey, _In_opt_ PCWSTR value_name, ::wil::reg::key_access access = ::wil::reg::key_access::read)
+{
+    wil::unique_hkey hkey;
+    if (SUCCEEDED(wil::reg::open_unique_key_nothrow(key, subKey, hkey, access)))
+    {
+        if (auto keyvalue = wil::reg::try_get_value_dword(hkey.get(), value_name))
+        {
+            return keyvalue.value();
+        }
+    }
+    return std::nullopt;
+}
+
+namespace ABI::DevHome::Elevation
+{
+    class ZoneA :
+        public Microsoft::WRL::RuntimeClass<
+            Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
+            IZoneA,
+            Microsoft::WRL::FtmBase>
+    {
+        InspectableClass(RuntimeClass_DevHome_Elevation_ZoneA, BaseTrust);
+
+    public:
+        STDMETHODIMP RuntimeClassInitialize() noexcept
+        {
+            return S_OK;
+        }
+
+           STDMETHODIMP GetName(_Out_ unsigned int* result) noexcept
+            {
+               // try get registry key to hklm/software/microsoft/windows/currentversion/devhome/quietbackgroundprocesses
+                if (auto durationOverride = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
+                {
+                    *result = (unsigned int)std::chrono::seconds(durationOverride.value()).count();
+                }
+                *result = 1111;
+                return S_OK;
+            }
+    };
+
+    //ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
+}
+
+
 
 namespace ABI::DevHome::Elevation
 {
@@ -38,10 +85,11 @@ namespace ABI::DevHome::Elevation
 
         // This method must called from an elevated process
         STDMETHODIMP PrepareConnection(
-                /* [in] */ unsigned int pid,
-                /* [in] */ ABI::Windows::Foundation::DateTime processCreateTime,
-                /* [in] */ ABI::DevHome::Elevation::Zone name,
-                /* [out, retval] */ HSTRING* result) noexcept try
+            /* [in] */ unsigned int pid,
+            /* [in] */ ABI::Windows::Foundation::DateTime processCreateTime,
+            /* [in] */ ABI::DevHome::Elevation::Zone name,
+            /* [out, retval] */ HSTRING* result) noexcept
+        try
         {
             // Create md5 hash of the 3 connection parameters
             std::wstring connectionId = std::to_wstring(pid) + L"_" + std::to_wstring(processCreateTime.UniversalTime) + L"_" + std::to_wstring(static_cast<int>(name));
@@ -60,8 +108,9 @@ namespace ABI::DevHome::Elevation
         CATCH_RETURN()
 
         STDMETHODIMP OpenConnection(
-                /* [in] */ HSTRING connectionId,
-                /* [out, retval] */ ABI::DevHome::Elevation::IZoneConnection** result) noexcept try
+            /* [in] */ HSTRING connectionId,
+            /* [out, retval] */ ABI::DevHome::Elevation::IZoneConnection** result) noexcept
+        try
         {
             std::wstring connectionIdStr = WindowsGetStringRawBuffer(connectionId, nullptr);
 
