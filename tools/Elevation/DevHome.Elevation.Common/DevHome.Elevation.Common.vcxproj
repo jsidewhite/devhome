@@ -141,7 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Midl Include="DevHome.QuietBackgroundProcesses.idl" />
+    <Midl Include="DevHome.Elevation.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
