@@ -23,7 +23,23 @@
 #include "DevHome.Elevation.h"
 #include "Utility.h"
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) noexcept try
+ULONG_PTR GetParentProcessId()
+{
+    ULONG_PTR pbi[6];
+    ULONG ulSize = 0;
+    LONG(WINAPI * NtQueryInformationProcess)
+    (HANDLE ProcessHandle, ULONG ProcessInformationClass, PVOID ProcessInformation, ULONG ProcessInformationLength, PULONG ReturnLength);
+    *(FARPROC*)&NtQueryInformationProcess =
+        GetProcAddress(LoadLibraryA("NTDLL.DLL"), "NtQueryInformationProcess");
+    if (NtQueryInformationProcess)
+    {
+        if (NtQueryInformationProcess(GetCurrentProcess(), 0, &pbi, sizeof(pbi), &ulSize) >= 0 && ulSize == sizeof(pbi))
+            return pbi[5];
+    }
+    return (ULONG_PTR)-1;
+}
+
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
     if (wargc < 1)
     {
@@ -49,48 +65,28 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) noexcept t
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
+    //zoneConnectionManager->LaunchZone(zoneName);
     //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);
     auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
 
-    std::mutex mutex;
-    bool comFinished{};
-    std::condition_variable finishCondition;
+    // Get PID of parent process
+    auto parentProcessId = GetParentProcessId();
 
-#pragma warning(push)
-#pragma warning(disable : 4324) // Avoid WRL alignment warning
+    // Get parent process create time
+    auto process = wil::unique_process_handle{ OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, parentProcessId) };
+    THROW_IF_NULL_ALLOC(process.get());
 
-    // Register WRL callback when all objects are destroyed
-    auto& module = Microsoft::WRL::Module<Microsoft::WRL::OutOfProc>::Create([&] {
-        // The last instance object of the module is released
-        {
-            auto lock = std::unique_lock<std::mutex>(mutex);
-            comFinished = true;
-        }
-        finishCondition.notify_one();
-    });
+    FILETIME createTime{};
+    FILETIME exitTime{};
+    FILETIME kernelTime{};
+    FILETIME userTime{};
+    THROW_IF_WIN32_BOOL_FALSE(GetProcessTimes(process.get(), &createTime, &exitTime, &kernelTime, &userTime));
 
-#pragma warning(pop)
+    INT64 createTime64 = createTime.dwLowDateTime + ((UINT64)createTime.dwHighDateTime << 32);
+    auto createTimeDatetime = ABI::Windows::Foundation::DateTime{ createTime64 };
 
-    // Register WinRT activatable classes
-    module.RegisterObjects();
-    auto unique_wrl_registration_cookie = wil::scope_exit([&module]() {
-        module.UnregisterObjects();
-    });
+    THROW_IF_FAILED(zoneConnectionManager->PrepareConnection(parentProcessId, createTimeDatetime, ABI::DevHome::Elevation::Zone_A, nullptr));
 
-    // Tell the unelevated server instance that we've registered our winrt classes with COM (so it can terminate)
-    wil::unique_event elevatedServerRunningEvent;
-    elevatedServerRunningEvent.open(ELEVATED_SERVER_STARTED_EVENT_NAME);
-    elevatedServerRunningEvent.SetEvent();
-
-    // Wait for all server references to release (implicitly also waiting for timers to finish via CoAddRefServerProcess)
-    auto lock = std::unique_lock<std::mutex>(mutex);
-
-    finishCondition.wait(lock, [&] {
-        return comFinished;
-    });
-
-    // Safety
-    QuietState::TurnOff();
 
     return 0;
 }
