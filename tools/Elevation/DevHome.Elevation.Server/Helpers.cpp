@@ -8,9 +8,10 @@
 #include <span>
 #include <string>
 
-#include "PerformanceRecorderEngine.h"
+//#include "PerformanceRecorderEngine.h"
 #include "Helpers.h"
 
+/*
 void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data)
 {
     std::ofstream file(path, std::ios::binary);
@@ -44,3 +45,4 @@ std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR p
     file.close();
     return data;
 }
+*/

@@ -9,8 +9,8 @@
 #include <wil/com.h>
 #include <wil/resource.h>
 
-#include "DevHome.QuietBackgroundProcesses.h"
-#include "PerformanceRecorderEngine.h"
+#include "DevHome.Elevation.h"
+//#include "PerformanceRecorderEngine.h"
 
 struct com_ptr_deleter
 {
@@ -36,8 +36,8 @@ unique_comptr_array<T> make_unique_comptr_array(size_t numOfElements)
 }
 
 // Create a performance recorder engine
-wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine();
+//wil::com_ptr<ABI::DevHome::QuietBackgroundProcesses::IPerformanceRecorderEngine> MakePerformanceRecorderEngine();
 
 // Read/write the performance data to/from disk
-void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data);
-std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);
+//void WritePerformanceDataToDisk(_In_ PCWSTR path, const std::span<ProcessPerformanceSummary>& data);
+//std::vector<ProcessPerformanceSummary> ReadPerformanceDataFromDisk(_In_ PCWSTR path);
