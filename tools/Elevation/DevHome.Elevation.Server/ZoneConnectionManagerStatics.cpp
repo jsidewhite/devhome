@@ -152,5 +152,5 @@ namespace ABI::DevHome::Elevation
         std::map<std::wstring, std::tuple<unsigned int, ABI::Windows::Foundation::DateTime, ABI::DevHome::Elevation::Zone>> m_preparedConnections;
     };
 
-    //ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
+    ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
 }
