@@ -1,0 +1,74 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+import "inspectable.idl";
+import "windows.foundation.idl";
+
+namespace DevHome.Elevation
+{
+    [contractversion(1)]
+    apicontract ElevationContract
+    {
+    }
+
+    enum ElevationZone
+    {
+        ElevationZoneA,
+        ElevationZoneB,
+        ElevationZoneC,
+    };
+
+    [contract(ElevationContract, 1.0), uuid(2b69fc32-cabe-4758-b9a0-fb8542e9c55c)]
+    interface IElevationZone
+    {
+    }
+
+    [default_interface]
+    runtimeclass ElevationVoucher
+    {
+        ElevationVoucher(String voucherName, ElevationZone zoneId, UInt32 processId, Windows.Foundation.DateTime processCreateTime);
+
+        String VoucherName { get; };
+        ElevationZone ZoneId { get; };
+        UInt32 ProcessId { get; };
+        Windows.Foundation.DateTime ProcessCreateTime { get; };
+        
+        IElevationZone Redeem();
+    };
+
+    /*
+    enum ClaimVoucherStatus
+    {
+        Success = 0,
+        NoVoucher,
+    };
+
+    runtimeclass ClaimVoucherResult
+    {
+        ElevationVoucher Voucher { get; };
+        ClaimVoucherStatus Status { get; };
+        HRESULT ExtendedError { get; };
+    }
+    */
+
+    //todo: rename to OpenChannel
+    [default_interface]
+    runtimeclass ElevationVoucherManager
+    {
+        // Make the voucher claimable (must be activated from an elevated process)
+        static void ActivateVoucher(ElevationVoucher voucher, Windows.Foundation.TimeSpan validDuration);
+
+        // Claim the voucher (from unelevated process)
+        //static ClaimVoucherResult ClaimVoucher(ElevationZone zoneName);
+        static ElevationVoucher ClaimVoucher(String voucherName);
+    }
+
+    //
+    // Zones
+    //
+    runtimeclass ElevationZoneA
+    {
+        UInt32 GetSomething();
+    }
+
+}
