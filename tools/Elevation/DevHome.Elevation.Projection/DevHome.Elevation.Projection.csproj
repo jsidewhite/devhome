@@ -8,12 +8,12 @@
     <Nullable>enable</Nullable>
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <MdmergeMergedDir>$(CppBaseOutDir)\DevHome.QuietBackgroundProcesses.Common\</MdmergeMergedDir>
+    <MdmergeMergedDir>$(CppBaseOutDir)\DevHome.Elevation.Common\</MdmergeMergedDir>
   </PropertyGroup>
 
   <PropertyGroup>
     <CsWinRTWindowsMetadata>10.0.19041.0</CsWinRTWindowsMetadata>
-    <CsWinRTIncludes>DevHome.QuietBackgroundProcesses</CsWinRTIncludes>
+    <CsWinRTIncludes>DevHome.Elevation</CsWinRTIncludes>
     <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
   </PropertyGroup>
 
@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <CsWinRTInputs Include="$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" />
+    <CsWinRTInputs Include="$(MdmergeMergedDir)DevHome.Elevation.winmd" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DevHome.QuietBackgroundProcesses.Common\DevHome.QuietBackgroundProcesses.Common.vcxproj" />
+    <ProjectReference Include="..\DevHome.Elevation.Common\DevHome.Elevation.Common.vcxproj" />
   </ItemGroup>
 
 </Project>
