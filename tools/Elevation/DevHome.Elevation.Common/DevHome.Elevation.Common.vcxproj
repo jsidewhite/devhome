@@ -12,7 +12,7 @@
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{E4EB0BD0-3B25-4818-B131-FEBE50D9DFE7}</ProjectGuid>
     <ProjectName>DevHome.Elevation.Common</ProjectName>
-    <RootNamespace>DevHome.QuietBackgroundProcesses</RootNamespace>
+    <RootNamespace>DevHome.Elevation</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
@@ -171,7 +171,7 @@
       <MdmergeParameters>$(MdmergeParameters) -o "$(MdmergeMergedDir.TrimEnd('\'))" -partial $(MdmergeMergeDepth)</MdmergeParameters>
     </PropertyGroup>
     <PropertyGroup>
-      <MergedWinmdFilePath>$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd</MergedWinmdFilePath>
+      <MergedWinmdFilePath>$(MdmergeMergedDir)DevHome.Elevation.winmd</MergedWinmdFilePath>
       <MdmergeResponseFile Condition="'$(MdmergeResponseFile)'==''">$(IntDir)$(MSBuildProjectFile).mdmerge.rsp</MdmergeResponseFile>
       <MdmergeCommand>$(MdMergePath)mdmerge %40"$(MdmergeResponseFile)"</MdmergeCommand>
     </PropertyGroup>
@@ -180,14 +180,14 @@
     <Exec Command="$(MdmergeCommand)" />
   </Target>
   <!-- Copy the merged .winmd to the out folder -->
-  <Target Name="CopyWinmdMerged" AfterTargets="Mdmerge" Inputs="$(MergedWinmdFilePath)" Outputs="$(OutDir)DevHome.QuietBackgroundProcesses.winmd">
+  <Target Name="CopyWinmdMerged" AfterTargets="Mdmerge" Inputs="$(MergedWinmdFilePath)" Outputs="$(OutDir)DevHome.Elevation.winmd">
     <PropertyGroup>
-      <MergedWinmdCopyCommand>copy /Y "$(MdmergeMergedDir)DevHome.QuietBackgroundProcesses.winmd" "$(OutDir)."</MergedWinmdCopyCommand>
+      <MergedWinmdCopyCommand>copy /Y "$(MdmergeMergedDir)DevHome.Elevation.winmd" "$(OutDir)."</MergedWinmdCopyCommand>
     </PropertyGroup>
     <Message Text="Copying merged winmd file to out folder: $(MergedWinmdFilePath) -&gt; $(OutDir)" Importance="Normal" />
-    <Copy SkipUnchangedFiles="false" SourceFiles="$(MergedWinmdFilePath)" DestinationFiles="$(OutDir)DevHome.QuietBackgroundProcesses.winmd" />
+    <Copy SkipUnchangedFiles="false" SourceFiles="$(MergedWinmdFilePath)" DestinationFiles="$(OutDir)DevHome.Elevation.winmd" />
     <ItemGroup>
-      <FileWrites Include="$(OutDir)DevHome.QuietBackgroundProcesses.winmd" />
+      <FileWrites Include="$(OutDir)DevHome.Elevation.winmd" />
     </ItemGroup>
   </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
