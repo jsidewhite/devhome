@@ -8,6 +8,18 @@
         <Interface Name="Microsoft.Windows.Widgets.Providers.IWidgetProvider2" InterfaceId="38C3A963-DD93-479D-9276-04BF84EE1816" />
       </ProxyStub>
     </Extension>
+
+
+
+    <!-- QuietBackgroundProcesses unelevated server which initiates & obtains a reference to a quiet session -->
+    <Extension Category="windows.activatableClass.outOfProcessServer">
+      <OutOfProcessServer ServerName="DevHome.Elevation.Server" uap5:IdentityType="activateAsActivator">
+        <Path>DevHome.Elevation.Server.exe</Path>
+        <Instancing>singleInstance</Instancing>
+        <ActivatableClass ActivatableClassId="DevHome.Elevation.ZoneConnectionManager" />
+      </OutOfProcessServer>
+    </Extension>
+
   </Extensions>
   <Identity Name="Microsoft.Windows.DevHome.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
@@ -83,7 +95,9 @@
           </uap5:OutOfProcessServer>
         </uap5:Extension>
 
+
         <!-- DevHome.Elevation.ZoneConnectionManager -->
+        <!--
         <uap5:Extension Category="windows.activatableClass.outOfProcessServer" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="packagedClassicApp">
           <uap5:OutOfProcessServer ServerName="DevHome.Elevation.Server" RunFullTrust="true">
             <uap5:Path>DevHome.Elevation.Server.exe</uap5:Path>
@@ -91,6 +105,8 @@
             <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ZoneConnectionManager" />
           </uap5:OutOfProcessServer>
         </uap5:Extension>
+        -->
+
 
         <uap3:Extension Category="windows.appExtensionHost">
           <uap3:AppExtensionHost>
