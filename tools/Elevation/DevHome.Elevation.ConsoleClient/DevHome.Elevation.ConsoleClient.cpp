@@ -23,22 +23,33 @@
 
 int main() try
 {
+    std::cout << "Create path..." << std::endl;
 
     // Launch elevated instance
     auto pathToZoneLaunchPad = std::filesystem::path(wil::GetModuleFileNameW().get());
     pathToZoneLaunchPad = pathToZoneLaunchPad.replace_filename(L"DevHome.Elevation.ZoneLaunchPad.exe");
 
+    auto pathString = pathToZoneLaunchPad.wstring();
+
     SHELLEXECUTEINFO sei = { sizeof(sei) };
     sei.lpVerb = L"runas";
-    sei.lpFile = pathToZoneLaunchPad.wstring().c_str();
+    //sei.lpFile = LR"(W:\repo\elevation\src\bin\x64\Debug\net8.0-windows10.0.22621.0\AppX\DevHome.Elevation.ZoneLaunchPad.exe)";
+    sei.lpFile = pathString.c_str();
     sei.lpParameters = L"ZoneA";
     sei.hwnd = NULL;
-    sei.nShow = SW_NORMAL;
+    sei.nShow = SW_SHOWNORMAL;
+    //sei.nShow = SW_HIDE;
+
+    std::cout << "ShellExecute..." << std::endl;
 
     THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
 
+    std::cout << "Wait..." << std::endl;
+
     // Let process finish
     wil::handle_wait(sei.hProcess);
+
+    std::cout << "GetExitCodeProcess..." << std::endl;
 
     DWORD exitCode = 0;
     THROW_LAST_ERROR_IF(!GetExitCodeProcess(sei.hProcess, &exitCode));
@@ -61,6 +72,13 @@ int main() try
 
     std::cout << "zoneAName = " << zoneAName << std::endl;
 
+
+    Sleep(10000);
+
     return 0;
 }
-CATCH_RETURN()
+catch (...)
+{
+    std::cout << "exception = " << wil::ResultFromCaughtException() << std::endl;
+    Sleep(10000);
+}
