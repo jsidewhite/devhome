@@ -49,6 +49,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // Parse the target Zone to be launched
     //auto zoneName = wargv[1];
     auto zoneName = wargv;
+    auto pid = 123;
+    auto zoneToLaunch = zoneName;
 
     if (wil::compare_string_ordinal(zoneName, L"ZoneA", true) != 0)
     {
@@ -62,6 +64,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     }
 
     WaitForDebuggerIfPresent();
+
+    auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
@@ -88,6 +92,10 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 
     THROW_IF_FAILED(zoneConnectionManager->PrepareConnection(parentProcessId, createTimeDatetime, ABI::DevHome::Elevation::Zone_A, nullptr));
 
+
+    wil::unique_event elevatedServerRunningEvent;
+    elevatedServerRunningEvent.open(eventName.c_str());
+    elevatedServerRunningEvent.SetEvent();
 
     return 0;
 }

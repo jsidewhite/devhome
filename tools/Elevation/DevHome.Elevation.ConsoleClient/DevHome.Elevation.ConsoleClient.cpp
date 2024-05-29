@@ -23,6 +23,12 @@
 
 int main() try
 {
+    // Get current pid
+    //auto pid = GetCurrentProcessId();
+    auto pid = 123;
+    auto zoneToLaunch = std::wstring(L"ZoneA");
+
+
     std::cout << "Create path..." << std::endl;
 
     // Launch elevated instance
@@ -45,12 +51,23 @@ int main() try
     sei.nShow = SW_NORMAL;
     //sei.nShow = SW_HIDE;
 
+    // Set event
+    auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
+    wil::unique_event elevatedServerRunningEvent;
+    elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName.c_str());
+
     std::cout << "ShellExecute..." << std::endl;
 
-    THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
+    //THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
+    auto retVal = ERROR_SUCCESS;
+    if (!ShellExecuteEx(&sei))
+    {
+        retVal = GetLastError();
+    }
 
     std::cout << "Wait..." << std::endl;
 
+    /*
     // Let process finish
     wil::handle_wait(sei.hProcess);
 
@@ -59,7 +76,35 @@ int main() try
     DWORD exitCode = 0;
     THROW_LAST_ERROR_IF(!GetExitCodeProcess(sei.hProcess, &exitCode));
 
-    std::cout << "Hello DevHome.Elevation.ZoneLaunchPad.exe! exit code = " << std::hex << exitCode << std::endl;
+
+    */
+
+    wil::unique_handle process(sei.hProcess);
+    if (retVal == ERROR_CANCELLED)
+    {
+        // User cancelled the UAC Prompt and thus can't elevate.
+        THROW_WIN32(ERROR_CANCELLED);
+    }
+
+    THROW_IF_WIN32_ERROR(retVal);
+
+    DWORD waitResult = WaitForSingleObject(process.get(), INFINITE);
+    THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_OPERATION_ABORTED), waitResult == WAIT_ABANDONED);
+    THROW_LAST_ERROR_IF_MSG(waitResult != WAIT_OBJECT_0, "Wait For Custom Install Worker process failed!");
+
+    std::cout << "GetExitCodeProcess..." << std::endl;
+
+    DWORD procExitCode = ERROR_SUCCESS;
+    THROW_IF_WIN32_BOOL_FALSE(GetExitCodeProcess(process.get(), &procExitCode));
+
+
+    auto exitCode = procExitCode;
+
+    elevatedServerRunningEvent.wait();
+
+
+
+    std::cout << "DevHome.Elevation.ZoneLaunchPad.exe! exit code = " << std::hex << exitCode << std::endl;
 
 
     
