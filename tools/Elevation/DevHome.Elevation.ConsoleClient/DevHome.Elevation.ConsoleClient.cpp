@@ -108,7 +108,8 @@ int main() try
 
 
     
-    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
+    //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
+    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneConnectionManager);
 
     wil::com_ptr<ABI::DevHome::Elevation::IZoneConnection> zoneConnection;
     THROW_IF_FAILED(zoneConnectionManager->OpenConnection(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), &zoneConnection));

@@ -25,8 +25,6 @@
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    constexpr auto ELEVATED_SERVER_STARTED_EVENT_NAME = L"Global\\DevHome_QuietBackgroundProcesses_ElevatedServer_Started";
-
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -35,24 +33,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
     auto serverName = ParseServerNameArgument(wargv);
 
-    if (wil::compare_string_ordinal(serverName, L"DevHome.QuietBackgroundProcesses.ElevatedServer", true) != 0)
+    if (wil::compare_string_ordinal(serverName, L"DevHome.Elevation.Server", true) != 0)
     {
         THROW_HR(E_INVALIDARG);
     }
 
-    // Let's self-elevate and terminate
-    if (!IsTokenElevated(GetCurrentProcessToken()))
-    {
-        wil::unique_event elevatedServerRunningEvent;
-        elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, ELEVATED_SERVER_STARTED_EVENT_NAME);
-
-        // Launch elevated instance
-        SelfElevate(wargv);
-
-        // Wait for the *actual* elevated server instance to register its winrt classes with COM before shutting down
-        elevatedServerRunningEvent.wait();
-        return 0;
-    }
+    THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
 
     WaitForDebuggerIfPresent();
 
@@ -85,11 +71,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     auto unique_wrl_registration_cookie = wil::scope_exit([&module]() {
         module.UnregisterObjects();
     });
-
-    // Tell the unelevated server instance that we've registered our winrt classes with COM (so it can terminate)
-    wil::unique_event elevatedServerRunningEvent;
-    elevatedServerRunningEvent.open(ELEVATED_SERVER_STARTED_EVENT_NAME);
-    elevatedServerRunningEvent.SetEvent();
 
     // Wait for all server references to release (implicitly also waiting for timers to finish via CoAddRefServerProcess)
     auto lock = std::unique_lock<std::mutex>(mutex);

@@ -69,10 +69,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
-    //zoneConnectionManager->LaunchZone(zoneName);
-    //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);
-    //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
-    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneConnectionManager);
 
     // Get PID of parent process
     auto parentProcessId = GetParentProcessId();
@@ -90,7 +86,13 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     INT64 createTime64 = createTime.dwLowDateTime + ((UINT64)createTime.dwHighDateTime << 32);
     auto createTimeDatetime = ABI::Windows::Foundation::DateTime{ createTime64 };
 
-    THROW_IF_FAILED(zoneConnectionManager->PrepareConnection(parentProcessId, createTimeDatetime, ABI::DevHome::Elevation::Zone_A, nullptr));
+    //zoneConnectionManager->LaunchZone(zoneName);
+    //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);
+    //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
+    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneConnectionManager);
+
+    HSTRING strValue;
+    THROW_IF_FAILED(zoneConnectionManager->PrepareConnection(parentProcessId, createTimeDatetime, ABI::DevHome::Elevation::Zone_A, &strValue));
 
 
     wil::unique_event elevatedServerRunningEvent;
