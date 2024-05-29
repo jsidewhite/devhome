@@ -41,7 +41,6 @@ ULONG_PTR GetParentProcessId()
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
-    return 0;
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);

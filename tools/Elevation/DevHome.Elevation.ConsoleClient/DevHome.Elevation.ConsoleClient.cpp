@@ -31,11 +31,15 @@ int main() try
 
     auto pathString = pathToZoneLaunchPad.wstring();
 
+
+    auto unique_rouninitialize_call = wil::RoInitialize();
+
     SHELLEXECUTEINFO sei = { sizeof(sei) };
     sei.lpVerb = L"runas";
     //sei.lpFile = LR"(W:\repo\elevation\src\bin\x64\Debug\net8.0-windows10.0.22621.0\AppX\DevHome.Elevation.ZoneLaunchPad.exe)";
     sei.lpFile = pathString.c_str();
     sei.lpParameters = L"ZoneA";
+    sei.fMask = SEE_MASK_NOCLOSEPROCESS;
     sei.hwnd = NULL;
     sei.nShow = SW_SHOWNORMAL;
     //sei.nShow = SW_HIDE;
@@ -58,7 +62,6 @@ int main() try
 
 
     
-    auto unique_rouninitialize_call = wil::RoInitialize();
     auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
 
     wil::com_ptr<ABI::DevHome::Elevation::IZoneConnection> zoneConnection;
