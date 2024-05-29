@@ -67,7 +67,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 #pragma warning(pop)
 
     // Register WinRT activatable classes
-    module.RegisterObjects();
+    THROW_IF_FAILED(module.RegisterObjects());
     auto unique_wrl_registration_cookie = wil::scope_exit([&module]() {
         module.UnregisterObjects();
     });
