@@ -23,6 +23,35 @@
 #include "DevHome.Elevation.h"
 #include "Utility.h"
 
+void CreateProcessW(std::filesystem::path const& path, std::optional<std::wstring> const& arguments, bool elevated = false)
+{
+    THROW_HR_IF(E_INVALIDARG, elevated);
+
+    STARTUPINFO startupInfo{};
+    startupInfo.cb = sizeof(startupInfo);
+    wil::unique_process_information processInfo;
+
+    PCWSTR lpwstrExePath{};
+    LPWSTR lpwstrCommandLine{};
+    std::wstring commandLine;
+    if (arguments)
+    {
+        commandLine = path.wstring() + L" " + arguments.value();
+        lpwstrCommandLine = const_cast<LPWSTR>(commandLine.c_str());
+    }
+    else
+    {
+        lpwstrExePath = path.c_str();
+    }
+
+    THROW_IF_WIN32_BOOL_FALSE(CreateProcess(lpwstrExePath, lpwstrCommandLine, nullptr, nullptr, TRUE, 0, nullptr, nullptr, &startupInfo, &processInfo));
+
+    // Let process finish
+    //wil::handle_wait(processInfo.hProcess);
+
+    //auto pid = GetProcessId(processInfo.hProcess);
+}
+
 ULONG_PTR GetParentProcessId()
 {
     ULONG_PTR pbi[6];
@@ -85,6 +114,9 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 
     INT64 createTime64 = createTime.dwLowDateTime + ((UINT64)createTime.dwHighDateTime << 32);
     auto createTimeDatetime = ABI::Windows::Foundation::DateTime{ createTime64 };
+
+    // CreateProcess
+    CreateProcessW(L"DevHome.Elevation.Server.exe", L"-ServerName:DevHome.Elevation.Server", false);
 
     //zoneConnectionManager->LaunchZone(zoneName);
     //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);

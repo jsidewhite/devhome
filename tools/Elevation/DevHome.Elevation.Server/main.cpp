@@ -30,7 +30,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
-    // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.QuietBackgroundProcesses.ElevatedServer"
+    // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.Elevation.Server"
     auto serverName = ParseServerNameArgument(wargv);
 
     if (wil::compare_string_ordinal(serverName, L"DevHome.Elevation.Server", true) != 0)

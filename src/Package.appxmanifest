@@ -11,9 +11,11 @@
 
 
 
-    <!-- QuietBackgroundProcesses unelevated server which initiates & obtains a reference to a quiet session -->
+    <!--
+      
+    -->
     <Extension Category="windows.activatableClass.outOfProcessServer">
-      <OutOfProcessServer ServerName="DevHome.Elevation.Server" uap5:IdentityType="activateAsActivator">
+      <OutOfProcessServer ServerName="DevHome.Elevation.Server" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
         <Path>DevHome.Elevation.Server.exe</Path>
         <Instancing>singleInstance</Instancing>
         <ActivatableClass ActivatableClassId="DevHome.Elevation.ZoneConnectionManager" />
