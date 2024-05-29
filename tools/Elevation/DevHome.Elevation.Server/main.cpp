@@ -38,7 +38,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
-    THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
+    //THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
 
     WaitForDebuggerIfPresent();
 
