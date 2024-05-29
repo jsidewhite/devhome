@@ -49,6 +49,14 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
         <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <!-- Limitations in Microsoft.Extension.Configuration require this to be a key=value pair.-->
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="DevHome.Elevation.ZoneLaunchPad.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
       </Application>
 
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
