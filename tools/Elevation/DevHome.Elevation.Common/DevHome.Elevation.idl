@@ -13,9 +13,9 @@ namespace DevHome.Elevation
 
     enum ElevationZone
     {
-        ZoneA,
-        ZoneB,
-        ZoneC,
+        ElevationZoneA,
+        ElevationZoneB,
+        ElevationZoneC,
     };
 
     [contract(ElevationContract, 1.0), uuid(2b69fc32-cabe-4758-b9a0-fb8542e9c55c)]
@@ -58,7 +58,7 @@ namespace DevHome.Elevation
     //
     // Zones
     //
-    runtimeclass ZoneA
+    runtimeclass ElevationZoneA
     {
         UInt32 GetName();
     }
