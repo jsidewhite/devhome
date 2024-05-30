@@ -31,6 +31,7 @@ namespace DevHome.Elevation
         IElevationZone Redeem();
     };
 
+    /*
     enum ClaimVoucherStatus
     {
         Success = 0,
@@ -43,6 +44,7 @@ namespace DevHome.Elevation
         ClaimVoucherStatus Status { get; };
         HRESULT ExtendedError { get; };
     }
+    */
 
     //todo: rename to OpenChannel
     [default_interface]
@@ -52,7 +54,8 @@ namespace DevHome.Elevation
         static void ActivateVoucher(ElevationVoucher voucher, Windows.Foundation.TimeSpan validDuration);
 
         // Claim the voucher (from unelevated process)
-        static ClaimVoucherResult ClaimVoucher(ElevationZone zoneName);
+        //static ClaimVoucherResult ClaimVoucher(ElevationZone zoneName);
+        static ElevationVoucher ClaimVoucher(ElevationZone zoneName);
     }
 
     //
