@@ -26,8 +26,8 @@ int main() try
     // Get current pid
     //auto pid = GetCurrentProcessId();
     auto pid = 123;
-    auto zoneToLaunch = std::wstring(L"ZoneA");
-
+    auto zoneToLaunch = std::wstring(L"ElevationZoneA");
+    auto voucherName = std::wstring(L"abc");
 
     std::cout << "Create path..." << std::endl;
 
@@ -40,11 +40,13 @@ int main() try
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
+    auto arguments = std::wstring{} + L"-ElevationZone " + zoneToLaunch + L" -VoucherName " + voucherName;
+
     SHELLEXECUTEINFO sei = { sizeof(sei) };
     sei.lpVerb = L"runas";
     //sei.lpFile = LR"(W:\repo\elevation\src\bin\x64\Debug\net8.0-windows10.0.22621.0\AppX\DevHome.Elevation.ZoneLaunchPad.exe)";
     sei.lpFile = pathString.c_str();
-    sei.lpParameters = L"-ElevationZone ElevationZoneA -VoucherName abc";
+    sei.lpParameters = arguments.c_str();
     sei.fMask = SEE_MASK_FLAG_NO_UI | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
     sei.hwnd = NULL;
     //sei.nShow = SW_SHOWNORMAL;

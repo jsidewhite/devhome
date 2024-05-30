@@ -79,6 +79,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
+    /*
     // Parse the target Zone to be launched
     //auto zoneName = wargv[1];
     auto zoneName = wargv;
@@ -93,6 +94,14 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         pid = std::stoi(arguments[2]);
         zoneToLaunch = arguments[3];
     }
+    */
+
+    
+    //auto zoneName = ((wchar_t*)(__argc))[2];
+    auto zoneName = __wargv[2];
+    auto voucherName = __wargv[4];
+    auto pid = 123;
+    auto zoneToLaunch = zoneName;
 
     //if (wil::compare_string_ordinal(zoneName, L"ZoneA", true) != 0)
     //{

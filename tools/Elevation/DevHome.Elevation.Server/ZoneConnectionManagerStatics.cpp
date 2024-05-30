@@ -203,20 +203,19 @@ namespace ABI::DevHome::Elevation
         ABI::Windows::Foundation::DateTime m_processCreateTime;
     };
 
-    class ElevationVoucherStatics WrlFinal :
+    class ElevationVoucherFactory WrlFinal :
         public Microsoft::WRL::AgileActivationFactory<
             Microsoft::WRL::Implements<IElevationVoucherFactory>>
     {
         InspectableClassStatic(RuntimeClass_DevHome_Elevation_ElevationVoucher, BaseTrust);
 
     public:
-        /*
+        
         STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
         {
             // Disallow activation - must use GetSingleton()
             return E_NOTIMPL;
         }
-        */
 
         STDMETHODIMP CreateInstance(
             /* [in] */ HSTRING voucherName,
@@ -232,7 +231,7 @@ namespace ABI::DevHome::Elevation
         }
     };
 
-    ActivatableClassWithFactory(ElevationVoucher, ElevationVoucherStatics);
+    ActivatableClassWithFactory(ElevationVoucher, ElevationVoucherFactory);
 }
 
 

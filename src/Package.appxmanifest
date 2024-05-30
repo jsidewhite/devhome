@@ -83,25 +83,26 @@
         <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <!-- DevHome.Elevation.ZoneConnectionManager -->
+        <!-- DevHome.Elevation.ElevationVoucherManager -->
         <!--
         -->
         <uap5:Extension Category="windows.activatableClass.outOfProcessServer" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="packagedClassicApp">
           <uap5:OutOfProcessServer ServerName="DevHome.Elevation.Server" RunFullTrust="true">
             <uap5:Path>DevHome.Elevation.Server.exe</uap5:Path>
             <uap5:Instancing>singleInstance</uap5:Instancing>
-            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ZoneConnectionManager" />
+            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucherManager" />
           </uap5:OutOfProcessServer>
         </uap5:Extension>
 
+
 <!--
+-->
   
         <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.Server.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
           <uap3:AppExecutionAlias>
             <desktop:ExecutionAlias Alias="DevHome.Elevation.Server.exe" />
           </uap3:AppExecutionAlias>
         </uap3:Extension>
--->
       </Extensions>
     </Application>
 
