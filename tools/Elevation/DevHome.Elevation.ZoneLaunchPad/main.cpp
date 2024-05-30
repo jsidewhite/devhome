@@ -19,6 +19,8 @@
 
 #include <objbase.h>
 #include <roregistrationapi.h>
+#include <shobjidl_core.h>
+
 
 #include "DevHome.Elevation.h"
 #include "Utility.h"
@@ -116,7 +118,11 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     auto createTimeDatetime = ABI::Windows::Foundation::DateTime{ createTime64 };
 
     // CreateProcess
-    CreateProcessW(L"DevHome.Elevation.Server.exe", L"-ServerName:DevHome.Elevation.Server", false);
+    //CreateProcessW(L"DevHome.Elevation.Server.exe", L"-ServerName:DevHome.Elevation.Server", false);
+    auto activationManager = wil::CoCreateInstance<ApplicationActivationManager, IApplicationActivationManager>();
+
+    DWORD processId = 0;
+    THROW_IF_FAILED(activationManager->ActivateApplication(L"Microsoft.Windows.DevHome.Dev_8wekyb3d8bbwe!AppElevationServer", nullptr, AO_NOERRORUI, &processId));
 
     //zoneConnectionManager->LaunchZone(zoneName);
     //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);

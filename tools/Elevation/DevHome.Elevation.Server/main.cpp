@@ -30,6 +30,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
+    /*
     // Parse the servername from the cmdline argument, e.g. "-ServerName:DevHome.Elevation.Server"
     auto serverName = ParseServerNameArgument(wargv);
 
@@ -37,6 +38,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     {
         THROW_HR(E_INVALIDARG);
     }
+    */
 
     //THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
 
