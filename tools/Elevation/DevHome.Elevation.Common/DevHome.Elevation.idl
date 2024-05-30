@@ -39,18 +39,9 @@ namespace DevHome.Elevation
 
     runtimeclass ClaimVoucherResult
     {
-        ZoneVoucher Voucher
-        {
-            get;
-        };
-        ClaimVoucherStatus Status
-        {
-            get;
-        };
-        HRESULT ExtendedError
-        {
-            get;
-        };
+        ZoneVoucher Voucher { get; };
+        ClaimVoucherStatus Status { get; };
+        HRESULT ExtendedError { get; };
     }
 
     //todo: rename to OpenChannel
@@ -58,22 +49,15 @@ namespace DevHome.Elevation
     runtimeclass ZoneVoucherManager
     {
         // Called from an elevated process
-        /*
-        static String PrepareConnection(
-            UInt32 pid,
-            Windows.Foundation.DateTime processCreateTime,
-            Zone name);
-
-        */
         static void ActivateVoucher(ZoneVoucher voucher, Windows.Foundation.TimeSpan validDuration);
 
         // Called from an unelevated process
         static ClaimVoucherResult ClaimVoucher(Zone zoneName);
-        //static void CloseConnection(String connectionId);
     }
 
-
-    //[contract(ElevationContract, 1.0)]
+    //
+    // Zones
+    //
     runtimeclass ZoneA
     {
         UInt32 GetName();
