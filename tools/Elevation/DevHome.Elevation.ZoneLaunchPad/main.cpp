@@ -54,7 +54,7 @@ void CreateProcessW(std::filesystem::path const& path, std::optional<std::wstrin
     //auto pid = GetProcessId(processInfo.hProcess);
 }
 
-ULONG_PTR GetParentProcessId()
+DWORD GetParentProcessId()
 {
     ULONG_PTR pbi[6];
     ULONG ulSize = 0;
@@ -65,9 +65,9 @@ ULONG_PTR GetParentProcessId()
     if (NtQueryInformationProcess)
     {
         if (NtQueryInformationProcess(GetCurrentProcess(), 0, &pbi, sizeof(pbi), &ulSize) >= 0 && ulSize == sizeof(pbi))
-            return pbi[5];
+            return static_cast<DWORD>(pbi[5]);
     }
-    return (ULONG_PTR)-1;
+    return (DWORD)-1;
 }
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
@@ -130,9 +130,9 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_IF_FAILED(activationManager->ActivateApplication(L"Microsoft.Windows.DevHome.Dev_8wekyb3d8bbwe!AppElevationServer", nullptr, AO_NOERRORUI, &processId));
 
         {
-            auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_Server__Started";
+            auto eventName234 = std::wstring{} + L"Global\\DevHome_Elevation_Server__Started";
             wil::unique_event elevatedServerRunningEvent;
-            elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName.c_str());
+            elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName234.c_str());
         }
     }
 
@@ -141,10 +141,26 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     //zoneConnectionManager->LaunchZone(zoneName);
     //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);
     //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
-    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneConnectionManager);
 
-    HSTRING strValue;
-    THROW_IF_FAILED(zoneConnectionManager->PrepareConnection(parentProcessId, createTimeDatetime, ABI::DevHome::Elevation::Zone_A, &strValue));
+    auto voucherFactory = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherFactory>(RuntimeClass_DevHome_Elevation_ElevationVoucher);
+
+    wil::com_ptr < ABI::DevHome::Elevation::IElevationVoucher> voucher;
+    THROW_IF_FAILED(voucherFactory->CreateInstance(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, parentProcessId, createTimeDatetime, &voucher));
+
+    /*
+    auto voucher = wil::ActivateInstance<ABI::DevHome::Elevation::IElevationVoucher>(
+        RuntimeClass_DevHome_Elevation_ElevationVoucher,
+        ABI::DevHome::Elevation::ElevationZone_ElevationZoneA,
+        parentProcessId,
+        createTimeDatetime);
+    */
+
+    auto voucherManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ElevationVoucherManager);
+
+    ABI::Windows::Foundation::TimeSpan validDuration;
+    validDuration.Duration = 1000 * 10000 * 11; // 11 seconds
+
+    THROW_IF_FAILED(voucherManager->ActivateVoucher(voucher.get(), validDuration));
 
     {
         auto eventName1 = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;

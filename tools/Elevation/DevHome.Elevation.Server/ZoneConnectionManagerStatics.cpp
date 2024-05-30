@@ -71,17 +71,32 @@ namespace ABI::DevHome::Elevation
 
 namespace ABI::DevHome::Elevation
 {
-    class ZoneConnectionManagerStatics WrlFinal :
+    class ElevationVoucherManagerStatics WrlFinal :
         public Microsoft::WRL::AgileActivationFactory<
-            Microsoft::WRL::Implements<IZoneConnectionManagerStatics>>
+            Microsoft::WRL::Implements<IElevationVoucherManagerStatics>>
     {
-        InspectableClassStatic(RuntimeClass_DevHome_Elevation_ZoneConnectionManager, BaseTrust);
+        InspectableClassStatic(RuntimeClass_DevHome_Elevation_ElevationVoucherManager, BaseTrust);
 
     public:
         STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
         {
             // Disallow activation - must use GetSingleton()
             return E_NOTIMPL;
+        }
+
+        STDMETHODIMP ActivateVoucher(
+            /* [in] */ IElevationVoucher* voucher,
+            /* [in] */ ABI::Windows::Foundation::TimeSpan validDuration) noexcept
+        {
+            // This method must called from an elevated process
+            
+            // todo:jw ensure client caller is elevated
+
+            //remove?
+            THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
+
+
+            return S_OK;
         }
 
         // This method must called from an elevated process

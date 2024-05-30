@@ -111,12 +111,12 @@ int main() try
 
     
     //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
-    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ElevationVoucherManager);
+    auto voucherManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ElevationVoucherManager);
 
 
 
     wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher> elevationVoucher;
-    THROW_IF_FAILED(zoneConnectionManager->ClaimVoucher(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, &elevationVoucher));
+    THROW_IF_FAILED(voucherManager->ClaimVoucher(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, &elevationVoucher));
 
     wil::com_ptr<ABI::DevHome::Elevation::IElevationZone> elevationZone;
     THROW_IF_FAILED(elevationVoucher->Redeem(&elevationZone));
