@@ -11,7 +11,7 @@ namespace DevHome.Elevation
     {
     }
 
-    enum Zone
+    enum ElevationZone
     {
         ZoneA,
         ZoneB,
@@ -19,16 +19,16 @@ namespace DevHome.Elevation
     };
 
     [contract(ElevationContract, 1.0), uuid(2b69fc32-cabe-4758-b9a0-fb8542e9c55c)]
-    interface IZone
+    interface IElevationZone
     {
     }
 
     [default_interface]
-    runtimeclass ZoneVoucher
+    runtimeclass ElevationVoucher
     {
-        ZoneVoucher(Zone zoneId, UInt32 pid, Windows.Foundation.DateTime processCreateTime);
+        ElevationVoucher(ElevationZone zoneId, UInt32 pid, Windows.Foundation.DateTime processCreateTime);
         
-        IZone Redeem();
+        IElevationZone Redeem();
     };
 
     enum ClaimVoucherStatus
@@ -39,20 +39,20 @@ namespace DevHome.Elevation
 
     runtimeclass ClaimVoucherResult
     {
-        ZoneVoucher Voucher { get; };
+        ElevationVoucher Voucher { get; };
         ClaimVoucherStatus Status { get; };
         HRESULT ExtendedError { get; };
     }
 
     //todo: rename to OpenChannel
     [default_interface]
-    runtimeclass ZoneVoucherManager
+    runtimeclass ElevationVoucherManager
     {
         // Called from an elevated process
-        static void ActivateVoucher(ZoneVoucher voucher, Windows.Foundation.TimeSpan validDuration);
+        static void EnableVoucher(ElevationVoucher voucher, Windows.Foundation.TimeSpan validDuration);
 
         // Called from an unelevated process
-        static ClaimVoucherResult ClaimVoucher(Zone zoneName);
+        static ClaimVoucherResult ClaimVoucher(ElevationZone zoneName);
     }
 
     //

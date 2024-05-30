@@ -111,7 +111,7 @@ int main() try
 
     
     //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
-    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneConnectionManager);
+    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneVoucherManager);
 
 
 
