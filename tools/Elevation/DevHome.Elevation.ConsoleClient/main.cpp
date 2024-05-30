@@ -44,7 +44,7 @@ int main() try
     sei.lpVerb = L"runas";
     //sei.lpFile = LR"(W:\repo\elevation\src\bin\x64\Debug\net8.0-windows10.0.22621.0\AppX\DevHome.Elevation.ZoneLaunchPad.exe)";
     sei.lpFile = pathString.c_str();
-    sei.lpParameters = L"ZoneA";
+    sei.lpParameters = L"-ElevationZone ElevationZoneA -VoucherName abc";
     sei.fMask = SEE_MASK_FLAG_NO_UI | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
     sei.hwnd = NULL;
     //sei.nShow = SW_SHOWNORMAL;

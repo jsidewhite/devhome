@@ -83,10 +83,19 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     auto pid = 123;
     auto zoneToLaunch = zoneName;
 
-    if (wil::compare_string_ordinal(zoneName, L"ZoneA", true) != 0)
+    // Split commandline arguments on space
+    auto arguments = CommandLineToArgvW(GetCommandLineW(), &wargc);
+    if (arguments)
     {
-        THROW_HR(E_INVALIDARG);
+        zoneName = arguments[1];
+        pid = std::stoi(arguments[2]);
+        zoneToLaunch = arguments[3];
     }
+
+    //if (wil::compare_string_ordinal(zoneName, L"ZoneA", true) != 0)
+    //{
+        //THROW_HR(E_INVALIDARG);
+    //}
 
     // Make sure we're already elevated instance
     if (!IsTokenElevated(GetCurrentProcessToken()))
@@ -145,7 +154,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     auto voucherFactory = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherFactory>(RuntimeClass_DevHome_Elevation_ElevationVoucher);
 
     wil::com_ptr < ABI::DevHome::Elevation::IElevationVoucher> voucher;
-    THROW_IF_FAILED(voucherFactory->CreateInstance(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, parentProcessId, createTimeDatetime, &voucher));
+    THROW_IF_FAILED(voucherFactory->CreateInstance(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, parentProcessId, createTimeDatetime, &voucher));
 
     /*
     auto voucher = wil::ActivateInstance<ABI::DevHome::Elevation::IElevationVoucher>(

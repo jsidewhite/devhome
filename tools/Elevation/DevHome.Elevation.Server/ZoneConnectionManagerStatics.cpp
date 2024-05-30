@@ -41,7 +41,8 @@ namespace ABI::DevHome::Elevation
 
         STDMETHODIMP ActivateVoucher(
             /* [in] */ IElevationVoucher* voucher,
-            /* [in] */ ABI::Windows::Foundation::TimeSpan validDuration) noexcept try
+            /* [in] */ ABI::Windows::Foundation::TimeSpan /* validDuration*/) noexcept
+        try
         {
             // This method must called from an elevated process
             
@@ -65,26 +66,76 @@ namespace ABI::DevHome::Elevation
             // Only activate a voucher if the requester is at least as elevated as us!
             THROW_HR_IF(E_ACCESSDENIED, clientLabel < ourLabel);
 
+            // Add to m_activatedVouchers
+            HSTRING hstrVoucherName;
+            THROW_IF_FAILED(voucher->get_VoucherName(&hstrVoucherName));
+            auto voucherName = std::wstring(WindowsGetStringRawBuffer(hstrVoucherName, nullptr));
+            {
+                std::scoped_lock lock(m_mutex);
+                m_activatedVouchers.emplace(voucherName, voucher);
+            }
+
             return S_OK;
         }
         CATCH_RETURN()
 
         STDMETHODIMP ClaimVoucher(
-            /* [in] */ ElevationZone zone,
+            /* [in] */ HSTRING hstrVoucherName,
             /* [out, retval] */ IElevationVoucher** result) noexcept try
         {
-            auto revert = wil::CoImpersonateClient();
+            // Find voucher in m_activatedVouchers
+            auto voucherName = std::wstring(WindowsGetStringRawBuffer(hstrVoucherName, nullptr));
 
+            {
+                std::scoped_lock lock(m_mutex);
+                auto it = m_activatedVouchers.find(voucherName);
+                THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_NOT_FOUND), it == m_activatedVouchers.end());
+
+                auto voucherPointer = it->second.get();
+
+                // Ensure client process matches what's stored in the voucher
+                {
+                    // Get calling process handle
+                    auto revert = wil::CoImpersonateClient();
+
+                    wil::unique_process_handle clientProcess;
+                    DWORD clientPid = GetProcessId(clientProcess.get());
+
+                    uint32_t voucherProcessId;
+                    THROW_IF_FAILED(voucherPointer->get_ProcessId(&voucherProcessId));
+
+                    if (clientPid != voucherProcessId)
+                    {
+                        THROW_HR(E_ACCESSDENIED);
+                    }
+
+
+                    //todo:jw time match
+
+                }
+
+
+                //*result = it->second.get();
+                auto voucher = std::move(it->second);
+
+                // Remove from m_activatedVouchers
+                m_activatedVouchers.erase(it);
+
+                *result = voucher.detach();
+            }
+
+
+            return S_OK;
         }
         CATCH_RETURN()
 
 
     private:
         std::mutex m_mutex;
-        std::map<std::wstring, std::tuple<unsigned int, ABI::Windows::Foundation::DateTime, ABI::DevHome::Elevation::Zone>> m_preparedConnections;
+        std::map<std::wstring, wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher>> m_activatedVouchers;
     };
 
-    ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
+    ActivatableStaticOnlyFactory(ElevationVoucherManagerStatics);
 }
 
 
