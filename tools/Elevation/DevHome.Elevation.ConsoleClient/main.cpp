@@ -111,20 +111,23 @@ int main() try
 
     
     //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
-    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ZoneVoucherManager);
+    auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ElevationVoucherManager);
 
 
 
-    wil::com_ptr<ABI::DevHome::Elevation::IZoneConnection> zoneConnection;
-    THROW_IF_FAILED(zoneConnectionManager->OpenConnection(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), &zoneConnection));
+    wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher> elevationVoucher;
+    THROW_IF_FAILED(zoneConnectionManager->ClaimVoucher(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, &elevationVoucher));
 
-    auto zoneA = zoneConnection.query<ABI::DevHome::Elevation::IZoneA>();
+    wil::com_ptr<ABI::DevHome::Elevation::IElevationZone> elevationZone;
+    THROW_IF_FAILED(elevationVoucher->Redeem(&elevationZone));
 
-    unsigned int zoneAName;
-    THROW_IF_FAILED(zoneA->GetName(&zoneAName));
+    auto elevationZoneA = elevationVoucher.query<ABI::DevHome::Elevation::IElevationZoneA>();
+
+    unsigned int something;
+    THROW_IF_FAILED(elevationZoneA->GetSomething(&something));
 
 
-    std::cout << "zoneAName = " << zoneAName << std::endl;
+    std::cout << "something = " << something << std::endl;
 
 
     Sleep(10000);

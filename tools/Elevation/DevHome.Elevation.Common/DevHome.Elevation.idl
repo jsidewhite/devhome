@@ -63,7 +63,7 @@ namespace DevHome.Elevation
     //
     runtimeclass ElevationZoneA
     {
-        UInt32 GetName();
+        UInt32 GetSomething();
     }
 
 }
