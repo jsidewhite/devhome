@@ -6,20 +6,29 @@ import "windows.foundation.idl";
 
 namespace DevHome.Elevation
 {
-    [contractversion(1)] apicontract ElevationContract
+    [contractversion(1)]
+    apicontract ElevationContract
     {
     }
 
     enum Zone
     {
-        A,
-        B,
-        C,
+        ZoneA,
+        ZoneB,
+        ZoneC,
     };
 
-    [contract(ElevationContract, 1.0), uuid(2f2222a5-1000-47ef-864e-1e46ed31bb22)]
-    interface IZoneConnection
+    [contract(ElevationContract, 1.0), uuid(2b69fc32-cabe-4758-b9a0-fb8542e9c55c)]
+    interface IZone
     {
+    }
+
+    [default_interface]
+    runtimeclass ZoneConnection
+    {
+        ZoneConnection(Zone zoneName, UInt32 pid, Windows.Foundation.DateTime processCreateTime);
+        
+        IZone ResolveZone();
     };
 
     //todo: rename to OpenChannel
@@ -27,27 +36,25 @@ namespace DevHome.Elevation
     runtimeclass ZoneConnectionManager
     {
         // Called from an elevated process
+        /*
         static String PrepareConnection(
             UInt32 pid,
             Windows.Foundation.DateTime processCreateTime,
             Zone name);
 
+        */
+        static void PinConnection(ZoneConnection connection);
+
         // Called from an unelevated process
-        static IZoneConnection OpenConnection(String connectionId);
-        static void CloseConnection(String connectionId);
+        static ZoneConnection OpenConnection(Zone zoneName);
+        //static void CloseConnection(String connectionId);
     }
 
-    [contract(ElevationContract, 1.0)]
-    interface IZoneA
+
+    //[contract(ElevationContract, 1.0)]
+    runtimeclass ZoneA
     {
         UInt32 GetName();
     }
 
-    
-    [contract(ElevationContract, 1.0)]
-    runtimeclass ZoneA
-    {
-        [default] interface IZoneA;
-        interface IZoneConnection;
-    }
 }
