@@ -24,16 +24,38 @@ namespace DevHome.Elevation
     }
 
     [default_interface]
-    runtimeclass ZoneConnection
+    runtimeclass ZoneVoucher
     {
-        ZoneConnection(Zone zoneName, UInt32 pid, Windows.Foundation.DateTime processCreateTime);
+        ZoneVoucher(Zone zoneId, UInt32 pid, Windows.Foundation.DateTime processCreateTime);
         
-        IZone ResolveZone();
+        IZone Redeem();
     };
+
+    enum ClaimVoucherStatus
+    {
+        Success = 0,
+        NoVoucher,
+    };
+
+    runtimeclass ClaimVoucherResult
+    {
+        ZoneVoucher Voucher
+        {
+            get;
+        };
+        ClaimVoucherStatus Status
+        {
+            get;
+        };
+        HRESULT ExtendedError
+        {
+            get;
+        };
+    }
 
     //todo: rename to OpenChannel
     [default_interface]
-    runtimeclass ZoneConnectionManager
+    runtimeclass ZoneVoucherManager
     {
         // Called from an elevated process
         /*
@@ -43,10 +65,10 @@ namespace DevHome.Elevation
             Zone name);
 
         */
-        static void PinConnection(ZoneConnection connection);
+        static void ActivateVoucher(ZoneVoucher voucher, Windows.Foundation.TimeSpan validDuration);
 
         // Called from an unelevated process
-        static ZoneConnection OpenConnection(Zone zoneName);
+        static ClaimVoucherResult ClaimVoucher(Zone zoneName);
         //static void CloseConnection(String connectionId);
     }
 
