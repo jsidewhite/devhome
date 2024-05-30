@@ -116,7 +116,8 @@ int main() try
 
 
     wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher> elevationVoucher;
-    THROW_IF_FAILED(voucherManager->ClaimVoucher(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, &elevationVoucher));
+    //THROW_IF_FAILED(voucherManager->ClaimVoucher(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, &elevationVoucher));
+    THROW_IF_FAILED(voucherManager->ClaimVoucher(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), &elevationVoucher));
 
     wil::com_ptr<ABI::DevHome::Elevation::IElevationZone> elevationZone;
     THROW_IF_FAILED(elevationVoucher->Redeem(&elevationZone));

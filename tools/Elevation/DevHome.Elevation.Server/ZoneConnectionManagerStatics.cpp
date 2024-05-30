@@ -138,6 +138,75 @@ namespace ABI::DevHome::Elevation
     ActivatableStaticOnlyFactory(ElevationVoucherManagerStatics);
 }
 
+namespace ABI::DevHome::Elevation
+{
+    class ElevationVoucher :
+        public Microsoft::WRL::RuntimeClass<
+            Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
+            IElevationVoucher,
+            Microsoft::WRL::FtmBase>
+    {
+        InspectableClass(RuntimeClass_DevHome_Elevation_ElevationVoucher, BaseTrust);
+
+    public:
+        STDMETHODIMP RuntimeClassInitialize(HSTRING voucherName, ElevationZone zoneId, uint32_t processId, ABI::Windows::Foundation::DateTime processCreateTime) noexcept
+        {
+            m_voucherName = std::wstring(WindowsGetStringRawBuffer(voucherName, nullptr));
+            m_zoneId = zoneId;
+            m_processId = processId;
+            m_processCreateTime = processCreateTime;
+            return S_OK;
+        }
+
+        STDMETHODIMP get_VoucherName(_Out_ HSTRING* result) noexcept
+        {
+            Microsoft::WRL::Wrappers::HStringReference(m_voucherName.c_str()).CopyTo(result);
+            return S_OK;
+        }
+
+        STDMETHODIMP get_ZoneId(_Out_ ElevationZone* result) noexcept
+        {
+            *result = m_zoneId;
+            return S_OK;
+        }
+
+        STDMETHODIMP get_ProcessId(_Out_ unsigned int* result) noexcept
+        {
+            *result = m_processId;
+            return S_OK;
+        }
+
+        STDMETHODIMP get_ProcessCreateTime(_Out_ Windows::Foundation::DateTime* result) noexcept
+        {
+            *result = m_processCreateTime;
+            return S_OK;
+        }
+
+        STDMETHODIMP Redeem(_COM_Outptr_ IElevationZone** result) noexcept
+        {
+            if (m_zoneId == ElevationZone::ElevationZoneA)
+            {
+                wil::com_ptr<IElevationZoneA> zoneA;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<IElevationZoneA>(&zoneA));
+
+                zoneA.query_to(result);
+            }
+            else
+            {
+                return E_NOTIMPL;
+            }
+        }
+
+    private:
+        std::wstring m_voucherName;
+        ElevationZone m_zoneId;
+        uint32_t m_processId;
+        ABI::Windows::Foundation::DateTime m_processCreateTime;
+    };
+
+    ActivatableClass(ElevationVoucher);
+}
+
 
 
 
