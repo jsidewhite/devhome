@@ -18,55 +18,10 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
+#include "Utility.h"
 #include "DevHome.Elevation.h"
 
 // std::mutex g_mutex;
-
-inline std::optional<uint32_t> try_get_registry_value_dword(HKEY key, _In_opt_ PCWSTR subKey, _In_opt_ PCWSTR value_name, ::wil::reg::key_access access = ::wil::reg::key_access::read)
-{
-    wil::unique_hkey hkey;
-    if (SUCCEEDED(wil::reg::open_unique_key_nothrow(key, subKey, hkey, access)))
-    {
-        if (auto keyvalue = wil::reg::try_get_value_dword(hkey.get(), value_name))
-        {
-            return keyvalue.value();
-        }
-    }
-    return std::nullopt;
-}
-
-namespace ABI::DevHome::Elevation
-{
-    class ZoneA :
-        public Microsoft::WRL::RuntimeClass<
-            Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
-            IZoneA,
-            IZoneConnection,
-            Microsoft::WRL::FtmBase>
-    {
-        InspectableClass(RuntimeClass_DevHome_Elevation_ZoneA, BaseTrust);
-
-    public:
-        STDMETHODIMP RuntimeClassInitialize() noexcept
-        {
-            return S_OK;
-        }
-
-           STDMETHODIMP GetName(_Out_ unsigned int* result) noexcept
-            {
-               // try get registry key to hklm/software/microsoft/windows/currentversion/devhome/quietbackgroundprocesses
-                if (auto durationOverride = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
-                {
-                    *result = (unsigned int)std::chrono::seconds(durationOverride.value()).count();
-                }
-                *result = 1111;
-                return S_OK;
-            }
-    };
-
-    //ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
-}
-
 
 
 namespace ABI::DevHome::Elevation
@@ -86,81 +41,43 @@ namespace ABI::DevHome::Elevation
 
         STDMETHODIMP ActivateVoucher(
             /* [in] */ IElevationVoucher* voucher,
-            /* [in] */ ABI::Windows::Foundation::TimeSpan validDuration) noexcept
+            /* [in] */ ABI::Windows::Foundation::TimeSpan validDuration) noexcept try
         {
             // This method must called from an elevated process
             
             // todo:jw ensure client caller is elevated
 
-            //remove?
-            THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
-
-
-            return S_OK;
-        }
-
-        // This method must called from an elevated process
-        STDMETHODIMP PrepareConnection(
-            /* [in] */ unsigned int pid,
-            /* [in] */ ABI::Windows::Foundation::DateTime processCreateTime,
-            /* [in] */ ABI::DevHome::Elevation::Zone name,
-            /* [out, retval] */ HSTRING* result) noexcept
-        try
-        {
-            // Create md5 hash of the 3 connection parameters
-            std::wstring connectionId = std::to_wstring(pid) + L"_" + std::to_wstring(processCreateTime.UniversalTime) + L"_" + std::to_wstring(static_cast<int>(name));
-
-            // Remember the connection in a std::map
-            std::scoped_lock<std::mutex> lock(m_mutex);
-            m_preparedConnections[connectionId] = std::make_tuple(pid, processCreateTime, name);
-
-            // return the connectionId
-            Microsoft::WRL::Wrappers::HString str;
-            str.Set(connectionId.c_str());
-            *result = str.Detach();
-
-            return S_OK;
-        }
-        CATCH_RETURN()
-
-        STDMETHODIMP CloseConnection(HSTRING connectionId) noexcept
-        try
-        {
-            std::wstring connectionIdStr = WindowsGetStringRawBuffer(connectionId, nullptr);
-
-            // Remove from the std::map
-            std::scoped_lock<std::mutex> lock(m_mutex);
-            m_preparedConnections.erase(connectionIdStr);
-            return S_OK;
-        }
-        CATCH_RETURN()
-
-        STDMETHODIMP OpenConnection(
-            /* [in] */ HSTRING connectionId,
-            /* [out, retval] */ ABI::DevHome::Elevation::IZoneConnection** result) noexcept
-        try
-        {
-            std::wstring connectionIdStr = WindowsGetStringRawBuffer(connectionId, nullptr);
-
-            // Find the connection in the std::map
-            std::scoped_lock<std::mutex> lock(m_mutex);
-            auto it = m_preparedConnections.find(connectionIdStr);
-            if (it == m_preparedConnections.end())
+            // Get client mandatory label
+            LONG clientLabel;
             {
-                return HRESULT_FROM_WIN32(ERROR_NOT_FOUND);
+                // Get calling process handle
+                auto revert = wil::CoImpersonateClient();
+            
+                wil::unique_handle clientToken;
+                THROW_IF_WIN32_BOOL_FALSE(OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &clientToken));
+
+                clientLabel = GetTokenMandatoryLabel(clientToken.get());
             }
 
-            // Create a ZoneConnection object
-            wil::com_ptr<ZoneA> zoneConnection;
-            RETURN_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ZoneA>(&zoneConnection));
+            // Get our mandatory label
+            auto ourLabel = GetTokenMandatoryLabel(GetCurrentProcessToken());
+            
+            // Only activate a voucher if the requester is at least as elevated as us!
+            THROW_HR_IF(E_ACCESSDENIED, clientLabel < ourLabel);
 
-            auto iZoneConnection = zoneConnection.query<IZoneConnection>();
-
-            // Return the ZoneConnection object
-            *result = iZoneConnection.detach();
             return S_OK;
         }
         CATCH_RETURN()
+
+        STDMETHODIMP ClaimVoucher(
+            /* [in] */ ElevationZone zone,
+            /* [out, retval] */ IElevationVoucher** result) noexcept try
+        {
+            auto revert = wil::CoImpersonateClient();
+
+        }
+        CATCH_RETURN()
+
 
     private:
         std::mutex m_mutex;
@@ -168,4 +85,38 @@ namespace ABI::DevHome::Elevation
     };
 
     ActivatableStaticOnlyFactory(ZoneConnectionManagerStatics);
+}
+
+
+
+
+namespace ABI::DevHome::Elevation
+{
+    class ElevationZoneA :
+        public Microsoft::WRL::RuntimeClass<
+            Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
+            IElevationZoneA,
+            Microsoft::WRL::FtmBase>
+    {
+        InspectableClass(RuntimeClass_DevHome_Elevation_ElevationZoneA, BaseTrust);
+
+    public:
+        STDMETHODIMP RuntimeClassInitialize() noexcept
+        {
+            return S_OK;
+        }
+
+        STDMETHODIMP GetSomething(_Out_ unsigned int* result) noexcept
+        {
+            // try get registry key to hklm/software/microsoft/windows/currentversion/devhome/quietbackgroundprocesses
+            if (auto durationOverride = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
+            {
+                *result = (unsigned int)std::chrono::seconds(durationOverride.value()).count();
+            }
+            *result = 1111;
+            return S_OK;
+        }
+    };
+
+    ActivatableClass(ElevationZoneA);
 }
