@@ -25,6 +25,8 @@
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
+    WaitForDebuggerIfPresent();
+
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -40,9 +42,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     }
     */
 
-    //THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
-
-    WaitForDebuggerIfPresent();
+    THROW_HR_IF(E_ACCESSDENIED, !IsTokenElevated(GetCurrentProcessToken()));
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
@@ -73,6 +73,11 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     auto unique_wrl_registration_cookie = wil::scope_exit([&module]() {
         module.UnregisterObjects();
     });
+
+    auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_Server__Started";
+    wil::unique_event elevatedServerRunningEvent;
+    elevatedServerRunningEvent.open(eventName.c_str());
+    elevatedServerRunningEvent.SetEvent();
 
     // Wait for all server references to release (implicitly also waiting for timers to finish via CoAddRefServerProcess)
     auto lock = std::unique_lock<std::mutex>(mutex);

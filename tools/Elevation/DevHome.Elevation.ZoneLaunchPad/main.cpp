@@ -96,8 +96,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 
     WaitForDebuggerIfPresent();
 
-    auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
-
     auto unique_rouninitialize_call = wil::RoInitialize();
 
 
@@ -117,12 +115,28 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     INT64 createTime64 = createTime.dwLowDateTime + ((UINT64)createTime.dwHighDateTime << 32);
     auto createTimeDatetime = ABI::Windows::Foundation::DateTime{ createTime64 };
 
-    // CreateProcess
-    //CreateProcessW(L"DevHome.Elevation.Server.exe", L"-ServerName:DevHome.Elevation.Server", false);
-    auto activationManager = wil::CoCreateInstance<ApplicationActivationManager, IApplicationActivationManager>();
 
-    DWORD processId = 0;
-    THROW_IF_FAILED(activationManager->ActivateApplication(L"Microsoft.Windows.DevHome.Dev_8wekyb3d8bbwe!AppElevationServer", nullptr, AO_NOERRORUI, &processId));
+    auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_Server__Started";
+    wil::unique_event elevatedServerRunningEvent22;
+    elevatedServerRunningEvent22.create(wil::EventOptions::ManualReset, eventName.c_str());
+
+    {
+        // CreateProcess
+        //CreateProcessW(L"DevHome.Elevation.Server.exe", L"-ServerName:DevHome.Elevation.Server", false);
+        auto activationManager = wil::CoCreateInstance<ApplicationActivationManager, IApplicationActivationManager>();
+
+
+        DWORD processId = 0;
+        THROW_IF_FAILED(activationManager->ActivateApplication(L"Microsoft.Windows.DevHome.Dev_8wekyb3d8bbwe!AppElevationServer", nullptr, AO_NOERRORUI, &processId));
+
+        {
+            auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_Server__Started";
+            wil::unique_event elevatedServerRunningEvent;
+            elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName.c_str());
+        }
+    }
+
+    elevatedServerRunningEvent22.wait();
 
     //zoneConnectionManager->LaunchZone(zoneName);
     //wil::CoCreateInstance<ABI::DevHome::Elevation::ZoneConnectionManager>(CLSID_ZoneA, CLSCTX_LOCAL_SERVER);
@@ -132,10 +146,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
     HSTRING strValue;
     THROW_IF_FAILED(zoneConnectionManager->PrepareConnection(parentProcessId, createTimeDatetime, ABI::DevHome::Elevation::Zone_A, &strValue));
 
-
-    wil::unique_event elevatedServerRunningEvent;
-    elevatedServerRunningEvent.open(eventName.c_str());
-    elevatedServerRunningEvent.SetEvent();
+    {
+        auto eventName1 = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
+        wil::unique_event elevatedServerRunningEvent;
+        elevatedServerRunningEvent.open(eventName1.c_str());
+        elevatedServerRunningEvent.SetEvent();
+    }
 
     return 0;
 }
