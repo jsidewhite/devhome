@@ -186,15 +186,14 @@ namespace ABI::DevHome::Elevation
         {
             if (m_zoneId == ElevationZone::ElevationZoneA)
             {
-                wil::com_ptr<IElevationZoneA> zoneA;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<IElevationZoneA>(&zoneA));
+                wil::com_ptr<ElevationZoneA> zoneA;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ElevationZoneA>(&zoneA));
 
                 zoneA.query_to(result);
+                return S_OK;
             }
-            else
-            {
-                return E_NOTIMPL;
-            }
+
+            return E_NOTIMPL;
         }
 
     private:
@@ -204,7 +203,36 @@ namespace ABI::DevHome::Elevation
         ABI::Windows::Foundation::DateTime m_processCreateTime;
     };
 
-    ActivatableClass(ElevationVoucher);
+    class ElevationVoucherStatics WrlFinal :
+        public Microsoft::WRL::AgileActivationFactory<
+            Microsoft::WRL::Implements<IElevationVoucherFactory>>
+    {
+        InspectableClassStatic(RuntimeClass_DevHome_Elevation_ElevationVoucher, BaseTrust);
+
+    public:
+        /*
+        STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
+        {
+            // Disallow activation - must use GetSingleton()
+            return E_NOTIMPL;
+        }
+        */
+
+        STDMETHODIMP CreateInstance(
+            /* [in] */ HSTRING voucherName,
+            /* [in] */ ElevationZone zoneId,
+            /* [in] */ UINT32 processId,
+            /* [in] */ ABI::Windows::Foundation::DateTime processCreateTime,
+            /* [out, retval] */ IElevationVoucher** result) noexcept
+        {
+            auto voucher = Microsoft::WRL::Make<ElevationVoucher>();
+            THROW_IF_FAILED(voucher->RuntimeClassInitialize(voucherName, zoneId, processId, processCreateTime));
+            *result = voucher.Detach();
+            return S_OK;
+        }
+    };
+
+    ActivatableClassWithFactory(ElevationVoucher, ElevationVoucherStatics);
 }
 
 
@@ -237,6 +265,8 @@ namespace ABI::DevHome::Elevation
             return S_OK;
         }
     };
+
+    
 
     ActivatableClass(ElevationZoneA);
 }

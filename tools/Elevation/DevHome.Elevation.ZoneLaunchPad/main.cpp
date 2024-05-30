@@ -72,6 +72,8 @@ DWORD GetParentProcessId()
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
 {
+    WaitForDebuggerIfPresent();
+
     if (wargc < 1)
     {
         THROW_HR(E_INVALIDARG);
@@ -103,7 +105,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
         THROW_HR(E_INVALIDARG);
     }
 
-    WaitForDebuggerIfPresent();
+    //WaitForDebuggerIfPresent();
 
     auto unique_rouninitialize_call = wil::RoInitialize();
 
