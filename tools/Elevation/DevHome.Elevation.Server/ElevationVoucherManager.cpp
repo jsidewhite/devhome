@@ -22,16 +22,6 @@
 #include "Utility.h"
 #include "DevHome.Elevation.h"
 
-// std::mutex g_mutex;
-/*
-MIDL_INTERFACE("68C6A1B9-DE39-42C3-8D28-BF40A5126541")
-ICallingProcessInfo : public IUnknown
-{
-public:
-    STDMETHOD(OpenCallerProcessHandle)(DWORD dwDesiredAccess, HANDLE * handle) = 0;
-};
-*/
-
 MIDL_INTERFACE("68c6a1b9-de39-42c3-8d28-bf40a5126541")
 ICallingProcessInfo : public IUnknown
 {
@@ -41,7 +31,6 @@ public:
         /* [annotation][out] */
         _Out_ HANDLE * callerPocessHandle) = 0;
 };
-
 
 namespace ABI::DevHome::Elevation
 {
@@ -54,7 +43,6 @@ namespace ABI::DevHome::Elevation
     public:
         STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
         {
-            // Disallow activation - must use GetSingleton()
             return E_NOTIMPL;
         }
 
@@ -64,11 +52,11 @@ namespace ABI::DevHome::Elevation
         try
         {
             // This method must called from an elevated process
-            
-            // todo:jw ensure client caller is elevated
+            //
+            // (Or rather, we'll only allow the voucher to be activated if the caller is as elevated as us.)
 
             // Get client mandatory label
-            LONG clientLabel;
+            auto clientLabel = [&]()
             {
                 // Get calling process handle
                 auto revert = wil::CoImpersonateClient();
@@ -76,8 +64,8 @@ namespace ABI::DevHome::Elevation
                 wil::unique_handle clientToken;
                 THROW_IF_WIN32_BOOL_FALSE(OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &clientToken));
 
-                clientLabel = GetTokenMandatoryLabel(clientToken.get());
-            }
+                return GetTokenMandatoryLabel(clientToken.get());
+            }();
 
             // Get our mandatory label
             auto ourLabel = GetTokenMandatoryLabel(GetCurrentProcessToken());
@@ -85,7 +73,7 @@ namespace ABI::DevHome::Elevation
             // Only activate a voucher if the requester is at least as elevated as us!
             THROW_HR_IF(E_ACCESSDENIED, clientLabel < ourLabel);
 
-            // Add to m_activatedVouchers
+            // Save voucher for a period of time
             HSTRING hstrVoucherName;
             THROW_IF_FAILED(voucher->get_VoucherName(&hstrVoucherName));
             auto voucherName = std::wstring(WindowsGetStringRawBuffer(hstrVoucherName, nullptr));
@@ -93,6 +81,18 @@ namespace ABI::DevHome::Elevation
                 std::scoped_lock lock(m_mutex);
                 m_activatedVouchers.emplace(voucherName, voucher);
             }
+
+            // Delete voucher after 5 seconds
+            auto th = std::thread([voucherName, this]()
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(15));
+                {
+                    std::scoped_lock lock(m_mutex);
+                    m_activatedVouchers.erase(voucherName);
+                }
+            });
+
+            th.detach();
 
             return S_OK;
         }

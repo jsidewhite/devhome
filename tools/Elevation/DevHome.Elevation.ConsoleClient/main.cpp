@@ -74,6 +74,8 @@ int main() try
     THROW_IF_FAILED(elevationZoneA->GetSomething(&something));
     std::cout << "Something = " << something << std::endl;
 
+    Sleep(25000);
+
     return 0;
 }
 catch (...)
