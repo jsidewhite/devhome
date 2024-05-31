@@ -130,7 +130,7 @@ namespace ABI::DevHome::Elevation
             // Ensure client process matches what's stored in the voucher
             if (callingProcessPid != voucherProcessId)
             {
-                THROW_HR(E_ACCESSDENIED);
+                THROW_WIN32(ERROR_THREAD_NOT_IN_PROCESS);
             }
 
             // Stop tracking the voucher and return it to unelevated client
