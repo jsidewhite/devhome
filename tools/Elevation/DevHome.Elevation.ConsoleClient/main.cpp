@@ -31,11 +31,6 @@ int main() try
 
     std::cout << "Create path..." << std::endl;
 
-    // Create event
-    //auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
-    //wil::unique_event elevatedServerRunningEvent;
-    //elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName.c_str());
-
     // Launch elevated ZoneLaunchPad instance
     auto pathToZoneLaunchPad = std::filesystem::path(wil::GetModuleFileNameW().get());
     pathToZoneLaunchPad = pathToZoneLaunchPad.replace_filename(L"DevHome.Elevation.ZoneLaunchPad.exe");
@@ -51,31 +46,24 @@ int main() try
     sei.hwnd = NULL;
     sei.nShow = SW_NORMAL;
 
-
     std::cout << "ShellExecute..." << std::endl;
     THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
-
     wil::unique_handle process(sei.hProcess);
 
+    std::cout << "Wait..." << std::endl;
     wil::handle_wait(process.get());
 
-    std::cout << "ZoneLaunchPad GetExitCodeProcess..." << std::endl;
+    std::cout << "GetExitCodeProcess..." << std::endl;
     DWORD exitCode = ERROR_SUCCESS;
     THROW_IF_WIN32_BOOL_FALSE(GetExitCodeProcess(process.get(), &exitCode));
+    std::cout << "Exit code = " << std::hex << exitCode << std::endl;
 
-    //elevatedServerRunningEvent.wait();
-
-    std::cout << "ZoneLaunchPad exit code = " << std::hex << exitCode << std::endl;
-
-    
-    //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
+    // Create voucher manager
     auto voucherManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherManagerStatics>(RuntimeClass_DevHome_Elevation_ElevationVoucherManager);
 
-
-
+    // Claim voucher
     wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher> elevationVoucher;
-    //THROW_IF_FAILED(voucherManager->ClaimVoucher(ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, &elevationVoucher));
-    THROW_IF_FAILED(voucherManager->ClaimVoucher(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), &elevationVoucher));
+    THROW_IF_FAILED(voucherManager->ClaimVoucher(Microsoft::WRL::Wrappers::HStringReference(voucherName.c_str()).Get(), &elevationVoucher));
 
     wil::com_ptr<ABI::DevHome::Elevation::IElevationZone> elevationZone;
     THROW_IF_FAILED(elevationVoucher->Redeem(&elevationZone));
@@ -84,12 +72,7 @@ int main() try
 
     unsigned int something;
     THROW_IF_FAILED(elevationZoneA->GetSomething(&something));
-
-
-    std::cout << "something = " << something << std::endl;
-
-
-    Sleep(1000);
+    std::cout << "Something = " << something << std::endl;
 
     return 0;
 }

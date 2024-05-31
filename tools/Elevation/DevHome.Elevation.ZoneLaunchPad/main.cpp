@@ -182,15 +182,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
 
     THROW_IF_FAILED(voucherManager->ActivateVoucher(voucher.get(), validDuration));
 
-    /*
-    {
-        auto eventName1 = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(parentProcessId) + L"_" + zoneToLaunch;
-        wil::unique_event elevatedServerRunningEvent;
-        elevatedServerRunningEvent.open(eventName1.c_str());
-        elevatedServerRunningEvent.SetEvent();
-    }
-    */
-
     return 0;
 }
 CATCH_RETURN()
