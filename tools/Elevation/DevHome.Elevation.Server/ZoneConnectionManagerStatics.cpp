@@ -229,8 +229,8 @@ namespace ABI::DevHome::Elevation
         {
             if (m_zoneId == ElevationZone::ElevationZoneA)
             {
-                wil::com_ptr<ElevationZoneA> zoneA;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ElevationZoneA>(&zoneA));
+                wil::com_ptr<Zones::ElevationZoneA> zoneA;
+                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<Zones::ElevationZoneA>(&zoneA));
 
                 //zoneA.query_to(result);
                 auto intf = zoneA.query<IElevationZone>();
@@ -283,7 +283,7 @@ namespace ABI::DevHome::Elevation
 
 
 
-namespace ABI::DevHome::Elevation
+namespace ABI::DevHome::Elevation::Zones
 {
     class ElevationZoneA :
         public Microsoft::WRL::RuntimeClass<
@@ -292,7 +292,7 @@ namespace ABI::DevHome::Elevation
             IElevationZone,
             Microsoft::WRL::FtmBase>
     {
-        InspectableClass(RuntimeClass_DevHome_Elevation_ElevationZoneA, BaseTrust);
+        InspectableClass(RuntimeClass_DevHome_Elevation_Zones_ElevationZoneA, BaseTrust);
 
     public:
         STDMETHODIMP RuntimeClassInitialize() noexcept

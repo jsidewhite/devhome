@@ -23,7 +23,7 @@
 //#include "TimedQuietSession.h"
 //#include "QuietState.h"
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
 {
     WaitForDebuggerIfPresent();
 

@@ -48,12 +48,28 @@ namespace DevHome.Elevation
         // Claim the voucher (call from unelevated process)
         static ElevationVoucher ClaimVoucher(String voucherName);
     }
+}
 
-
-    // Zones
+//
+// Zones
+//
+namespace DevHome.Elevation.Zones
+{    
     runtimeclass ElevationZoneA
     {
         UInt32 GetSomething();
     }
+
+    /*
+    runtimeclass ElevationZoneB
+    {
+        UInt32 GetSomethingElse();
+    }
+
+    runtimeclass VirtualMachineManagement
+    {
+        UInt32 GetSomethingElse();
+    }
+    */
 
 }
