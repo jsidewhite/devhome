@@ -181,9 +181,9 @@ namespace ABI::DevHome::Elevation
             m_processId = processId;
             m_processCreateTime = processCreateTime;
 
-            if (GetCallingProcessElevationLevel() < requestedElevationLevel)
+            if (requestedElevationLevel > GetCallingProcessElevationLevel())
             {
-                return E_ACCESSDENIED;
+                THROW_HR(E_ACCESSDENIED);
             }
 
             m_elevationLevel = requestedElevationLevel;
