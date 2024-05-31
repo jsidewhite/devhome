@@ -25,7 +25,6 @@ int main() try
 {
     auto unique_rouninitialize_call = wil::RoInitialize();
 
-    auto pid = GetCurrentProcessId();
     auto zoneToLaunch = std::wstring(L"ElevationZoneA");
     auto voucherName = std::wstring(L"abc");
 
@@ -74,12 +73,10 @@ int main() try
     THROW_IF_FAILED(elevationZoneA->GetSomething(&something));
     std::cout << "Something = " << something << std::endl;
 
-    Sleep(25000);
-
     return 0;
 }
 catch (...)
 {
     std::cout << "exception = " << wil::ResultFromCaughtException() << std::endl;
-    Sleep(10000);
+    Sleep(2000);
 }

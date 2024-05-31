@@ -32,6 +32,16 @@ public:
         _Out_ HANDLE * callerPocessHandle) = 0;
 };
 
+static DWORD GetCallingProcessPid()
+{
+    wil::unique_handle callingProcessHandle;
+    wil::unique_handle impersonationToken;
+    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
+    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
+    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
+    return GetProcessId(callingProcessHandle.get());
+}
+
 namespace ABI::DevHome::Elevation
 {
     class ElevationVoucherManagerStatics WrlFinal :
@@ -105,69 +115,32 @@ namespace ABI::DevHome::Elevation
             // Find voucher in m_activatedVouchers
             auto voucherName = std::wstring(WindowsGetStringRawBuffer(hstrVoucherName, nullptr));
 
+            std::scoped_lock lock(m_mutex);
+            auto it = m_activatedVouchers.find(voucherName);
+            THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_NOT_FOUND), it == m_activatedVouchers.end());
+
+            auto voucherPointer = it->second.get();
+
+            // Get voucher process pid
+            uint32_t voucherProcessId;
+            THROW_IF_FAILED(voucherPointer->get_ProcessId(&voucherProcessId));
+
+            // Get calling process pid
+            DWORD callingProcessPid = GetCallingProcessPid();
+
+            // Ensure client process matches what's stored in the voucher
+            if (callingProcessPid != voucherProcessId)
             {
-                std::scoped_lock lock(m_mutex);
-                auto it = m_activatedVouchers.find(voucherName);
-                THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_NOT_FOUND), it == m_activatedVouchers.end());
-
-                auto voucherPointer = it->second.get();
-
-                // Ensure client process matches what's stored in the voucher
-                {
-                    // Get calling process handle
-                    //auto revert = wil::CoImpersonateClient();
-
-
-                    wil::unique_handle callingProcessHandle;
-                    wil::unique_handle impersonationToken;
-                    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
-                    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
-                    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
-
-                    // Get current pid
-                    //DWORD clientPid = GetCurrentProcessId();
-
-                    /*
-                    HANDLE handle;
-                    //wil::com_ptr<ICallingProcessInfo> callingProcessInfo; // ComPtr is from WRL, you can use the interface directly instead
-                    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
-                    THROW_IF_FAILED(CoGetCallContext(__uuidof(ICallingProcessInfo), &callingProcessInfo));
-                    //CoGetCallContext(__uuidof(ICallingProcessInfo), (void**)callingProcessInfo.GetAddressOf());
-                    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, &handle));
-
-                    */
-                    DWORD clientPid = GetProcessId(callingProcessHandle.get());
-
-
-
-                    //wil::unique_handle clientToken;
-                    //THROW_IF_WIN32_BOOL_FALSE(OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &clientToken));
-
-                    //DWORD clientPid = GetProcessId(clientToken.get());
-
-                    uint32_t voucherProcessId;
-                    THROW_IF_FAILED(voucherPointer->get_ProcessId(&voucherProcessId));
-
-                    if (clientPid != voucherProcessId)
-                    {
-                        THROW_HR(E_ACCESSDENIED);
-                    }
-
-
-                    //todo:jw time match
-
-                }
-
-
-                //*result = it->second.get();
-                auto voucher = std::move(it->second);
-
-                // Remove from m_activatedVouchers
-                m_activatedVouchers.erase(it);
-
-                *result = voucher.detach();
+                THROW_HR(E_ACCESSDENIED);
             }
 
+            //*result = it->second.get();
+            auto voucher = std::move(it->second);
+
+            // Remove from m_activatedVouchers
+            m_activatedVouchers.erase(it);
+
+            *result = voucher.detach();
 
             return S_OK;
         }
