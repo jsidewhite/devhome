@@ -124,7 +124,7 @@ int main() try
     wil::com_ptr<ABI::DevHome::Elevation::IElevationZone> elevationZone;
     THROW_IF_FAILED(elevationVoucher->Redeem(&elevationZone));
 
-    auto elevationZoneA = elevationVoucher.query<ABI::DevHome::Elevation::IElevationZoneA>();
+    auto elevationZoneA = elevationZone.query<ABI::DevHome::Elevation::IElevationZoneA>();
 
     unsigned int something;
     THROW_IF_FAILED(elevationZoneA->GetSomething(&something));

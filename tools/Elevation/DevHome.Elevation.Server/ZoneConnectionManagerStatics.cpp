@@ -22,6 +22,24 @@
 #include "DevHome.Elevation.h"
 
 // std::mutex g_mutex;
+/*
+MIDL_INTERFACE("68C6A1B9-DE39-42C3-8D28-BF40A5126541")
+ICallingProcessInfo : public IUnknown
+{
+public:
+    STDMETHOD(OpenCallerProcessHandle)(DWORD dwDesiredAccess, HANDLE * handle) = 0;
+};
+*/
+
+MIDL_INTERFACE("68c6a1b9-de39-42c3-8d28-bf40a5126541")
+ICallingProcessInfo : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE OpenCallerProcessHandle(
+        DWORD desiredAccess,
+        /* [annotation][out] */
+        _Out_ HANDLE * callerPocessHandle) = 0;
+};
 
 
 namespace ABI::DevHome::Elevation
@@ -96,10 +114,35 @@ namespace ABI::DevHome::Elevation
                 // Ensure client process matches what's stored in the voucher
                 {
                     // Get calling process handle
-                    auto revert = wil::CoImpersonateClient();
+                    //auto revert = wil::CoImpersonateClient();
 
-                    wil::unique_process_handle clientProcess;
-                    DWORD clientPid = GetProcessId(clientProcess.get());
+
+                    wil::unique_handle callingProcessHandle;
+                    wil::unique_handle impersonationToken;
+                    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
+                    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
+                    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
+
+                    // Get current pid
+                    //DWORD clientPid = GetCurrentProcessId();
+
+                    /*
+                    HANDLE handle;
+                    //wil::com_ptr<ICallingProcessInfo> callingProcessInfo; // ComPtr is from WRL, you can use the interface directly instead
+                    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
+                    THROW_IF_FAILED(CoGetCallContext(__uuidof(ICallingProcessInfo), &callingProcessInfo));
+                    //CoGetCallContext(__uuidof(ICallingProcessInfo), (void**)callingProcessInfo.GetAddressOf());
+                    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, &handle));
+
+                    */
+                    DWORD clientPid = GetProcessId(callingProcessHandle.get());
+
+
+
+                    //wil::unique_handle clientToken;
+                    //THROW_IF_WIN32_BOOL_FALSE(OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &clientToken));
+
+                    //DWORD clientPid = GetProcessId(clientToken.get());
 
                     uint32_t voucherProcessId;
                     THROW_IF_FAILED(voucherPointer->get_ProcessId(&voucherProcessId));
@@ -189,7 +232,10 @@ namespace ABI::DevHome::Elevation
                 wil::com_ptr<ElevationZoneA> zoneA;
                 THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<ElevationZoneA>(&zoneA));
 
-                zoneA.query_to(result);
+                //zoneA.query_to(result);
+                auto intf = zoneA.query<IElevationZone>();
+
+                *result = intf.detach();
                 return S_OK;
             }
 
@@ -243,6 +289,7 @@ namespace ABI::DevHome::Elevation
         public Microsoft::WRL::RuntimeClass<
             Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
             IElevationZoneA,
+            IElevationZone,
             Microsoft::WRL::FtmBase>
     {
         InspectableClass(RuntimeClass_DevHome_Elevation_ElevationZoneA, BaseTrust);
