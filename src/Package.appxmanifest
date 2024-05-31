@@ -90,7 +90,9 @@
           <uap5:OutOfProcessServer ServerName="DevHome.Elevation.Server" RunFullTrust="true">
             <uap5:Path>DevHome.Elevation.Server.exe</uap5:Path>
             <uap5:Instancing>singleInstance</uap5:Instancing>
+            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucher" />
             <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucherManager" />
+            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationZoneA" />
           </uap5:OutOfProcessServer>
         </uap5:Extension>
 
