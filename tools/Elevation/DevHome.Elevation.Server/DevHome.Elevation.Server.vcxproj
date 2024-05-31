@@ -139,6 +139,8 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ElevationZone.Vi.cpp" />
+    <ClCompile Include="ElevationZone.ElevationZoneA.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
