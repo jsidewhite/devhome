@@ -56,8 +56,8 @@ namespace DevHome.Elevation
     [default_interface]
     runtimeclass ElevationVoucherManager
     {
-        // Make the voucher claimable (calle from elevated process)
-        static void ActivateVoucher(ElevationVoucher voucher, Windows.Foundation.TimeSpan validDuration);
+        // Make the voucher claimable (call from elevated process)
+        static void AddVoucherToWillCall(ElevationVoucher voucher, Windows.Foundation.TimeSpan validDuration);
 
         // Claim the voucher (call from unelevated process)
         static ElevationVoucher ClaimVoucher(String voucherName);

@@ -68,7 +68,7 @@ namespace ABI::DevHome::Elevation
             return E_NOTIMPL;
         }
 
-        STDMETHODIMP ActivateVoucher(
+        STDMETHODIMP AddVoucherToWillCall(
             /* [in] */ IElevationVoucher* voucher,
             /* [in] */ ABI::Windows::Foundation::TimeSpan /* validDuration*/) noexcept
         try
@@ -100,7 +100,7 @@ namespace ABI::DevHome::Elevation
             auto voucherName = std::wstring(WindowsGetStringRawBuffer(hstrVoucherName, nullptr));
             {
                 std::scoped_lock lock(m_mutex);
-                m_activatedVouchers.emplace(voucherName, voucher);
+                m_vouchers.emplace(voucherName, voucher);
             }
 
             // Delete voucher after 10 seconds
@@ -109,7 +109,7 @@ namespace ABI::DevHome::Elevation
                 std::this_thread::sleep_for(std::chrono::seconds(10));
                 {
                     std::scoped_lock lock(m_mutex);
-                    m_activatedVouchers.erase(voucherName);
+                    m_vouchers.erase(voucherName);
                 }
             });
 
@@ -120,15 +120,15 @@ namespace ABI::DevHome::Elevation
         CATCH_RETURN()
 
         STDMETHODIMP ClaimVoucher(
-            /* [in] */ HSTRING hstrVoucherName,
+            /* [in] */ HSTRING voucherName,
             /* [out, retval] */ IElevationVoucher** result) noexcept try
         {
             // Find voucher in m_activatedVouchers
-            auto voucherName = std::wstring(WindowsGetStringRawBuffer(hstrVoucherName, nullptr));
+            auto strVoucherName = std::wstring(WindowsGetStringRawBuffer(voucherName, nullptr));
 
             std::scoped_lock lock(m_mutex);
-            auto it = m_activatedVouchers.find(voucherName);
-            THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_NOT_FOUND), it == m_activatedVouchers.end());
+            auto it = m_vouchers.find(strVoucherName);
+            THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_NOT_FOUND), it == m_vouchers.end());
 
             auto voucherPointer = it->second.get();
 
@@ -147,7 +147,7 @@ namespace ABI::DevHome::Elevation
 
             // Stop tracking the voucher and return it to unelevated client
             auto voucher = std::move(it->second);
-            m_activatedVouchers.erase(it);
+            m_vouchers.erase(it);
             *result = voucher.detach();
 
             return S_OK;
@@ -157,7 +157,7 @@ namespace ABI::DevHome::Elevation
 
     private:
         std::mutex m_mutex;
-        std::map<std::wstring, wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher>> m_activatedVouchers;
+        std::map<std::wstring, wil::com_ptr<ABI::DevHome::Elevation::IElevationVoucher>> m_vouchers;
     };
 
     ActivatableStaticOnlyFactory(ElevationVoucherManagerStatics);
