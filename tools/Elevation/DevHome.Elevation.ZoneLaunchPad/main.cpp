@@ -70,7 +70,7 @@ DWORD GetParentProcessId()
     return (DWORD)-1;
 }
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR wargv, int wargc) try
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
 {
     WaitForDebuggerIfPresent();
 

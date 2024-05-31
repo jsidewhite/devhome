@@ -18,6 +18,7 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
+#include "Helpers.h"
 #include "Utility.h"
 #include "DevHome.Elevation.h"
 
@@ -225,10 +226,10 @@ namespace ABI::DevHome::Elevation
             return S_OK;
         }
 
-        STDMETHODIMP Redeem(_COM_Outptr_ IElevationZone** ) noexcept
+        STDMETHODIMP Redeem(_COM_Outptr_ IElevationZone** result) noexcept
         {
-
-            return E_NOTIMPL;
+            THROW_IF_FAILED(MakeElevationZone(m_zoneId, result));
+            return S_OK;
         }
 
     private:
