@@ -100,7 +100,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
     //auto zoneName = ((wchar_t*)(__argc))[2];
     auto zoneName = __wargv[2];
     auto voucherName = __wargv[4];
-    auto pid = 123;
+    //auto pid = 123;
     auto zoneToLaunch = zoneName;
 
     //if (wil::compare_string_ordinal(zoneName, L"ZoneA", true) != 0)
@@ -165,7 +165,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
     auto voucherFactory = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherFactory>(RuntimeClass_DevHome_Elevation_ElevationVoucher);
 
     wil::com_ptr < ABI::DevHome::Elevation::IElevationVoucher> voucher;
-    THROW_IF_FAILED(voucherFactory->CreateInstance(Microsoft::WRL::Wrappers::HStringReference(L"abc").Get(), ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, parentProcessId, createTimeDatetime, &voucher));
+    THROW_IF_FAILED(voucherFactory->CreateInstance(Microsoft::WRL::Wrappers::HStringReference(voucherName).Get(), ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, parentProcessId, createTimeDatetime, &voucher));
 
     /*
     auto voucher = wil::ActivateInstance<ABI::DevHome::Elevation::IElevationVoucher>(
@@ -182,12 +182,14 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
 
     THROW_IF_FAILED(voucherManager->ActivateVoucher(voucher.get(), validDuration));
 
+    /*
     {
-        auto eventName1 = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
+        auto eventName1 = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(parentProcessId) + L"_" + zoneToLaunch;
         wil::unique_event elevatedServerRunningEvent;
         elevatedServerRunningEvent.open(eventName1.c_str());
         elevatedServerRunningEvent.SetEvent();
     }
+    */
 
     return 0;
 }

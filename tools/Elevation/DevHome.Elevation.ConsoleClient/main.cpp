@@ -23,93 +23,49 @@
 
 int main() try
 {
-    // Get current pid
-    //auto pid = GetCurrentProcessId();
-    auto pid = 123;
+    auto unique_rouninitialize_call = wil::RoInitialize();
+
+    auto pid = GetCurrentProcessId();
     auto zoneToLaunch = std::wstring(L"ElevationZoneA");
     auto voucherName = std::wstring(L"abc");
 
     std::cout << "Create path..." << std::endl;
 
-    // Launch elevated instance
+    // Create event
+    //auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
+    //wil::unique_event elevatedServerRunningEvent;
+    //elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName.c_str());
+
+    // Launch elevated ZoneLaunchPad instance
     auto pathToZoneLaunchPad = std::filesystem::path(wil::GetModuleFileNameW().get());
     pathToZoneLaunchPad = pathToZoneLaunchPad.replace_filename(L"DevHome.Elevation.ZoneLaunchPad.exe");
 
     auto pathString = pathToZoneLaunchPad.wstring();
-
-
-    auto unique_rouninitialize_call = wil::RoInitialize();
-
     auto arguments = std::wstring{} + L"-ElevationZone " + zoneToLaunch + L" -VoucherName " + voucherName;
 
     SHELLEXECUTEINFO sei = { sizeof(sei) };
     sei.lpVerb = L"runas";
-    //sei.lpFile = LR"(W:\repo\elevation\src\bin\x64\Debug\net8.0-windows10.0.22621.0\AppX\DevHome.Elevation.ZoneLaunchPad.exe)";
     sei.lpFile = pathString.c_str();
     sei.lpParameters = arguments.c_str();
     sei.fMask = SEE_MASK_FLAG_NO_UI | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
     sei.hwnd = NULL;
-    //sei.nShow = SW_SHOWNORMAL;
     sei.nShow = SW_NORMAL;
-    //sei.nShow = SW_HIDE;
 
-    // Set event
-    auto eventName = std::wstring{} + L"Global\\DevHome_Elevation_ZoneLaunchPad_" + std::to_wstring(pid) + L"_" + zoneToLaunch;
-    wil::unique_event elevatedServerRunningEvent;
-    elevatedServerRunningEvent.create(wil::EventOptions::ManualReset, eventName.c_str());
 
     std::cout << "ShellExecute..." << std::endl;
-
-    //THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
-    auto retVal = ERROR_SUCCESS;
-    if (!ShellExecuteEx(&sei))
-    {
-        retVal = GetLastError();
-    }
-
-    std::cout << "Wait..." << std::endl;
-
-    /*
-    // Let process finish
-    wil::handle_wait(sei.hProcess);
-
-    std::cout << "GetExitCodeProcess..." << std::endl;
-
-    DWORD exitCode = 0;
-    THROW_LAST_ERROR_IF(!GetExitCodeProcess(sei.hProcess, &exitCode));
-
-
-    */
-
-
+    THROW_LAST_ERROR_IF(!ShellExecuteEx(&sei));
 
     wil::unique_handle process(sei.hProcess);
-    if (retVal == ERROR_CANCELLED)
-    {
-        // User cancelled the UAC Prompt and thus can't elevate.
-        THROW_WIN32(ERROR_CANCELLED);
-    }
 
-    THROW_IF_WIN32_ERROR(retVal);
+    wil::handle_wait(process.get());
 
-    DWORD waitResult = WaitForSingleObject(process.get(), INFINITE);
-    THROW_HR_IF(HRESULT_FROM_WIN32(ERROR_OPERATION_ABORTED), waitResult == WAIT_ABANDONED);
-    THROW_LAST_ERROR_IF_MSG(waitResult != WAIT_OBJECT_0, "Wait For Custom Install Worker process failed!");
+    std::cout << "ZoneLaunchPad GetExitCodeProcess..." << std::endl;
+    DWORD exitCode = ERROR_SUCCESS;
+    THROW_IF_WIN32_BOOL_FALSE(GetExitCodeProcess(process.get(), &exitCode));
 
-    std::cout << "GetExitCodeProcess..." << std::endl;
+    //elevatedServerRunningEvent.wait();
 
-    DWORD procExitCode = ERROR_SUCCESS;
-    THROW_IF_WIN32_BOOL_FALSE(GetExitCodeProcess(process.get(), &procExitCode));
-
-
-    auto exitCode = procExitCode;
-
-    elevatedServerRunningEvent.wait();
-
-
-
-    std::cout << "DevHome.Elevation.ZoneLaunchPad.exe! exit code = " << std::hex << exitCode << std::endl;
-
+    std::cout << "ZoneLaunchPad exit code = " << std::hex << exitCode << std::endl;
 
     
     //auto zoneConnectionManager = wil::GetActivationFactory<ABI::DevHome::Elevation::IZoneConnectionManagerStatics>(L"DevHome.Elevation.ZoneConnectionManager");
