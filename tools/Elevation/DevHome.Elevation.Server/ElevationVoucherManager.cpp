@@ -62,7 +62,6 @@ namespace ABI::DevHome::Elevation
         try
         {
             // This method must called from an elevated process
-            //
             // (Or rather, we'll only allow the voucher to be activated if the caller is as elevated as us.)
 
             // Get client mandatory label
@@ -92,10 +91,10 @@ namespace ABI::DevHome::Elevation
                 m_activatedVouchers.emplace(voucherName, voucher);
             }
 
-            // Delete voucher after 5 seconds
+            // Delete voucher after 10 seconds
             auto th = std::thread([voucherName, this]()
             {
-                std::this_thread::sleep_for(std::chrono::seconds(15));
+                std::this_thread::sleep_for(std::chrono::seconds(10));
                 {
                     std::scoped_lock lock(m_mutex);
                     m_activatedVouchers.erase(voucherName);
@@ -134,12 +133,9 @@ namespace ABI::DevHome::Elevation
                 THROW_HR(E_ACCESSDENIED);
             }
 
-            //*result = it->second.get();
+            // Stop tracking the voucher and return it to unelevated client
             auto voucher = std::move(it->second);
-
-            // Remove from m_activatedVouchers
             m_activatedVouchers.erase(it);
-
             *result = voucher.detach();
 
             return S_OK;
