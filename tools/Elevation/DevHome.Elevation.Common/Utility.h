@@ -68,3 +68,33 @@ inline void SetComFastRundownAndNoEhHandle()
     THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_RO_SETTINGS, COMGLB_FAST_RUNDOWN));
     THROW_IF_FAILED(pGlobalOptions->Set(COMGLB_EXCEPTION_HANDLING, COMGLB_EXCEPTION_DONOT_HANDLE_ANY));
 }
+
+MIDL_INTERFACE("68c6a1b9-de39-42c3-8d28-bf40a5126541")
+ICallingProcessInfo : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE OpenCallerProcessHandle(
+        DWORD desiredAccess,
+        /* [annotation][out] */
+        _Out_ HANDLE * callerPocessHandle) = 0;
+};
+
+inline DWORD GetCallingProcessPid()
+{
+    wil::unique_handle callingProcessHandle;
+    wil::unique_handle impersonationToken;
+    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
+    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
+    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
+    return GetProcessId(callingProcessHandle.get());
+}
+
+inline DWORD GetCallingProcessMandatoryLabel()
+{
+    wil::unique_handle callingProcessHandle;
+    wil::unique_handle impersonationToken;
+    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
+    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
+    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
+    return GetTokenMandatoryLabel(callingProcessHandle.get());
+}

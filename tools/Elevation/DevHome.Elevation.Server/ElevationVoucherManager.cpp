@@ -22,36 +22,6 @@
 #include "Utility.h"
 #include "DevHome.Elevation.h"
 
-MIDL_INTERFACE("68c6a1b9-de39-42c3-8d28-bf40a5126541")
-ICallingProcessInfo : public IUnknown
-{
-public:
-    virtual HRESULT STDMETHODCALLTYPE OpenCallerProcessHandle(
-        DWORD desiredAccess,
-        /* [annotation][out] */
-        _Out_ HANDLE * callerPocessHandle) = 0;
-};
-
-static DWORD GetCallingProcessPid()
-{
-    wil::unique_handle callingProcessHandle;
-    wil::unique_handle impersonationToken;
-    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
-    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
-    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
-    return GetProcessId(callingProcessHandle.get());
-}
-
-static DWORD GetCallingProcessMandatoryLabel()
-{
-    wil::unique_handle callingProcessHandle;
-    wil::unique_handle impersonationToken;
-    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
-    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
-    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
-    return GetTokenMandatoryLabel(callingProcessHandle.get());
-}
-
 static ABI::DevHome::Elevation::ElevationLevel MandatoryLabelToElevationLevel(LONG mandatoryLabel)
 {
     if (mandatoryLabel == SECURITY_MANDATORY_HIGH_RID)
@@ -269,7 +239,6 @@ namespace ABI::DevHome::Elevation
         
         STDMETHODIMP ActivateInstance(_COM_Outptr_ IInspectable**) noexcept
         {
-            // Disallow activation - must use GetSingleton()
             return E_NOTIMPL;
         }
 
