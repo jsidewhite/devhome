@@ -13,8 +13,14 @@
 #include <wil/win32_helpers.h>
 #include <wil/winrt.h>
 
+#include "Helpers.h"
 #include "Utility.h"
 #include "DevHome.Elevation.h"
+
+HRESULT MakeElevationZone_VirtualMachineManagement(_COM_Outptr_ ABI::DevHome::Elevation::IElevationZone** result) noexcept
+{
+    return MakeAndInitializeToInterface<ABI::DevHome::Elevation::Zones::VirtualMachineManagement, ABI::DevHome::Elevation::IElevationZone>(result);
+}
 
 namespace ABI::DevHome::Elevation::Zones
 {

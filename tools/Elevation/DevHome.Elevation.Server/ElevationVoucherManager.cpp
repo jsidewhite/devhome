@@ -225,19 +225,8 @@ namespace ABI::DevHome::Elevation
             return S_OK;
         }
 
-        STDMETHODIMP Redeem(_COM_Outptr_ IElevationZone** result) noexcept
+        STDMETHODIMP Redeem(_COM_Outptr_ IElevationZone** ) noexcept
         {
-            if (m_zoneId == ElevationZone::ElevationZoneA)
-            {
-                wil::com_ptr<Zones::ElevationZoneA> zoneA;
-                THROW_IF_FAILED(Microsoft::WRL::MakeAndInitialize<Zones::ElevationZoneA>(&zoneA));
-
-                //zoneA.query_to(result);
-                auto intf = zoneA.query<IElevationZone>();
-
-                *result = intf.detach();
-                return S_OK;
-            }
 
             return E_NOTIMPL;
         }
