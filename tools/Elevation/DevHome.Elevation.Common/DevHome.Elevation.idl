@@ -4,6 +4,7 @@
 import "inspectable.idl";
 import "windows.foundation.idl";
 
+// Elevation voucher infrastructure
 namespace DevHome.Elevation
 {
     [contractversion(1)]
@@ -50,9 +51,7 @@ namespace DevHome.Elevation
     }
 }
 
-//
-// Zones
-//
+// Specific Elevation Zones
 namespace DevHome.Elevation.Zones
 {    
     runtimeclass ElevationZoneA
@@ -60,16 +59,8 @@ namespace DevHome.Elevation.Zones
         UInt32 GetSomething();
     }
 
-    /*
-    runtimeclass ElevationZoneB
-    {
-        UInt32 GetSomethingElse();
-    }
-
     runtimeclass VirtualMachineManagement
     {
-        UInt32 GetSomethingElse();
+        UInt32 DoSomething();
     }
-    */
-
 }

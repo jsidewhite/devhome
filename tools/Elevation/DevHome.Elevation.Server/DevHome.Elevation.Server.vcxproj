@@ -139,14 +139,14 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ElevationZone.Vi.cpp" />
+    <ClCompile Include="ElevationZone.VirtualMachineManagement.cpp" />
     <ClCompile Include="ElevationZone.ElevationZoneA.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ZoneConnectionManagerStatics.cpp" />
+    <ClCompile Include="ElevationVoucherManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

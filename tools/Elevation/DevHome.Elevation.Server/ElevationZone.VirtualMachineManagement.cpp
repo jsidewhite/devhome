@@ -3,11 +3,6 @@
 
 #include <pch.h>
 
-#include <chrono>
-#include <map>
-#include <memory>
-#include <mutex>
-
 #include <wrl/client.h>
 #include <wrl/implements.h>
 #include <wrl/module.h>
@@ -26,7 +21,7 @@ namespace ABI::DevHome::Elevation::Zones
     class VirtualMachineManagement :
         public Microsoft::WRL::RuntimeClass<
             Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRt>,
-            IElevationZoneA,
+            IVirtualMachineManagement,
             IElevationZone,
             Microsoft::WRL::FtmBase>
     {
@@ -38,17 +33,15 @@ namespace ABI::DevHome::Elevation::Zones
             return S_OK;
         }
 
-        STDMETHODIMP GetSomethingElse(_Out_ unsigned int* result) noexcept
+        STDMETHODIMP DoSomething(_Out_ unsigned int* result) noexcept
         {
             // try get registry key to hklm/software/microsoft/windows/currentversion/devhome/quietbackgroundprocesses
             if (auto durationOverride = try_get_registry_value_dword(HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\DevHome\QuietBackgroundProcesses)", L"Duration"))
             {
-                *result = (unsigned int)std::chrono::seconds(durationOverride.value()).count();
+                // *result = (unsigned int)std::chrono::seconds(durationOverride.value()).count();
             }
             *result = 1111;
             return S_OK;
         }
     };
-
-    //ActivatableClass(ElevationZoneA);
 }
