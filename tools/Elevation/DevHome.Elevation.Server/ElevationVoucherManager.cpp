@@ -223,10 +223,10 @@ namespace ABI::DevHome::Elevation
 
     private:
         std::wstring m_voucherName;
+        ElevationLevel m_elevationLevel;
         ElevationZone m_zoneId;
         uint32_t m_processId;
         ABI::Windows::Foundation::DateTime m_processCreateTime;
-        ElevationLevel m_elevationLevel;
     };
 
     class ElevationVoucherFactory WrlFinal :
