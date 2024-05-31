@@ -8,20 +8,6 @@
         <Interface Name="Microsoft.Windows.Widgets.Providers.IWidgetProvider2" InterfaceId="38C3A963-DD93-479D-9276-04BF84EE1816" />
       </ProxyStub>
     </Extension>
-
-
-
-    <!--
-      
-    <Extension Category="windows.activatableClass.outOfProcessServer">
-      <OutOfProcessServer ServerName="DevHome.Elevation.Server" uap5:IdentityType="activateAsPackage" uap5:RunFullTrust="true">
-        <Path>DevHome.Elevation.Server.exe</Path>
-        <Instancing>singleInstance</Instancing>
-        <ActivatableClass ActivatableClassId="DevHome.Elevation.ZoneConnectionManager" />
-      </OutOfProcessServer>
-    </Extension>
-    -->
-
   </Extensions>
   <Identity Name="Microsoft.Windows.DevHome.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
@@ -39,76 +25,7 @@
     <Resource Language="x-generate" />
   </Resources>
 
-
-
   <Applications>
-
-<Application Id="AppConsoleClient" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements DisplayName="DevHome.Elevation.ConsoleClient.exe" Description="DevHome.Elevation.ConsoleClient.exe" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
-        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
-      </uap:VisualElements>
-      <Extensions>
-        <!-- Limitations in Microsoft.Extension.Configuration require this to be a key=value pair.-->
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
-          <uap3:AppExecutionAlias>
-            <desktop:ExecutionAlias Alias="doele.exe" />
-          </uap3:AppExecutionAlias>
-        </uap3:Extension>
-      </Extensions>
-      </Application>
-
-<Application Id="AppZoneLaunchPad" Executable="DevHome.Elevation.ZoneLaunchPad.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements DisplayName="DevHome.Elevation.ZoneLaunchPad.exe" Description="DevHome.Elevation.ZoneLaunchPad.exe" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
-        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
-      </uap:VisualElements>
-      <Extensions>
-        <!-- Limitations in Microsoft.Extension.Configuration require this to be a key=value pair.-->
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ZoneLaunchPad.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
-          <uap3:AppExecutionAlias>
-            <desktop:ExecutionAlias Alias="DevHome.Elevation.ZoneLaunchPad.exe" />
-          </uap3:AppExecutionAlias>
-        </uap3:Extension>
-      </Extensions>
-      </Application>
-
-
-
-
-
-    <Application Id="AppElevationServer" Executable="DevHome.Elevation.Server.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
-        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
-      </uap:VisualElements>
-      <Extensions>
-        <!-- DevHome.Elevation.ElevationVoucherManager -->
-        <!--
-        -->
-        <uap5:Extension Category="windows.activatableClass.outOfProcessServer" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="packagedClassicApp">
-          <uap5:OutOfProcessServer ServerName="DevHome.Elevation.Server" RunFullTrust="true">
-            <uap5:Path>DevHome.Elevation.Server.exe</uap5:Path>
-            <uap5:Instancing>singleInstance</uap5:Instancing>
-            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucher" />
-            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucherManager" />
-            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationZoneA" />
-          </uap5:OutOfProcessServer>
-        </uap5:Extension>
-
-
-<!--
--->
-  
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.Server.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
-          <uap3:AppExecutionAlias>
-            <desktop:ExecutionAlias Alias="DevHome.Elevation.Server.exe" />
-          </uap3:AppExecutionAlias>
-        </uap3:Extension>
-      </Extensions>
-    </Application>
-
-
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
@@ -132,20 +49,6 @@
             <uap5:ActivatableClass ActivatableClassId="DevHome.QuietBackgroundProcesses.PerformanceRecorderEngine" />
           </uap5:OutOfProcessServer>
         </uap5:Extension>
-
-
-        <!-- DevHome.Elevation.ZoneConnectionManager -->
-        <!--
-        <uap5:Extension Category="windows.activatableClass.outOfProcessServer" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="packagedClassicApp">
-          <uap5:OutOfProcessServer ServerName="DevHome.Elevation.Server" RunFullTrust="true">
-            <uap5:Path>DevHome.Elevation.Server.exe</uap5:Path>
-            <uap5:Instancing>singleInstance</uap5:Instancing>
-            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ZoneConnectionManager" />
-          </uap5:OutOfProcessServer>
-        </uap5:Extension>
-        -->
-
-
         <uap3:Extension Category="windows.appExtensionHost">
           <uap3:AppExtensionHost>
             <uap3:Name>com.microsoft.devhome</uap3:Name>
@@ -405,6 +308,56 @@
         </uap:Extension>
       </Extensions>
     </Application>
+
+    <!-- Elevation test client -->
+    <Application Id="AppConsoleClient" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements DisplayName="DevHome.Elevation.ConsoleClient.exe" Description="DevHome.Elevation.ConsoleClient.exe" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
+        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="doele.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
+    <!-- General elevation server -->
+    <Application Id="AppElevationServer" Executable="DevHome.Elevation.Server.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
+        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension Category="windows.activatableClass.outOfProcessServer" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="packagedClassicApp">
+          <uap5:OutOfProcessServer ServerName="DevHome.Elevation.Server" RunFullTrust="true">
+            <uap5:Path>DevHome.Elevation.Server.exe</uap5:Path>
+            <uap5:Instancing>singleInstance</uap5:Instancing>
+            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucher" />
+            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucherManager" />
+            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationZoneA" />
+          </uap5:OutOfProcessServer>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+
+    <!-- Elevation zone launch pad -->
+    <Application Id="AppZoneLaunchPad" Executable="DevHome.Elevation.ZoneLaunchPad.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements DisplayName="DevHome.Elevation.ZoneLaunchPad.exe" Description="DevHome.Elevation.ZoneLaunchPad.exe" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
+        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ZoneLaunchPad.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="DevHome.Elevation.ZoneLaunchPad.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
     <Application Id="Devhome.PI" Executable="DevHome.PI.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="ms-resource:PIDisplayName" Description="ms-resource:PIAppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" AppListEntry="none">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
