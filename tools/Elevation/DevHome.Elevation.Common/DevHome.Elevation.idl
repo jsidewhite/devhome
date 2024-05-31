@@ -20,6 +20,14 @@ namespace DevHome.Elevation
         VirtualMachineManagement,
     };
 
+    // Elevation levels
+    enum ElevationLevel
+    {
+        Medium,
+        High,
+    };
+
+
     [contract(ElevationContract, 1.0), uuid(2b69fc32-cabe-4758-b9a0-fb8542e9c55c)]
     interface IElevationZone
     {
@@ -29,7 +37,12 @@ namespace DevHome.Elevation
     [default_interface]
     runtimeclass ElevationVoucher
     {
-        ElevationVoucher(String voucherName, ElevationZone zoneId, UInt32 processId, Windows.Foundation.DateTime processCreateTime);
+        ElevationVoucher(
+            String voucherName,
+            ElevationLevel requestedElevationLevel,
+            ElevationZone zoneId,
+            UInt32 processId,
+            Windows.Foundation.DateTime processCreateTime);
 
         String VoucherName { get; };
         ElevationZone ZoneId { get; };

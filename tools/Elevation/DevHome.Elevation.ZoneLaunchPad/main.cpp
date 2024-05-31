@@ -165,7 +165,13 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int wargc) try
     auto voucherFactory = wil::GetActivationFactory<ABI::DevHome::Elevation::IElevationVoucherFactory>(RuntimeClass_DevHome_Elevation_ElevationVoucher);
 
     wil::com_ptr < ABI::DevHome::Elevation::IElevationVoucher> voucher;
-    THROW_IF_FAILED(voucherFactory->CreateInstance(Microsoft::WRL::Wrappers::HStringReference(voucherName).Get(), ABI::DevHome::Elevation::ElevationZone_ElevationZoneA, parentProcessId, createTimeDatetime, &voucher));
+    THROW_IF_FAILED(voucherFactory->CreateInstance(
+        Microsoft::WRL::Wrappers::HStringReference(voucherName).Get(),
+        ABI::DevHome::Elevation::ElevationLevel_High,
+        ABI::DevHome::Elevation::ElevationZone_ElevationZoneA,
+        parentProcessId,
+        createTimeDatetime,
+        &voucher));
 
     /*
     auto voucher = wil::ActivateInstance<ABI::DevHome::Elevation::IElevationVoucher>(

@@ -42,6 +42,48 @@ static DWORD GetCallingProcessPid()
     return GetProcessId(callingProcessHandle.get());
 }
 
+static DWORD GetCallingProcessMandatoryLabel()
+{
+    wil::unique_handle callingProcessHandle;
+    wil::unique_handle impersonationToken;
+    Microsoft::WRL::ComPtr<ICallingProcessInfo> callingProcessInfo;
+    THROW_IF_FAILED(CoGetCallContext(IID_PPV_ARGS(&callingProcessInfo)));
+    THROW_IF_FAILED(callingProcessInfo->OpenCallerProcessHandle(PROCESS_QUERY_LIMITED_INFORMATION, callingProcessHandle.addressof()));
+    return GetTokenMandatoryLabel(callingProcessHandle.get());
+}
+
+static ABI::DevHome::Elevation::ElevationLevel MandatoryLabelToElevationLevel(LONG mandatoryLabel)
+{
+    if (mandatoryLabel == SECURITY_MANDATORY_HIGH_RID)
+    {
+        return ABI::DevHome::Elevation::ElevationLevel::High;
+    }
+    else if (mandatoryLabel == SECURITY_MANDATORY_MEDIUM_RID)
+    {
+        return ABI::DevHome::Elevation::ElevationLevel::Medium;
+    }
+    THROW_HR(E_INVALIDARG);
+}
+
+static LONG ElevationLevelToMandatoryLabel(ABI::DevHome::Elevation::ElevationLevel elevationLevel)
+{
+    if (elevationLevel == ABI::DevHome::Elevation::ElevationLevel::High)
+    {
+        return SECURITY_MANDATORY_HIGH_RID;
+    }
+    else if (elevationLevel == ABI::DevHome::Elevation::ElevationLevel::Medium)
+    {
+        return SECURITY_MANDATORY_MEDIUM_RID;
+    }
+    THROW_HR(E_INVALIDARG);
+}
+
+static ABI::DevHome::Elevation::ElevationLevel GetCallingProcessElevationLevel()
+{
+    auto level = GetCallingProcessMandatoryLabel();
+    return MandatoryLabelToElevationLevel(level);
+}
+
 namespace ABI::DevHome::Elevation
 {
     class ElevationVoucherManagerStatics WrlFinal :
@@ -162,14 +204,22 @@ namespace ABI::DevHome::Elevation
         InspectableClass(RuntimeClass_DevHome_Elevation_ElevationVoucher, BaseTrust);
 
     public:
-        STDMETHODIMP RuntimeClassInitialize(HSTRING voucherName, ElevationZone zoneId, uint32_t processId, ABI::Windows::Foundation::DateTime processCreateTime) noexcept
+        STDMETHODIMP RuntimeClassInitialize(HSTRING voucherName, ElevationLevel requestedElevationLevel, ElevationZone zoneId, uint32_t processId, ABI::Windows::Foundation::DateTime processCreateTime) noexcept try
         {
             m_voucherName = std::wstring(WindowsGetStringRawBuffer(voucherName, nullptr));
             m_zoneId = zoneId;
             m_processId = processId;
             m_processCreateTime = processCreateTime;
+
+            if (GetCallingProcessElevationLevel() < requestedElevationLevel)
+            {
+                return E_ACCESSDENIED;
+            }
+
+            m_elevationLevel = requestedElevationLevel;
             return S_OK;
         }
+        CATCH_RETURN()
 
         STDMETHODIMP get_VoucherName(_Out_ HSTRING* result) noexcept
         {
@@ -206,6 +256,7 @@ namespace ABI::DevHome::Elevation
         ElevationZone m_zoneId;
         uint32_t m_processId;
         ABI::Windows::Foundation::DateTime m_processCreateTime;
+        ElevationLevel m_elevationLevel;
     };
 
     class ElevationVoucherFactory WrlFinal :
@@ -224,13 +275,14 @@ namespace ABI::DevHome::Elevation
 
         STDMETHODIMP CreateInstance(
             /* [in] */ HSTRING voucherName,
+            ElevationLevel requestedElevationLevel,
             /* [in] */ ElevationZone zoneId,
             /* [in] */ UINT32 processId,
             /* [in] */ ABI::Windows::Foundation::DateTime processCreateTime,
             /* [out, retval] */ IElevationVoucher** result) noexcept
         {
             auto voucher = Microsoft::WRL::Make<ElevationVoucher>();
-            THROW_IF_FAILED(voucher->RuntimeClassInitialize(voucherName, zoneId, processId, processCreateTime));
+            THROW_IF_FAILED(voucher->RuntimeClassInitialize(voucherName, requestedElevationLevel, zoneId, processId, processCreateTime));
             *result = voucher.Detach();
             return S_OK;
         }
