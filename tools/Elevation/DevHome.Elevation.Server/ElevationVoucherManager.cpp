@@ -77,7 +77,7 @@ namespace ABI::DevHome::Elevation
             // (Or rather, we'll only allow the voucher to be activated if the caller is as elevated as us.)
 
             // Get client mandatory label
-            auto clientLabel = [&]()
+            auto clientElevationLevel = [&]()
             {
                 // Get calling process handle
                 auto revert = wil::CoImpersonateClient();
@@ -85,14 +85,21 @@ namespace ABI::DevHome::Elevation
                 wil::unique_handle clientToken;
                 THROW_IF_WIN32_BOOL_FALSE(OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &clientToken));
 
-                return GetTokenMandatoryLabel(clientToken.get());
+                return MandatoryLabelToElevationLevel(GetTokenMandatoryLabel(clientToken.get()));
             }();
 
             // Get our mandatory label
-            auto ourLabel = GetTokenMandatoryLabel(GetCurrentProcessToken());
-            
-            // Only activate a voucher if the requester is at least as elevated as us!
-            THROW_HR_IF(E_ACCESSDENIED, clientLabel < ourLabel);
+            auto ourElevationLevel = MandatoryLabelToElevationLevel(GetTokenMandatoryLabel(GetCurrentProcessToken()));
+
+            // Get voucher elevation level
+            ElevationLevel voucherElevationLevel;
+            THROW_IF_FAILED(voucher->get_ElevationLevel(&voucherElevationLevel));
+
+            // Do an access check to make sure the caller is elevated enough to put the voucher in will-call
+            THROW_HR_IF(E_ACCESSDENIED, clientElevationLevel < voucherElevationLevel);
+
+            // Do an access check to make sure the voucher's requested access level isn't higher than our server (where zone code will execute)!
+            THROW_HR_IF(E_ACCESSDENIED, voucherElevationLevel < ourElevationLevel);
 
             // Save voucher for a period of time
             HSTRING hstrVoucherName;
@@ -183,7 +190,7 @@ namespace ABI::DevHome::Elevation
 
             if (requestedElevationLevel > GetCallingProcessElevationLevel())
             {
-                THROW_HR(E_ACCESSDENIED);
+                THROW_WIN32(ERROR_PRIVILEGE_NOT_HELD);
             }
 
             m_elevationLevel = requestedElevationLevel;
@@ -194,6 +201,12 @@ namespace ABI::DevHome::Elevation
         STDMETHODIMP get_VoucherName(_Out_ HSTRING* result) noexcept
         {
             Microsoft::WRL::Wrappers::HStringReference(m_voucherName.c_str()).CopyTo(result);
+            return S_OK;
+        }
+
+        STDMETHODIMP get_ElevationLevel(_Out_ ElevationLevel* result) noexcept
+        {
+            *result = m_elevationLevel;
             return S_OK;
         }
 

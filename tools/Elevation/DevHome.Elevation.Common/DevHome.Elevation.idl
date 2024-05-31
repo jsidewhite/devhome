@@ -45,6 +45,7 @@ namespace DevHome.Elevation
             Windows.Foundation.DateTime processCreateTime);
 
         String VoucherName { get; };
+        ElevationLevel ElevationLevel { get; };
         ElevationZone ZoneId { get; };
         UInt32 ProcessId { get; };
         Windows.Foundation.DateTime ProcessCreateTime { get; };
