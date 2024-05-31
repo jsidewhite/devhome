@@ -133,7 +133,7 @@ int main() try
     std::cout << "something = " << something << std::endl;
 
 
-    Sleep(10000);
+    Sleep(1000);
 
     return 0;
 }

@@ -314,5 +314,5 @@ namespace ABI::DevHome::Elevation
 
     
 
-    ActivatableClass(ElevationZoneA);
+    //ActivatableClass(ElevationZoneA);
 }

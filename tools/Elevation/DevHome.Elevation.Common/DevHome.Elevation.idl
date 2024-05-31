@@ -11,11 +11,12 @@ namespace DevHome.Elevation
     {
     }
 
+    // Elevation zones
     enum ElevationZone
     {
         ElevationZoneA,
         ElevationZoneB,
-        ElevationZoneC,
+        VirtualMachineManagement,
     };
 
     [contract(ElevationContract, 1.0), uuid(2b69fc32-cabe-4758-b9a0-fb8542e9c55c)]
@@ -23,6 +24,7 @@ namespace DevHome.Elevation
     {
     }
 
+    // A voucher that can be redeemed for an elevation zone
     [default_interface]
     runtimeclass ElevationVoucher
     {
@@ -36,36 +38,19 @@ namespace DevHome.Elevation
         IElevationZone Redeem();
     };
 
-    /*
-    enum ClaimVoucherStatus
-    {
-        Success = 0,
-        NoVoucher,
-    };
-
-    runtimeclass ClaimVoucherResult
-    {
-        ElevationVoucher Voucher { get; };
-        ClaimVoucherStatus Status { get; };
-        HRESULT ExtendedError { get; };
-    }
-    */
-
-    //todo: rename to OpenChannel
+    // Elevation voucher manager that allows vouchers to activated and claimed
     [default_interface]
     runtimeclass ElevationVoucherManager
     {
-        // Make the voucher claimable (must be activated from an elevated process)
+        // Make the voucher claimable (calle from elevated process)
         static void ActivateVoucher(ElevationVoucher voucher, Windows.Foundation.TimeSpan validDuration);
 
-        // Claim the voucher (from unelevated process)
-        //static ClaimVoucherResult ClaimVoucher(ElevationZone zoneName);
+        // Claim the voucher (call from unelevated process)
         static ElevationVoucher ClaimVoucher(String voucherName);
     }
 
-    //
+
     // Zones
-    //
     runtimeclass ElevationZoneA
     {
         UInt32 GetSomething();

@@ -24,7 +24,6 @@
   <Resources>
     <Resource Language="x-generate" />
   </Resources>
-
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
@@ -309,21 +308,6 @@
       </Extensions>
     </Application>
 
-    <!-- Elevation test client -->
-    <Application Id="AppConsoleClient" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements DisplayName="DevHome.Elevation.ConsoleClient.exe" Description="DevHome.Elevation.ConsoleClient.exe" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
-        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
-      </uap:VisualElements>
-      <Extensions>
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
-          <uap3:AppExecutionAlias>
-            <desktop:ExecutionAlias Alias="doele.exe" />
-          </uap3:AppExecutionAlias>
-        </uap3:Extension>
-      </Extensions>
-    </Application>
-
     <!-- General elevation server -->
     <Application Id="AppElevationServer" Executable="DevHome.Elevation.Server.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements DisplayName="ms-resource:AppDisplayNameDev" Description="ms-resource:AppDescription" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
@@ -337,7 +321,6 @@
             <uap5:Instancing>singleInstance</uap5:Instancing>
             <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucher" />
             <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationVoucherManager" />
-            <uap5:ActivatableClass ActivatableClassId="DevHome.Elevation.ElevationZoneA" />
           </uap5:OutOfProcessServer>
         </uap5:Extension>
       </Extensions>
@@ -353,6 +336,21 @@
         <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ZoneLaunchPad.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
           <uap3:AppExecutionAlias>
             <desktop:ExecutionAlias Alias="DevHome.Elevation.ZoneLaunchPad.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
+    <!-- Elevation test client -->
+    <Application Id="AppConsoleClient" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements DisplayName="DevHome.Elevation.ConsoleClient.exe" Description="DevHome.Elevation.ConsoleClient.exe" BackgroundColor="transparent" Square150x150Logo="Assets\Logos\MedTile.png" Square44x44Logo="Assets\Logos\AppList.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Logos\WideTile.png" />
+        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="DevHome.Elevation.ConsoleClient.exe" EntryPoint="Windows.FullTrustApplication" uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="doele.exe" />
           </uap3:AppExecutionAlias>
         </uap3:Extension>
       </Extensions>

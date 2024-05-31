@@ -144,7 +144,6 @@
     <Midl Include="DevHome.Elevation.idl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
