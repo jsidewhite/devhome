@@ -42,6 +42,7 @@ namespace DevHome.Elevation
             ElevationLevel requestedElevationLevel,
             ElevationZone zoneId,
             UInt32 processId,
+            // HANDLE process, // Cannot use a handle in modern idl
             Windows.Foundation.DateTime processCreateTime);
 
         String VoucherName { get; };

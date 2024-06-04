@@ -110,7 +110,7 @@ namespace ABI::DevHome::Elevation
                 m_vouchers.emplace(voucherName, voucher);
             }
 
-            // Delete voucher after 10 seconds
+            // Quick and dirty: Delete voucher after 10 seconds without worrying about memory issues for now
             auto th = std::thread([voucherName, this]()
             {
                 std::this_thread::sleep_for(std::chrono::seconds(10));
